@@ -1,0 +1,633 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider        = "prisma-client-js"
+  // output          = "../../generated/client" // todo 开发时注掉，打包前打开
+  binaryTargets   = ["darwin", "windows", "linux-musl", "rhel-openssl-1.0.x"]
+  previewFeatures = ["prismaSchemaFolder"]
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// 1.1 用户表
+model sys_user {
+  id             String          @id @db.VarChar(10)
+  username       String          @db.VarChar(50)
+  nickname       String?         @db.VarChar(50)
+  password       String          @db.VarChar(100)
+  avatar         String?         @db.VarChar(200)
+  sex            String?         @db.VarChar(10)
+  email          String?         @db.VarChar(50)
+  tel            String?         @db.VarChar(15)
+  create_role    String          @db.VarChar(30)
+  update_role    String          @db.VarChar(30)
+  create_by      String          @db.VarChar(10)
+  update_by      String          @db.VarChar(10)
+  create_time    DateTime        @default(now())
+  update_time    DateTime        @updatedAt
+  deleted        String          @default("N") @db.Char(1)
+  sys_admin_tops sys_admin_top[]
+}
+
+// 1.1.1 访客用户表
+model sys_user_visitor {
+  id          String   @id @db.VarChar(10)
+  username    String   @db.VarChar(50)
+  nickname    String?  @db.VarChar(50)
+  password    String   @db.VarChar(100)
+  avatar      String?  @db.VarChar(200)
+  sex         String?  @db.VarChar(10)
+  email       String?  @db.VarChar(50)
+  tel         String?  @db.VarChar(15)
+  create_role String   @db.VarChar(30)
+  update_role String   @db.VarChar(30)
+  create_by   String   @db.VarChar(10)
+  update_by   String   @db.VarChar(10)
+  create_time DateTime @default(now())
+  update_time DateTime @updatedAt
+  deleted     String   @default("N") @db.Char(1)
+}
+
+// 1.1.2 用户表默认权限表
+model sys_user_table_default_permission {
+  id          Int      @id @default(autoincrement()) @db.Int
+  table_name  String   @db.VarChar(50) // 表名
+  perm_type   String   @db.VarChar(2) // 角色类型
+  perm_id     Int      @db.Int // 角色id
+  create_role String   @db.VarChar(30)
+  update_role String   @db.VarChar(30)
+  create_by   String   @db.VarChar(10)
+  update_by   String   @db.VarChar(10)
+  create_time DateTime @default(now())
+  update_time DateTime @updatedAt
+  deleted     String   @default("N") @db.Char(1)
+}
+
+// 1.2 字典类型表
+model sys_dic_type {
+  id            Int            @id @default(autoincrement()) @db.Int
+  name          String         @db.VarChar(50)
+  type          String         @db.VarChar(50)
+  if_disabled   String         @db.Char(1)
+  order_num     Int            @db.Int
+  remark        String?        @db.VarChar(300)
+  create_role   String         @db.VarChar(30)
+  update_role   String         @db.VarChar(30)
+  create_by     String         @db.VarChar(10)
+  update_by     String         @db.VarChar(10)
+  create_time   DateTime       @default(now())
+  update_time   DateTime       @updatedAt
+  deleted       String         @default("N") @db.Char(1)
+  sys_dic_datas sys_dic_data[]
+}
+
+// 1.3 字典数据表
+model sys_dic_data {
+  id          Int          @id @default(autoincrement()) @db.Int
+  label       String       @db.VarChar(50)
+  value       String       @db.VarChar(50)
+  dic_type_id Int          @db.Int
+  if_default  String       @db.Char(1)
+  if_disabled String       @db.Char(1)
+  order_num   Int          @db.Int
+  remark      String?      @db.VarChar(300)
+  create_role String       @db.VarChar(30)
+  update_role String       @db.VarChar(30)
+  create_by   String       @db.VarChar(10)
+  update_by   String       @db.VarChar(10)
+  create_time DateTime     @default(now())
+  update_time DateTime     @updatedAt
+  deleted     String       @default("N") @db.Char(1)
+  dic_type_   sys_dic_type @relation(fields: [dic_type_id], references: [id])
+}
+
+// 1.4 代码生成-表信息表
+model sys_code_gen_table {
+  id                   Int                   @id @default(autoincrement()) @db.Int
+  table_name           String                @db.VarChar(60)
+  table_descr          String                @db.VarChar(100)
+  entity_name          String                @db.VarChar(60)
+  table_remark         String?               @db.VarChar(300)
+  business_name        String                @db.VarChar(60)
+  module_name          String                @db.VarChar(60)
+  business_name_cn     String                @db.VarChar(60)
+  module_name_cn       String                @db.VarChar(60)
+  sys_id               Int                   @db.Int
+  order_num            Int                   @db.Int
+  remark               String?               @db.VarChar(300)
+  create_role          String                @db.VarChar(30)
+  update_role          String                @db.VarChar(30)
+  create_by            String                @db.VarChar(10)
+  update_by            String                @db.VarChar(10)
+  create_time          DateTime              @default(now())
+  update_time          DateTime              @updatedAt
+  deleted              String                @default("N") @db.Char(1)
+  sys_                 sys_sys               @relation(fields: [sys_id], references: [id])
+  sys_code_gen_columns sys_code_gen_column[]
+}
+
+// 1.5 代码生成-列信息表
+model sys_code_gen_column {
+  id          Int                @id @default(autoincrement()) @db.Int
+  table_id    Int                @db.Int
+  col_name    String             @db.VarChar(60)
+  col_descr   String             @db.VarChar(60)
+  mysql_type  String             @db.VarChar(60)
+  ts_type     String             @db.VarChar(10)
+  ts_name     String             @db.VarChar(60)
+  if_ins      String             @db.Char(1)
+  if_upd      String             @db.Char(1)
+  if_sel_one  String             @db.Char(1)
+  if_sel_more String             @db.Char(1)
+  if_required String             @db.Char(1)
+  sel_type    String             @db.VarChar(10)
+  form_type   String             @db.VarChar(20)
+  order_num   Int                @db.Int
+  remark      String?            @db.VarChar(300)
+  create_role String             @db.VarChar(30)
+  update_role String             @db.VarChar(30)
+  create_by   String             @db.VarChar(10)
+  update_by   String             @db.VarChar(10)
+  create_time DateTime           @default(now())
+  update_time DateTime           @updatedAt
+  deleted     String             @default("N") @db.Char(1)
+  table_id_   sys_code_gen_table @relation(fields: [table_id], references: [id])
+}
+
+// 2.0 顶级管理员表
+model sys_admin_top {
+  id          Int      @id @default(autoincrement()) @db.Int
+  user_id     String   @db.VarChar(10)
+  remark      String?  @db.VarChar(300)
+  create_role String   @db.VarChar(30)
+  update_role String   @db.VarChar(30)
+  create_by   String   @db.VarChar(10)
+  update_by   String   @db.VarChar(10)
+  create_time DateTime @default(now())
+  update_time DateTime @updatedAt
+  deleted     String   @default("N") @db.Char(1)
+  user_id_    sys_user @relation(fields: [user_id], references: [id])
+}
+
+// 2.1 菜单表
+model sys_menu {
+  id                        Int                        @id @default(autoincrement()) @db.Int
+  label                     String                     @db.VarChar(30)
+  type                      String                     @db.VarChar(2)
+  path                      String                     @db.VarChar(100)
+  parent_id                 Int                        @db.Int
+  component                 String                     @db.VarChar(60)
+  icon                      String                     @db.VarChar(30)
+  order_num                 Int                        @db.Int
+  if_link                   String                     @db.Char(1)
+  if_visible                String                     @db.Char(1)
+  if_disabled               String                     @db.Char(1)
+  if_public                 String                     @db.Char(1)
+  if_fixed                  String                     @db.Char(1)
+  perms                     String                     @db.VarChar(100)
+  sys_id                    Int                        @db.Int
+  remark                    String?                    @db.VarChar(300)
+  create_role               String                     @db.VarChar(30)
+  update_role               String                     @db.VarChar(30)
+  create_by                 String                     @db.VarChar(10)
+  update_by                 String                     @db.VarChar(10)
+  create_time               DateTime                   @default(now())
+  update_time               DateTime                   @updatedAt
+  deleted                   String                     @default("N") @db.Char(1)
+  sys_                      sys_sys                    @relation(fields: [sys_id], references: [id])
+  sys_role_permissions      sys_role_permission[]
+  sys_dept_permissions      sys_dept_permission[]
+  sys_menu_ip_white_lists   sys_menu_ip_white_list[]
+  sys_table_row_permissions sys_table_row_permission[]
+}
+
+// 2.2 角色表
+model sys_role {
+  id                   Int                   @id @default(autoincrement()) @db.Int
+  label                String                @db.VarChar(30)
+  if_admin             String                @db.Char(1)
+  if_disabled          String                @db.Char(1)
+  order_num            Int                   @db.Int
+  remark               String?               @db.VarChar(300)
+  create_role          String                @db.VarChar(30)
+  update_role          String                @db.VarChar(30)
+  create_by            String                @db.VarChar(10)
+  update_by            String                @db.VarChar(10)
+  create_time          DateTime              @default(now())
+  update_time          DateTime              @updatedAt
+  deleted              String                @default("N") @db.Char(1)
+  sys_user_roles       sys_user_role[]
+  sys_role_permissions sys_role_permission[]
+  sys_role_syss        sys_role_sys[]
+}
+
+// 2.3 用户角色表
+model sys_user_role {
+  id          Int      @id @default(autoincrement()) @db.Int
+  user_id     String   @db.VarChar(10)
+  role_id     Int      @db.Int
+  login_role  String   @db.VarChar(30)
+  create_role String   @db.VarChar(30)
+  update_role String   @db.VarChar(30)
+  create_by   String   @db.VarChar(10)
+  update_by   String   @db.VarChar(10)
+  create_time DateTime @default(now())
+  update_time DateTime @updatedAt
+  deleted     String   @default("N") @db.Char(1)
+  role_id_    sys_role @relation(fields: [role_id], references: [id])
+}
+
+// 2.4 角色权限表
+model sys_role_permission {
+  id             Int      @id @default(autoincrement()) @db.Int
+  role_id        Int      @db.Int
+  permission_id  Int      @db.Int
+  create_role    String   @db.VarChar(30)
+  update_role    String   @db.VarChar(30)
+  create_by      String   @db.VarChar(10)
+  update_by      String   @db.VarChar(10)
+  create_time    DateTime @default(now())
+  update_time    DateTime @updatedAt
+  deleted        String   @default("N") @db.Char(1)
+  role_id_       sys_role @relation(fields: [role_id], references: [id])
+  permission_id_ sys_menu @relation(fields: [permission_id], references: [id])
+}
+
+// 2.5 部门表
+model sys_dept {
+  id                   Int                   @id @default(autoincrement()) @db.Int
+  label                String                @db.VarChar(50)
+  if_admin             String                @db.Char(1)
+  if_disabled          String                @db.Char(1)
+  parent_id            Int                   @db.Int
+  order_num            Int                   @db.Int
+  remark               String?               @db.VarChar(300)
+  create_role          String                @db.VarChar(30)
+  update_role          String                @db.VarChar(30)
+  create_by            String                @db.VarChar(10)
+  update_by            String                @db.VarChar(10)
+  create_time          DateTime              @default(now())
+  update_time          DateTime              @updatedAt
+  deleted              String                @default("N") @db.Char(1)
+  sys_user_depts       sys_user_dept[]
+  sys_dept_permissions sys_dept_permission[]
+  sys_dept_syss        sys_dept_sys[]
+}
+
+// 2.6 用户部门表
+model sys_user_dept {
+  id          Int      @id @default(autoincrement()) @db.Int
+  user_id     String   @db.VarChar(10)
+  dept_id     Int      @db.Int
+  login_role  String   @db.VarChar(30)
+  create_role String   @db.VarChar(30)
+  update_role String   @db.VarChar(30)
+  create_by   String   @db.VarChar(10)
+  update_by   String   @db.VarChar(10)
+  create_time DateTime @default(now())
+  update_time DateTime @updatedAt
+  deleted     String   @default("N") @db.Char(1)
+  dept_id_    sys_dept @relation(fields: [dept_id], references: [id])
+}
+
+// 2.7 部门权限表
+model sys_dept_permission {
+  id             Int      @id @default(autoincrement()) @db.Int
+  dept_id        Int      @db.Int
+  permission_id  Int      @db.Int
+  create_role    String   @db.VarChar(30)
+  update_role    String   @db.VarChar(30)
+  create_by      String   @db.VarChar(10)
+  update_by      String   @db.VarChar(10)
+  create_time    DateTime @default(now())
+  update_time    DateTime @updatedAt
+  deleted        String   @default("N") @db.Char(1)
+  dept_id_       sys_dept @relation(fields: [dept_id], references: [id])
+  permission_id_ sys_menu @relation(fields: [permission_id], references: [id])
+}
+
+// 2.8 系统表
+model sys_sys {
+  id                  Int                  @id @default(autoincrement()) @db.Int
+  name                String               @db.VarChar(300)
+  perms               String               @db.VarChar(100)
+  order_num           Int                  @db.Int
+  path                String               @db.VarChar(100)
+  if_disabled         String               @db.Char(1)
+  remark              String?              @db.VarChar(300)
+  create_role         String               @db.VarChar(30)
+  update_role         String               @db.VarChar(30)
+  create_by           String               @db.VarChar(10)
+  update_by           String               @db.VarChar(10)
+  create_time         DateTime             @default(now())
+  update_time         DateTime             @updatedAt
+  deleted             String               @default("N") @db.Char(1)
+  sys_role_syss       sys_role_sys[]
+  sys_dept_syss       sys_dept_sys[]
+  sys_menus           sys_menu[]
+  sys_code_gen_tables sys_code_gen_table[]
+}
+
+// 2.9 角色系统表
+model sys_role_sys {
+  id          Int      @id @default(autoincrement()) @db.Int
+  role_id     Int      @db.Int
+  sys_id      Int      @db.Int
+  create_role String   @db.VarChar(30)
+  update_role String   @db.VarChar(30)
+  create_by   String   @db.VarChar(10)
+  update_by   String   @db.VarChar(10)
+  create_time DateTime @default(now())
+  update_time DateTime @updatedAt
+  deleted     String   @default("N") @db.Char(1)
+  role_id_    sys_role @relation(fields: [role_id], references: [id])
+  sys_id_     sys_sys  @relation(fields: [sys_id], references: [id])
+}
+
+// 2.10 部门系统表
+model sys_dept_sys {
+  id          Int      @id @default(autoincrement()) @db.Int
+  dept_id     Int      @db.Int
+  sys_id      Int      @db.Int
+  create_role String   @db.VarChar(30)
+  update_role String   @db.VarChar(30)
+  create_by   String   @db.VarChar(10)
+  update_by   String   @db.VarChar(10)
+  create_time DateTime @default(now())
+  update_time DateTime @updatedAt
+  deleted     String   @default("N") @db.Char(1)
+  dept_id_    sys_dept @relation(fields: [dept_id], references: [id])
+  sys_id_     sys_sys  @relation(fields: [sys_id], references: [id])
+}
+
+// 2.11 菜单-ip白名单表
+model sys_menu_ip_white_list {
+  id          Int      @id @default(autoincrement()) @db.Int
+  menu_id     Int      @db.Int
+  white_list  String   @db.VarChar(100)
+  from_type   String   @db.VarChar(2)
+  type        String   @db.VarChar(2)
+  remark      String?  @db.VarChar(300)
+  create_role String   @db.VarChar(30)
+  update_role String   @db.VarChar(30)
+  create_by   String   @db.VarChar(10)
+  update_by   String   @db.VarChar(10)
+  create_time DateTime @default(now())
+  update_time DateTime @updatedAt
+  deleted     String   @default("N") @db.Char(1)
+  menu_id_    sys_menu @relation(fields: [menu_id], references: [id])
+}
+
+// 2.12 菜单-数据表行权限表
+model sys_table_row_permission {
+  id             Int      @id @default(autoincrement()) @db.Int
+  permission_id  Int      @db.Int
+  action_type    String   @db.VarChar(20)
+  action_id      String   @db.VarChar(20)
+  data_type      String   @db.VarChar(20)
+  create_role    String   @db.VarChar(30)
+  update_role    String   @db.VarChar(30)
+  create_by      String   @db.VarChar(10)
+  update_by      String   @db.VarChar(10)
+  create_time    DateTime @default(now())
+  update_time    DateTime @updatedAt
+  deleted        String   @default("N") @db.Char(1)
+  permission_id_ sys_menu @relation(fields: [permission_id], references: [id])
+}
+
+// 2.13 用户组表
+model sys_user_group {
+  id                         Int                         @id @default(autoincrement()) @db.Int
+  label                      String                      @db.VarChar(30)
+  parent_id                  Int                         @db.Int
+  order_num                  Int                         @db.Int
+  remark                     String?                     @db.VarChar(300)
+  create_role                String                      @db.VarChar(30)
+  update_role                String                      @db.VarChar(30)
+  create_by                  String                      @db.VarChar(10)
+  update_by                  String                      @db.VarChar(10)
+  create_time                DateTime                    @default(now())
+  update_time                DateTime                    @updatedAt
+  deleted                    String                      @default("N") @db.Char(1)
+  sys_user_user_groups       sys_user_user_group[]
+  sys_user_group_permissions sys_user_group_permission[]
+}
+
+// 2.14 用户用户组表
+model sys_user_user_group {
+  id             Int            @id @default(autoincrement()) @db.Int
+  user_id        String         @db.VarChar(10)
+  user_group_id  Int            @db.Int
+  login_role     String         @db.VarChar(30)
+  create_role    String         @db.VarChar(30)
+  update_role    String         @db.VarChar(30)
+  create_by      String         @db.VarChar(10)
+  update_by      String         @db.VarChar(10)
+  create_time    DateTime       @default(now())
+  update_time    DateTime       @updatedAt
+  deleted        String         @default("N") @db.Char(1)
+  user_group_id_ sys_user_group @relation(fields: [user_group_id], references: [id])
+}
+
+// 2.15 接口表
+model sys_interface {
+  id                             Int                             @id @default(autoincrement()) @db.Int
+  label                          String                          @db.VarChar(30)
+  icon                           String                          @db.VarChar(30)
+  order_num                      Int                             @db.Int
+  if_disabled                    String                          @db.Char(1)
+  if_public                      String                          @db.Char(1)
+  perms                          String                          @db.VarChar(100)
+  url                            String                          @db.VarChar(100)
+  remark                         String?                         @db.VarChar(300)
+  create_role                    String                          @db.VarChar(30)
+  update_role                    String                          @db.VarChar(30)
+  create_by                      String                          @db.VarChar(10)
+  update_by                      String                          @db.VarChar(10)
+  create_time                    DateTime                        @default(now())
+  update_time                    DateTime                        @updatedAt
+  deleted                        String                          @default("N") @db.Char(1)
+  sys_interface_interface_groups sys_interface_interface_group[]
+}
+
+// 2.16 接口组表
+model sys_interface_group {
+  id                             Int                             @id @default(autoincrement()) @db.Int
+  label                          String                          @db.VarChar(30)
+  parent_id                      Int                             @db.Int
+  perms                          String                          @db.VarChar(100)
+  base_u_r_l                     String                          @db.VarChar(300)
+  order_num                      Int                             @db.Int
+  remark                         String?                         @db.VarChar(300)
+  create_role                    String                          @db.VarChar(30)
+  update_role                    String                          @db.VarChar(30)
+  create_by                      String                          @db.VarChar(10)
+  update_by                      String                          @db.VarChar(10)
+  create_time                    DateTime                        @default(now())
+  update_time                    DateTime                        @updatedAt
+  deleted                        String                          @default("N") @db.Char(1)
+  sys_interface_interface_groups sys_interface_interface_group[]
+  sys_user_group_permissions     sys_user_group_permission[]
+}
+
+// 2.17 接口接口组
+model sys_interface_interface_group {
+  id                  Int                 @id @default(autoincrement()) @db.Int
+  interface_id        Int                 @db.Int
+  interface_group_id  Int                 @db.Int
+  create_role         String              @db.VarChar(30)
+  update_role         String              @db.VarChar(30)
+  create_by           String              @db.VarChar(10)
+  update_by           String              @db.VarChar(10)
+  create_time         DateTime            @default(now())
+  update_time         DateTime            @updatedAt
+  deleted             String              @default("N") @db.Char(1)
+  interface_id_       sys_interface       @relation(fields: [interface_id], references: [id])
+  interface_group_id_ sys_interface_group @relation(fields: [interface_group_id], references: [id])
+}
+
+// 2.18 用户组接口组表
+model sys_user_group_permission {
+  id                       Int                  @id @default(autoincrement()) @db.Int
+  user_group_id            Int                  @db.Int
+  permission_id            Int                  @db.Int
+  if_long_term             String               @db.Char(1)
+  if_limit_request_times   String               @db.Char(1)
+  if_reject_request_use_up String               @db.Char(1)
+  permission_start_time    DateTime             @db.DateTime(3)
+  permission_end_time      DateTime             @db.DateTime(3)
+  limit_request_times      Int                  @db.Int
+  if_use_up                String               @default("N") @db.Char(1)
+  order_num                Int                  @db.Int
+  remark                   String?              @db.VarChar(300)
+  create_role              String               @db.VarChar(30)
+  update_role              String               @db.VarChar(30)
+  create_by                String               @db.VarChar(10)
+  update_by                String               @db.VarChar(10)
+  create_time              DateTime             @default(now())
+  update_time              DateTime             @updatedAt
+  deleted                  String               @default("N") @db.Char(1)
+  user_group_id_           sys_user_group       @relation(fields: [user_group_id], references: [id])
+  permission_id_           sys_interface_group  @relation(fields: [permission_id], references: [id])
+  log_algorithm_calls      log_algorithm_call[]
+}
+
+// 2.19 定时任务表
+model sys_scheduled_task {
+  id              Int      @id @default(autoincrement()) @db.Int
+  name            String   @db.VarChar(100)
+  target          String   @db.VarChar(150)
+  cron_expression String   @db.VarChar(100)
+  order_num       Int      @db.Int
+  if_disabled     String   @db.Char(1)
+  remark          String?  @db.VarChar(300)
+  create_role     String   @db.VarChar(30)
+  update_role     String   @db.VarChar(30)
+  create_by       String   @db.VarChar(10)
+  update_by       String   @db.VarChar(10)
+  create_time     DateTime @default(now())
+  update_time     DateTime @updatedAt
+  deleted         String   @default("N") @db.Char(1)
+}
+
+// 3.2 文件表
+model tbl_file {
+  id            String   @id @default(uuid()) @db.VarChar(50)
+  file_name     String   @db.VarChar(200)
+  file_new_name String   @db.VarChar(200)
+  file_size     BigInt   @db.BigInt
+  file_md5      String   @db.VarChar(50)
+  if_chunk      String   @db.Char(1)
+  chunk_num     Int?     @db.Int
+  if_merge      String?  @db.Char(1)
+  if_first      String   @db.Char(1)
+  if_finished   String   @db.Char(1)
+  module        String?  @db.VarChar(50)
+  remark        String?  @db.VarChar(300)
+  create_role   String   @db.VarChar(30)
+  update_role   String   @db.VarChar(30)
+  create_by     String   @db.VarChar(10)
+  update_by     String   @db.VarChar(10)
+  create_time   DateTime @default(now())
+  update_time   DateTime @updatedAt
+  deleted       String   @default("N") @db.Char(1)
+}
+
+// 3.3 文件分片表
+model tbl_file_chunk {
+  id            String   @id @default(uuid()) @db.VarChar(50)
+  file_md5      String   @db.VarChar(50)
+  file_new_name String   @db.VarChar(200)
+  chunk_name    String   @db.VarChar(200)
+  chunk_index   Int      @db.Int
+  if_finished   String   @db.Char(1)
+  remark        String?  @db.VarChar(300)
+  create_role   String   @db.VarChar(30)
+  create_by     String   @db.VarChar(10)
+  create_time   DateTime @default(now())
+  deleted       String   @default("N") @db.Char(1)
+}
+
+// 0.1 登录日志表
+model log_user_login {
+  id             Int      @id @default(autoincrement()) @db.Int
+  user_id        String   @db.VarChar(10)
+  login_role     String   @db.VarChar(30)
+  login_ip       String   @db.VarChar(20)
+  login_position String   @db.VarChar(30)
+  login_browser  String   @db.VarChar(30)
+  login_os       String   @db.VarChar(30)
+  if_success     String   @db.Char(1)
+  fail_type      String   @db.VarChar(20)
+  remark         String?  @db.VarChar(100)
+  create_time    DateTime @default(now())
+}
+
+// 0.2 系统操作日志表
+model log_operation {
+  id           Int      @id @default(autoincrement()) @db.Int
+  req_id       String   @db.VarChar(40)
+  call_ip      String   @db.VarChar(20)
+  host_name    String   @db.VarChar(100)
+  perms        String   @db.VarChar(100)
+  user_id      String   @db.VarChar(10)
+  login_role   String   @db.VarChar(30)
+  req_param    String   @db.Text
+  old_value    String   @db.Text
+  operate_type String   @db.VarChar(10)
+  if_success   String   @db.Char(1)
+  remark       String?  @db.VarChar(100)
+  create_time  DateTime @default(now())
+}
+
+// 0.3 算法调用日志表
+model log_algorithm_call {
+  id                        Int                       @id @default(autoincrement()) @db.Int
+  user_group_permission_id  Int                       @db.Int
+  pperms                    String                    @db.VarChar(100)
+  perms                     String                    @db.VarChar(100)
+  user_id                   String                    @db.VarChar(10)
+  login_role                String                    @db.VarChar(30)
+  call_ip                   String                    @db.VarChar(20)
+  if_success                String                    @db.Char(1)
+  remark                    String?                   @db.VarChar(100)
+  create_time               DateTime                  @default(now())
+  user_group_permission_id_ sys_user_group_permission @relation(fields: [user_group_permission_id], references: [id])
+}
+
+// 0.4 定时任务运行日志表
+model log_scheduled_task {
+  id           Int      @id @default(autoincrement()) @db.Int
+  task_target  String   @db.VarChar(150)
+  operate_type String   @db.VarChar(10)
+  if_success   String   @db.Char(1)
+  remark       String?  @db.VarChar(100)
+  create_time  DateTime @default(now())
+}

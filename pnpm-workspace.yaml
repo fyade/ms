@@ -1,0 +1,9 @@
+packages:
+  # 前端
+  - 'admin'
+  # 配置
+  - 'config'
+  # 实体类及工具函数
+  - 'common'
+  # 后端
+  - 'server'

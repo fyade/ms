@@ -15,7 +15,7 @@ import { Delete, Download, Edit, Plus, Refresh, Upload, Search } from "@element-
 import { LogOperationDto, LogOperationUpdDto } from "@/type/module/main/sysLog/logOperation.ts";
 import { logOperationApi } from "@/api/module/main/sysLog/logOperation.ts";
 import { logOperationDict } from "@/dict/module/main/sysLog/logOperation.ts";
-import { formatDate } from "@/utils/TimeUtils.ts";
+import { timeUtils } from "@ms/common";
 
 const state = reactive<State2<LogOperationDto, LogOperationUpdDto>>({
   dialogForm: {
@@ -552,7 +552,7 @@ const fCan2 = () => {
       <!--<el-table-column prop="updateBy" :label="logOperationDict.updateBy" width="120"/>-->
       <el-table-column prop="createTime" :label="logOperationDict.createTime" width="220">
         <template #default="{row}">
-          {{ formatDate(new Date(row.createTime)) }}
+          {{ timeUtils.formatDate(new Date(row.createTime)) }}
         </template>
       </el-table-column>
       <!--<el-table-column prop="updateTime" :label="logOperationDict.updateTime" width="220"/>-->

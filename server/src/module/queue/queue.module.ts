@@ -1,12 +1,12 @@
 import { Global, Module } from "@nestjs/common";
 import { QueueService } from "./queue.service";
 import { BullModule } from "@nestjs/bullmq";
-import { currentEnv } from "../../../config/config";
 import { QueueoService } from "./queueo.service";
 import { LogOperationConsumer } from "./log-operation.consumer";
 import { LogScheduledTaskConsumer } from "./log-scheduled-task.consumer";
+import { serverConfig } from "@ms/config";
 
-const redisConfig = currentEnv().redis;
+const redisConfig = serverConfig.currentConfig().redis;
 
 @Global()
 @Module({

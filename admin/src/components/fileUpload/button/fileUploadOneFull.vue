@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { fileUploadOneFull } from "@/api/common/fileUpload.ts";
-import { unitConversion_storage } from "@/utils/NumberUtils.ts";
-import { CHUNK_SIZE } from "~/config/config.ts";
 import { Upload } from '@element-plus/icons-vue'
 import { ElMessage } from "element-plus"
 import { selectFiles } from "@/utils/FileUtils.ts";
+import { adminConfig } from '@ms/config';
+import { numberUtils } from "@ms/common";
 
 const emit = defineEmits(['uploadSuccess', 'uploadFail']);
 const isDisabled = ref(false)
@@ -22,9 +22,10 @@ const upload1 = async () => {
   }
   isLoading.value = true
   const file = filepicks[0]
-  if (file.size > CHUNK_SIZE) {
-    // MessagePlugin.error(file.name + '文件大小超过' + unitConversion_storage(CHUNK_SIZE) + '。')
-    ElMessage.warning(file.name + '文件大小超过' + unitConversion_storage(CHUNK_SIZE) + '。')
+  const chunksize = adminConfig.currentConfig().CHUNK_SIZE;
+  if (file.size > chunksize) {
+    // MessagePlugin.error(file.name + '文件大小超过' + numberUtils.unitConversion_storage(CHUNK_SIZE) + '。')
+    ElMessage.warning(file.name + '文件大小超过' + numberUtils.unitConversion_storage(chunksize) + '。')
     isDisabled.value = false
     isLoading.value = false
     return

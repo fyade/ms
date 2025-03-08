@@ -2,12 +2,12 @@
 import { computed, onBeforeUnmount, reactive, ref } from "vue";
 import { fileUploadOneChunk_check, fileUploadOneChunk_merge, fileUploadOneChunk_upload } from "@/api/common/fileUpload.ts";
 import SparkMd5 from "spark-md5";
-import { removeElementsByIndices } from "@/utils/ObjectUtils.ts";
-import { CHUNK_SIZE } from "~/config/config.ts";
 import { Upload } from '@element-plus/icons-vue'
 import { ElMessage } from "element-plus"
 import { FileUploadInterfaceMoreChunkConcur } from "@/type/common/fileUpload.ts";
 import { selectFiles } from "@/utils/FileUtils.ts";
+import { adminConfig } from '@ms/config';
+import { objectUtils } from "@ms/common";
 
 interface ProgressI {
   started: number[],
@@ -67,7 +67,7 @@ const upload7 = async () => {
     state.progress_ended = 0
     const file = filepicks[i]
     // 开始
-    state.chunkTotal = Math.ceil(file.size / CHUNK_SIZE)
+    state.chunkTotal = Math.ceil(file.size / adminConfig.currentConfig().CHUNK_SIZE)
     const chunks = createChunks(file)
     state.fileMd5 = await hash(chunks)
     // 上传前检查
@@ -81,8 +81,8 @@ const upload7 = async () => {
       uploadSuccess()
       continue
     }
-    const indexs = removeElementsByIndices(new Array(chunks.length).fill(null).map((item, i) => i), ...res1.uploadedIndexs)
-    const newChunks = removeElementsByIndices(chunks, ...res1.uploadedIndexs);
+    const indexs = objectUtils.removeElementsByIndices(new Array(chunks.length).fill(null).map((item, i) => i), ...res1.uploadedIndexs)
+    const newChunks = objectUtils.removeElementsByIndices(chunks, ...res1.uploadedIndexs);
     // 开始分片上传
     state.currentStage = 'c'
     state.fileNewName = res1.fileNewName
@@ -108,8 +108,9 @@ const upload7 = async () => {
  */
 const createChunks = (file: File): Blob[] => {
   let res = []
-  for (let i = 0; i < file.size; i += CHUNK_SIZE) {
-    res.push(file.slice(i, i + CHUNK_SIZE))
+  const chunksize = adminConfig.currentConfig().CHUNK_SIZE;
+  for (let i = 0; i < file.size; i += chunksize) {
+    res.push(file.slice(i, i + chunksize))
   }
   return res
 }

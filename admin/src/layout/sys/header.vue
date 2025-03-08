@@ -3,7 +3,6 @@ import { ArrowRight } from '@element-plus/icons-vue'
 import { RouteRecordNormalized, RouteRecordRaw, useRoute, useRouter } from "vue-router";
 import { ref, watch } from "vue";
 import { useRouterStore } from "@/store/module/router.ts";
-import { toPath } from "@/utils/baseUtils.ts";
 import { useUserStore } from '@/store/module/user';
 import { fileBaseUrl } from "@/api/request.ts";
 import { useSysStore } from "@/store/module/sys.ts";
@@ -78,7 +77,7 @@ if (props.ifShowBreadcrumb) {
             class="el-breadcrumb-item"
             v-for="(item, index) in list"
             :key="index"
-            :to="`/${toPath(...list.slice(0, index + 1).map(itm => itm.path.indexOf('/') === 0 ? itm.path.replace('/', '') : itm.path))}`"
+            :to="`/${(list.slice(0, index + 1).map(itm => itm.path.indexOf('/') === 0 ? itm.path.replace('/', '') : itm.path)).join('/').replace(/\/+/g, '/')}`"
         >
           {{ item.meta ? item.meta.label : item.name }}
         </el-breadcrumb-item>

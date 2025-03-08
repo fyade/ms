@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { unitConversion_storage } from "@/utils/NumberUtils.ts";
 import { useSysStore } from "@/store/module/sys.ts";
 import { onBeforeUnmount, reactive } from "vue";
 import { getSysInfo } from "@/api/common/sys.ts";
+import { numberUtils } from "@ms/common";
 
 const sysStore = useSysStore()
 const intervalTimers: NodeJS.Timeout[] = []
@@ -83,8 +83,8 @@ const tips = [
                     >
                       {{ item.mount }}
                     </span>
-                  <span>{{ unitConversion_storage(item.size - item.used, { unitSpace: ' ' }) }} 可用</span>
-                  <span>，共 {{ unitConversion_storage(item.size, { unitSpace: ' ' }) }}</span>
+                  <span>{{ numberUtils.unitConversion_storage(item.size - item.used, { unitSpace: ' ' }) }} 可用</span>
+                  <span>，共 {{ numberUtils.unitConversion_storage(item.size, { unitSpace: ' ' }) }}</span>
                 </p>
               </div>
             </el-card>
@@ -105,8 +105,8 @@ const tips = [
           <el-col :span="12">
             <!--内存-->
             <el-card v-if="serverinfo.memory" shadow="never">
-              <span>内存已使用 {{ unitConversion_storage(serverinfo.memory.used, { showNuit: false }) }}</span>
-              <span> / {{ unitConversion_storage(serverinfo.memory.total, { unitSpace: ' ' }) }}</span>
+              <span>内存已使用 {{ numberUtils.unitConversion_storage(serverinfo.memory.used, { showNuit: false }) }}</span>
+              <span> / {{ numberUtils.unitConversion_storage(serverinfo.memory.total, { unitSpace: ' ' }) }}</span>
               <span> ({{ ((serverinfo.memory.used / serverinfo.memory.total) * 100).toFixed(2) }}%)</span>
             </el-card>
             <el-card v-else shadow="never">

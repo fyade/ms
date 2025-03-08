@@ -1,10 +1,8 @@
 import { Module } from '@nestjs/common';
 import { APP_FILTER } from '@nestjs/core';
-import { currentEnv } from '../config/config';
 import { GlobalExceptionFilter } from './filter/GlobalExceptionFilter';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './module/auth/auth.module';
 import { BaseContextModule } from './module/base-context/base-context.module';
 import { CacheModule } from './module/cache/cache.module';
@@ -53,9 +51,6 @@ import { LogScheduledTaskModule } from './module/module/main/sys-log/log-schedul
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      load: [currentEnv],
-    }),
     AuthModule,
     BaseContextModule,
     CacheModule,

@@ -4,16 +4,15 @@ import { LogAlgorithmCallDto } from '../module/algorithm/log-algorithm-call/dto'
 import { getIpInfoFromRequest } from '../../util/RequestUtils';
 import { UserGroupPermissionDto } from '../module/algorithm/user-group-permission/dto';
 import { Exception } from '../../exception/Exception';
-import { timestamp } from '../../util/TimeUtils';
 import { Request } from 'express';
 import { MenuDto } from '../module/main/sys-manage/menu/dto';
 import { MenuIpWhiteListDto } from '../module/main/sys-manage/menu-ip-white-list/dto';
 import { BaseContextService } from '../base-context/base-context.service';
 import { CachePermissionService } from '../cache/cache.permission.service';
 import { UserTableDefaultPermissionDto } from '../module/main/other-user/user-table-default-permission/dto';
-import { objToCamelCase } from '../../util/BaseUtils';
 import { SysDto } from '../module/main/sys-manage/sys/dto';
 import { PrismaoService } from '../../prisma/prismao.service';
+import { baseUtils, timeUtils } from "@ms/common";
 
 @Injectable()
 export class AuthService {
@@ -216,7 +215,7 @@ export class AuthService {
           order_num: 'asc',
         },
       });
-      const userSyss = objToCamelCase<SysDto[]>(userSyss_);
+      const userSyss = baseUtils.objToCamelCase<SysDto[]>(userSyss_);
       retarr.push(...userSyss);
       return retarr;
     }
@@ -258,7 +257,7 @@ export class AuthService {
         order_num: 'asc',
       },
     });
-    const userSyss = objToCamelCase<SysDto[]>(userSyss_);
+    const userSyss = baseUtils.objToCamelCase<SysDto[]>(userSyss_);
     retarr.push(...userSyss);
     return retarr;
   }
@@ -305,7 +304,7 @@ export class AuthService {
           order_num: 'asc',
         },
       });
-      const userPermissions = objToCamelCase<MenuDto[]>(userPermissions_);
+      const userPermissions = baseUtils.objToCamelCase<MenuDto[]>(userPermissions_);
       retarr.push(...userPermissions);
       return retarr;
     }
@@ -347,7 +346,7 @@ export class AuthService {
         order_num: 'asc',
       },
     });
-    const userPermissions = objToCamelCase<MenuDto[]>(userPermissions_);
+    const userPermissions = baseUtils.objToCamelCase<MenuDto[]>(userPermissions_);
     retarr.push(...userPermissions);
     return retarr;
   }
@@ -456,7 +455,7 @@ export class AuthService {
     algorithmCallDto.userGroupPermissionId = userGroupPermission.id;
     // 没长期权限，不在时间期限内，则阻止
     if (userGroupPermission.ifLongTerm === base.N) {
-      if (timestamp() < timestamp(userGroupPermission.permissionStartTime) || timestamp() > timestamp(userGroupPermission.permissionEndTime)) {
+      if (timeUtils.timestamp() < timeUtils.timestamp(userGroupPermission.permissionStartTime) || timeUtils.timestamp() > timeUtils.timestamp(userGroupPermission.permissionEndTime)) {
         throw new Exception('您不在权限期限内。');
       }
     }
@@ -597,7 +596,7 @@ export class AuthService {
           ...this.prismao.defaultSelArg().where,
         },
       });
-      const sutdps = objToCamelCase<UserTableDefaultPermissionDto[]>(sutdps_);
+      const sutdps = baseUtils.objToCamelCase<UserTableDefaultPermissionDto[]>(sutdps_);
       const allRoleIds2 = await this.prismao.getOrigin().sys_role.findMany({
         where: {
           ...(ifAdmin ? { if_admin: base.Y } : {}),
@@ -628,7 +627,7 @@ export class AuthService {
           ...this.prismao.defaultSelArg().where,
         },
       });
-      const sutdps = objToCamelCase<UserTableDefaultPermissionDto[]>(sutdps_);
+      const sutdps = baseUtils.objToCamelCase<UserTableDefaultPermissionDto[]>(sutdps_);
       const allRoleIds2 = await this.prismao.getOrigin().sys_role.findMany({
         where: {
           ...(ifAdmin ? { if_admin: base.Y } : {}),

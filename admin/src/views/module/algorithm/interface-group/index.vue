@@ -17,7 +17,6 @@ import { interfaceGroupApi } from "@/api/module/algorithm/interfaceGroup.ts";
 import { interfaceGroupDict } from "@/dict/module/algorithm/interfaceGroup.ts";
 import { arr2ToDiguiObj } from "@/utils/baseUtils.ts";
 import InterfaceGroupInterface from "@/views/module/algorithm/interface-group/interfaceGroupInterface.vue";
-import { copyObject } from "@/utils/ObjectUtils.ts";
 
 const state = reactive<State2<InterfaceGroupDto, InterfaceGroupUpdDto>>({
   dialogForm: {

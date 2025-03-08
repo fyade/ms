@@ -1,69 +1,6 @@
 import { deepClone } from "@/utils/ObjectUtils.ts";
 import { final } from "@/utils/base.ts";
 
-/**
- * sleep
- * @param ms
- */
-export function sleep(ms: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-/**
- * 转换为path
- * @param str
- */
-export function toPath(...str: string[]): string {
-  return str.join('/').replace(/\/+/g, '/');
-}
-
-/**
- * 生成随机数
- * @param min
- * @param max
- * @param decimalPlaces
- */
-export function randomNumber(min: number, max: number, decimalPlaces: number): number {
-  if (min > max) {
-    throw new Error('最小值不能大于最大值');
-  }
-  const factor = Math.pow(10, decimalPlaces);
-  const randomNum = Math.random() * (max - min) + min;
-  return Math.round(randomNum * factor) / factor;
-}
-
-/**
- * 下划线转驼峰
- * @param str
- */
-export function toCamelCase<T = string>(str: string): T {
-  return str.replace(/_([a-z])/g, (all, i) => i.toUpperCase()) as T;
-}
-
-/**
- * 下划线转驼峰
- * @param strs
- */
-export function toCamelCases(strs: string[]): string[] {
-  return strs.map(str => toCamelCase(str));
-}
-
-/**
- * 驼峰转下划线
- * @param str
- */
-export function toSnakeCase(str: string): string {
-  return str.replace(/([A-Z])/g, '_$1').toLowerCase();
-}
-
-/**
- * 驼峰转下划线
- * @param strs
- */
-export function toSnakeCases(strs: string[]): string[] {
-  return strs.map(str => toSnakeCase(str));
-}
-
 type Arr2ToDiguiObjI<T, K extends string, V> = T & {
   [P in K]: V
 }

@@ -5,9 +5,9 @@ import { ElNotification, NotificationHandle } from "element-plus";
 import { useRoute } from "vue-router";
 import { LoginDto, UserDto } from "@/type/module/main/sysManage/user.ts";
 import { getSelfInfo, loginApi, logOutApi } from "@/api/module/main/sysManage/user.ts";
-import { clearObject, copyObject } from "@/utils/ObjectUtils.ts";
 import { ifWebsiteLink } from "@/utils/LinkUtils.ts";
 import { UserVisitorDto } from "@/type/module/main/otherUser/userVisitor.ts";
+import { objectUtils } from "@ms/common";
 
 export const useUserStore = defineStore('userStore', () => {
   const token = ref('')
@@ -39,7 +39,7 @@ export const useUserStore = defineStore('userStore', () => {
             token.value = res.token
             loginRole.value = res.loginRole
             ifLogin.value = true
-            copyObject(userinfo, res.user)
+            objectUtils.copyObject(userinfo, res.user)
             if (route.query?.redirect && !ifWebsiteLink(route.query?.redirect.toString(), '/')) {
               notification.close()
               await router.push(route.query.redirect as string)
@@ -75,11 +75,11 @@ export const useUserStore = defineStore('userStore', () => {
   const removeToken = () => {
     token.value = ''
     ifLogin.value = false
-    clearObject(userinfo)
+    objectUtils.clearObject(userinfo)
   }
   const refreshSelfInfo = () => {
     getSelfInfo().then(res => {
-      copyObject(userinfo, res)
+      objectUtils.copyObject(userinfo, res)
     })
   }
   return {

@@ -2,10 +2,10 @@ import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { useUserStore } from "@/store/module/user.ts";
 import { ElMessage } from "element-plus";
 import { useSysStore } from "@/store/module/sys.ts";
-import { currentEnv } from "~/config/config.ts";
 import { AxiosRes } from "@/type/asiox.ts";
+import { adminConfig } from '@ms/config'
 
-const env = currentEnv();
+const env = adminConfig.currentConfig();
 export const baseURL = env.VITE_API_PREFIX
 export const fileBaseUrl = env.VITE_API_FILE_PREFIX + '/'
 
@@ -19,6 +19,13 @@ request.interceptors.request.use(
     Object.keys(publicHeader).forEach(key => {
       config.headers[key] = publicHeader[key]
     })
+    if (config.method?.toUpperCase() === 'GET' && config.params && typeof config.params === 'object') {
+      Object.keys(config.params).forEach(key => {
+        if (typeof config.params[key] === 'object') {
+          config.params[key] = JSON.stringify(config.params[key])
+        }
+      })
+    }
     return config
   }
 )
@@ -59,7 +66,9 @@ export default function <T = any>(param: AxiosRequestConfig): Promise<T> {
  * @param param
  * @param options
  */
-export async function request2<T = any>(param: AxiosRequestConfig, options: { level: 0 }): Promise<AxiosResponse<AxiosRes<T>>>;
+export async function request2<T = any>(param: AxiosRequestConfig, options: {
+  level: 0
+}): Promise<AxiosResponse<AxiosRes<T>>>;
 export async function request2<T = any>(param: AxiosRequestConfig, options: { level: 1 }): Promise<AxiosRes<T>>;
 export async function request2<T = any>(param: AxiosRequestConfig, options: { level: 2 }): Promise<T>;
 export async function request2<T = any>(param: AxiosRequestConfig, options?: { level?: 0 | 1 | 2 }): Promise<T>;

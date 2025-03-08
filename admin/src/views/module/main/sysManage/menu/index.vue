@@ -16,11 +16,11 @@ import { MenuDto, MenuUpdDto } from "@/type/module/main/sysManage/menu.ts";
 import { menuApi } from "@/api/module/main/sysManage/menu.ts";
 import { menuDict, menuDictI2, menuDictInter } from "@/dict/module/main/sysManage/menu.ts";
 import { useRouterStore } from "@/store/module/router.ts";
-import { arrNoRepeat, copyObject, ifNull, ifUndefined } from "@/utils/ObjectUtils.ts";
 import { arr2ToDiguiObj } from "@/utils/baseUtils.ts";
 import { SysDto } from "@/type/module/main/sysManage/sys.ts";
 import { sysApi } from "@/api/module/main/sysManage/sys.ts";
 import MenuIpWhiteList from "@/views/module/main/sysManage/menu/menuIpWhiteList.vue";
+import { objectUtils } from "@ms/common";
 
 const state = reactive<State2<MenuDto, MenuUpdDto>>({
   dialogForm: {
@@ -243,7 +243,7 @@ watch(() => [state.dialogForm.parentId, activeTabName.value], () => {
     canChooseTypes.value = [T_MENU, T_COMP, T_Inter]
     return
   }
-  if (ifNull(state.dialogForm.parentId) || ifUndefined(state.dialogForm.parentId)) {
+  if (objectUtils.ifNull(state.dialogForm.parentId) || objectUtils.ifUndefined(state.dialogForm.parentId)) {
     state.dialogForm.parentId = final.DEFAULT_PARENT_ID
   }
   if (state.dialogForm.parentId === final.DEFAULT_PARENT_ID) {
@@ -293,14 +293,14 @@ const expandRowKeys = ref<string[]>([])
 const expandRowKeys2 = ref<string[]>([])
 const expendAll = () => {
   if (expandRowKeys.value.length === 0) {
-    expandRowKeys.value = arrNoRepeat(tableData.value.map(item => item.parentId)).filter(item => item !== final.DEFAULT_PARENT_ID).map(_ => `${_}`)
+    expandRowKeys.value = objectUtils.arrNoRepeat(tableData.value.map(item => item.parentId)).filter(item => item !== final.DEFAULT_PARENT_ID).map(_ => `${_}`)
   } else {
     expandRowKeys.value = []
   }
 }
 const expendAll2 = () => {
   if (expandRowKeys2.value.length === 0) {
-    expandRowKeys2.value = arrNoRepeat(tableDataInter.value.map(item => item.parentId)).filter(item => item !== final.DEFAULT_PARENT_ID).map(_ => `${_}`)
+    expandRowKeys2.value = objectUtils.arrNoRepeat(tableDataInter.value.map(item => item.parentId)).filter(item => item !== final.DEFAULT_PARENT_ID).map(_ => `${_}`)
   } else {
     expandRowKeys2.value = []
   }
@@ -351,7 +351,7 @@ const tInsInter = (id: number) => {
 const selectInterGroup = reactive(new MenuDto())
 const manageInterDialogShow = ref(false)
 const manageInter = (row: MenuDto) => {
-  copyObject(selectInterGroup, row);
+  objectUtils.copyObject(selectInterGroup, row);
   configI2.insUpdParam.sysId = selectSys.value;
   configI2.selectParam.parentId = row.id;
   manageInterDialogShow.value = true

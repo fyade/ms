@@ -4,7 +4,7 @@ import { useSysStore } from "@/store/module/sys.ts";
 import { useSysConfigStore } from "@/store/module/sysConfig.ts";
 import { useDictStore } from "@/store/module/dict.ts";
 
-export default function useStore() {
+export function useStore() {
   return {
     dict: useDictStore(),
     router: useRouterStore(),

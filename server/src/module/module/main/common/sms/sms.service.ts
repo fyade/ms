@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../../../prisma/prisma.service';
-import { currentEnv } from '../../../../../../config/config';
+import { serverConfig } from "@ms/config";
 
 @Injectable()
 export class SmsService {
-  private env: ReturnType<typeof currentEnv>;
+  private env: ReturnType<typeof serverConfig.currentConfig>;
 
   constructor(private readonly prisma: PrismaService) {
-    this.env = currentEnv();
+    this.env = serverConfig.currentConfig();
   }
 }

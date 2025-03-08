@@ -15,7 +15,7 @@ import { Delete, Download, Edit, Plus, Refresh, Upload, Search } from "@element-
 import { LogScheduledTaskDto, LogScheduledTaskUpdDto } from "@/type/module/main/sysLog/logScheduledTask.ts";
 import { logScheduledTaskApi } from "@/api/module/main/sysLog/logScheduledTask.ts";
 import { logScheduledTaskDict } from "@/dict/module/main/sysLog/logScheduledTask.ts";
-import { formatDate } from "@/utils/TimeUtils.ts";
+import { timeUtils } from "@ms/common";
 
 const state = reactive<State2<LogScheduledTaskDto, LogScheduledTaskUpdDto>>({
   dialogForm: {
@@ -401,7 +401,7 @@ const fCan2 = () => {
       <!--<el-table-column prop="updateBy" :label="logScheduledTaskDict.updateBy" width="120"/>-->
       <el-table-column prop="createTime" :label="logScheduledTaskDict.createTime" width="220">
         <template #default="{row}">
-          {{ formatDate(new Date(row.createTime)) }}
+          {{ timeUtils.formatDate(new Date(row.createTime)) }}
         </template>
       </el-table-column>
       <!--<el-table-column prop="updateTime" :label="logScheduledTaskDict.updateTime" width="220"/>-->

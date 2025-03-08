@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import Redis from 'ioredis';
-import { currentEnv } from '../../config/config';
+import { serverConfig } from "@ms/config";
 
-const env = currentEnv();
+const env = serverConfig.currentConfig();
 
 @Injectable()
 export class RedisService {

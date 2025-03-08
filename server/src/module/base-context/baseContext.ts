@@ -1,5 +1,5 @@
-import { randomUUID } from '../../util/IdUtils';
 import { baseInterfaceColumns2 } from '../module/main/sys-util/code-generation/codeGeneration';
+import { idUtils } from "@ms/common";
 
 export const USER_INFO_LINSHI_FIELD_NAME = 'user-info-linshi';
 
@@ -16,7 +16,7 @@ export function genCurrentUser(user?: string, token?: string, loginRole?: string
   const currentUser = new CurrentUser();
   currentUser.userId = user;
   currentUser.token = token;
-  currentUser.reqId = randomUUID();
+  currentUser.reqId = idUtils.randomUUID();
   currentUser.loginRole = loginRole;
   currentUser.perms = perms;
   currentUser.topAdmin = false;

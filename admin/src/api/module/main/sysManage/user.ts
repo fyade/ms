@@ -8,7 +8,7 @@ import {
   AdminResetUserPsdDto,
   RegistDto
 } from "@/type/module/main/sysManage/user.ts";
-import { encrypt } from "@/utils/EncryptUtils.ts";
+import { encryptUtils } from "@ms/common";
 
 export const userApi: ApiConfig<UserDto, UserUpdDto> = {
   /**
@@ -103,7 +103,7 @@ export function loginApi(data: LoginDto) {
     method: 'POST',
     data: {
       ...data,
-      password: encrypt(data.password),
+      password: encryptUtils.encrypt(data.password),
       psdType: 'b'
     }
   })
@@ -145,7 +145,7 @@ export function newUser(params: RegistDto) {
     method: 'POST',
     data: {
       ...params,
-      password: encrypt(params.password),
+      password: encryptUtils.encrypt(params.password),
       psdType: 'b'
     }
   })
@@ -164,9 +164,9 @@ export function updPsd(params: UserUpdPsdDto) {
     url: '/main/sys-manage/user/upd-psd',
     method: 'POST',
     data: {
-      oldp: encrypt(params.oldp),
-      newp1: encrypt(params.newp1),
-      newp2: encrypt(params.newp2),
+      oldp: encryptUtils.encrypt(params.oldp),
+      newp1: encryptUtils.encrypt(params.newp1),
+      newp2: encryptUtils.encrypt(params.newp2),
       oldpType: 'b',
       newp1Type: 'b',
       newp2Type: 'b'
@@ -180,7 +180,7 @@ export function resetUserPsd(params: AdminResetUserPsdDto) {
     method: 'POST',
     data: {
       ...params,
-      password: encrypt(params.password),
+      password: encryptUtils.encrypt(params.password),
       psdType: 'b'
     }
   })

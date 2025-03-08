@@ -1,11 +1,11 @@
 import { HTTP } from './Enum';
-import { time, timestamp as timeStamp } from '../util/TimeUtils';
+import { timeUtils } from "@ms/common";
 
 export class R<T = any> {
   public code: number;
   public data: T;
   public msg: string;
-  private time: Date;
+  private time: string;
   private timestamp: number;
   private reqId: string;
 
@@ -13,8 +13,8 @@ export class R<T = any> {
     this.code = code;
     this.data = data;
     this.msg = msg;
-    this.time = time();
-    this.timestamp = timeStamp(this.time);
+    this.time = timeUtils.time();
+    this.timestamp = timeUtils.timestamp(this.time);
     this.reqId = reqId;
   }
 

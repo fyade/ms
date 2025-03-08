@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { CONFIG, final } from "@/utils/base.ts";
 import { computed } from "vue";
-import { ifNull, ifUndefined, ifValid } from "@/utils/ObjectUtils.ts";
 import { RouteRecordNormalized, useRoute } from "vue-router";
 import { useSysConfigStore } from "@/store/module/sysConfig.ts";
+import { objectUtils } from "@ms/common";
 
 const route = useRoute()
 const props = defineProps({
@@ -18,7 +18,7 @@ const props = defineProps({
 });
 const menus2 = computed(() => {
   return props.menus.toSorted((a, b) => {
-    return (ifValid(a.meta.orderNum) && typeof a.meta.orderNum === 'number' ? a.meta.orderNum : 0) - (ifValid(b.meta.orderNum) && typeof b.meta.orderNum === 'number' ? b.meta.orderNum : 0)
+    return (objectUtils.ifValid(a.meta.orderNum) && typeof a.meta.orderNum === 'number' ? a.meta.orderNum : 0) - (objectUtils.ifValid(b.meta.orderNum) && typeof b.meta.orderNum === 'number' ? b.meta.orderNum : 0)
   })
 })
 const emits = defineEmits(['gotoMenu']);
@@ -34,7 +34,7 @@ const openSite = (item: string) => window.open(item.replace('/http', 'http'))
 
 const sysConfigStore = useSysConfigStore();
 const ifParentMenuItem = (item: RouteRecordNormalized) => {
-  return item.meta.parentId === final.DEFAULT_PARENT_ID || ifUndefined(item.meta.parentId) || ifNull(item.meta.parentId)
+  return item.meta.parentId === final.DEFAULT_PARENT_ID || objectUtils.ifUndefined(item.meta.parentId) || objectUtils.ifNull(item.meta.parentId)
 }
 </script>
 

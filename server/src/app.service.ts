@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { R } from './common/R';
 import { NonSupportedException } from './exception/NonSupportedException';
-import { currentVersion } from '../config/config';
 import { AuthService } from './module/auth/auth.service';
 import { getAllFiles } from './util/FileUtils';
 import { T_COMP, T_Inter, T_MENU } from './util/base';
 import { BaseContextService } from './module/base-context/base-context.service';
 import { CacheTokenService } from './module/cache/cache.token.service';
 import { PrismaoService } from "./prisma/prismao.service";
+import { serverConfig } from "@ms/config";
 
 const si = require("systeminformation");
 const fs = require('fs').promises;
@@ -31,7 +31,7 @@ export class AppService {
   }
 
   async getVersion(): Promise<R> {
-    return R.ok(currentVersion);
+    return R.ok(serverConfig.currentVersion);
   }
 
   async getTime(): Promise<R> {

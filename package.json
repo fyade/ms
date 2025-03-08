@@ -4,10 +4,21 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "[dev] [admin ] dev": "cross-env NODE_ENV=dev pnpm --filter @ms/admin dev",
+    "[dev] [server] start:dev": "cross-env NODE_ENV=dev pnpm --filter @ms/server start:dev",
+    "[dev] [server] start:debug": "cross-env NODE_ENV=dev pnpm --filter @ms/server start:debug",
+    "[build] [config] build": "pnpm -filter @ms/config build",
+    "[build] [common] build": "pnpm -filter @ms/common build",
+    "[build] [config & common]": "pnpm -filter @ms/config build && pnpm -filter @ms/common build",
+    "[build] [admin ] build:prod": "cross-env NODE_ENV=prod pnpm --filter @ms/admin build:prod",
+    "[build] [server] build:wp": "cross-env NODE_ENV=prod pnpm --filter @ms/server build:wp"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
-  "packageManager": "pnpm@10.5.2"
+  "packageManager": "pnpm@10.5.2",
+  "devDependencies": {
+    "@types/node": "^22.13.9",
+    "cross-env": "^7.0.3",
+    "typescript": "^5.8.2"
+  }
 }

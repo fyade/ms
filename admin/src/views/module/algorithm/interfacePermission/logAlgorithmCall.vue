@@ -9,7 +9,7 @@ import { Delete, Download, Edit, Plus, Refresh, Upload, Search } from "@element-
 import { LogAlgorithmCallDto, LogAlgorithmCallUpdDto } from "@/type/module/algorithm/logAlgorithmCall.ts";
 import { logAlgorithmCallApi } from "@/api/module/algorithm/logAlgorithmCall.ts";
 import { logAlgorithmCallDict } from "@/dict/module/algorithm/logAlgorithmCall.ts";
-import { formatDate } from "@/utils/TimeUtils.ts";
+import { timeUtils } from "@ms/common";
 
 const props = defineProps({
   selectUGPId: {
@@ -469,7 +469,7 @@ const fCan2 = () => {
       <!--<el-table-column prop="updateBy" :label="logAlgorithmCallDict.updateBy" width="120"/>-->
       <el-table-column prop="createTime" :label="logAlgorithmCallDict.createTime" width="220">
         <template #default="{row}">
-          {{ formatDate(new Date(row.createTime)) }}
+          {{ timeUtils.formatDate(new Date(row.createTime)) }}
         </template>
       </el-table-column>
       <!--<el-table-column prop="updateTime" :label="logAlgorithmCallDict.updateTime" width="220"/>-->

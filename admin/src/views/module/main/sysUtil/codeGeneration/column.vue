@@ -12,8 +12,8 @@ import { codeGenColumnDict } from "@/dict/module/main/sysUtil/codeGenColumn.ts";
 import { ChooseTableTableColInterface, ChooseTableTableColInterfaceDict, ChooseTableTableInterface } from "@/type/module/main/sysUtil/codeGeneration.ts";
 import { getDbInfo } from "@/api/module/main/sysUtil/codeGeneration.ts";
 import { deepClone } from "@/utils/ObjectUtils.ts";
-import { toCamelCase } from "@/utils/baseUtils.ts";
 import { TypeOM } from "@/type/utils/base.ts";
+import { baseUtils } from "@ms/common";
 
 const props = defineProps({
   tableId: {
@@ -193,10 +193,10 @@ const d1Con = () => {
     multipleSelection1.value.forEach((row, rowIndex) => {
       const obj = deepClone<CodeGenColumnDto>(toRaw(state.dialogForm))
       obj.colName = row.colName
-      obj.colDescr = adict[toCamelCase<keyof AdictInterface>(row.colName)] || ''
+      obj.colDescr = adict[baseUtils.toCamelCase<keyof AdictInterface>(row.colName)] || ''
       obj.mysqlType = row.colType
       obj.tsType = (['Int'].indexOf(row.colType) > -1 ? tsTypeDicts.find(item => item.value === 'number')?.value : tsTypeDicts.find(item => item.value !== 'number')?.value) || ''
-      obj.tsName = toCamelCase(row.colName)
+      obj.tsName = baseUtils.toCamelCase(row.colName)
       obj.ifIns = ifInsIgnoreKeys.includes(row.colName) ? final.N : final.Y
       obj.ifUpd = ifUpdIgnoreKeys.includes(row.colName) ? final.N : final.Y
       obj.ifSelOne = ifSelOneIgnoreKeys.includes(row.colName) ? final.N : final.Y
@@ -213,10 +213,10 @@ const d1Con = () => {
   if (activeTabName.value === final.one) {
     const row = deepClone<ChooseTableTableColInterface>(toRaw(multipleSelection1.value[0]))
     state.dialogForm.colName = row.colName
-    state.dialogForm.colDescr = adict[toCamelCase<keyof AdictInterface>(row.colName)] || ''
+    state.dialogForm.colDescr = adict[baseUtils.toCamelCase<keyof AdictInterface>(row.colName)] || ''
     state.dialogForm.mysqlType = row.colType
     state.dialogForm.tsType = (['Int'].indexOf(row.colType) > -1 ? tsTypeDicts.find(item => item.value === 'number')?.value : tsTypeDicts.find(item => item.value !== 'number')?.value) as string
-    state.dialogForm.tsName = toCamelCase(row.colName)
+    state.dialogForm.tsName = baseUtils.toCamelCase(row.colName)
     state.dialogForm.ifIns = final.Y
     state.dialogForm.ifUpd = final.Y
     state.dialogForm.ifSelOne = final.Y

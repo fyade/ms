@@ -2,11 +2,12 @@ import { computed, nextTick, onMounted, reactive, Ref, ref, toRaw, useTemplateRe
 import { ElMessage, ElMessageBox, FormInstance, FormItemRule, type FormRules } from "element-plus"
 import { final, Operate, PAGINATION } from "@/utils/base.ts"
 import { ApiConfig, State2, TablePageConfig } from "@/type/tablePage.ts";
-import { copyObject, deepClone, ifHasKey, ifValid } from "@/utils/ObjectUtils.ts";
-import { downloadFromBlob } from "@/utils/DownloadUtils.ts";
+import { deepClone } from "@/utils/ObjectUtils.ts";
 import { Workbook } from "exceljs";
 import { selectFiles } from "@/utils/FileUtils.ts";
 import { TypeIU, TypeOM } from "@/type/utils/base.ts";
+import { downloadFromBlob } from "@/utils/DownloadUtils.ts";
+import { objectUtils } from "@ms/common";
 
 const exportIgnoreKeys = ['createRole', 'updateRole', 'createBy', 'updateBy', 'createTime', 'updateTime', 'deleted']
 const importIgnoreKeys = ['id', ...exportIgnoreKeys]
@@ -107,7 +108,7 @@ export const funcTablePage = <T extends { id: number | string }, T2 = T>({
     if (ifImport || activeTabName && activeTabName.value === final.more) {
       config.beforeInsertCallback && config.beforeInsertCallback(dialogType.value)
       api.insertMore((ifImport ? dataFromExcel : state.dialogForms!).map(item => ({...item, ...config.insUpdParam}))).then(res => {
-        if (ifValid(res)) {
+        if (objectUtils.ifValid(res)) {
           ElMessage.success(Operate.success)
           dialogVisible.value = false
           config.insertCallback && config.insertCallback(dialogType.value)
@@ -119,7 +120,7 @@ export const funcTablePage = <T extends { id: number | string }, T2 = T>({
     } else if (!activeTabName || activeTabName.value === final.one) {
       config.beforeInsertCallback && config.beforeInsertCallback(dialogType.value)
       api.insertOne({...state.dialogForm, ...config.insUpdParam}).then(res => {
-        if (ifValid(res)) {
+        if (objectUtils.ifValid(res)) {
           ElMessage.success(Operate.success)
           dialogVisible.value = false
           config.insertCallback && config.insertCallback(dialogType.value)
@@ -138,7 +139,7 @@ export const funcTablePage = <T extends { id: number | string }, T2 = T>({
     if (activeTabName.value === final.more) {
       config.beforeUpdateCallback && config.beforeUpdateCallback(dialogType.value)
       api.updateMore((state.dialogForms!).map(item => ({...item, ...config.insUpdParam}))).then(res => {
-        if (ifValid(res)) {
+        if (objectUtils.ifValid(res)) {
           ElMessage.success(Operate.success)
           dialogVisible.value = false
           config.updateCallback && config.updateCallback(dialogType.value)
@@ -154,7 +155,7 @@ export const funcTablePage = <T extends { id: number | string }, T2 = T>({
     } else if (!activeTabName || activeTabName.value === final.one) {
       config.beforeUpdateCallback && config.beforeUpdateCallback(dialogType.value)
       api.updateOne({...state.dialogForm, ...config.insUpdParam}).then(res => {
-        if (ifValid(res)) {
+        if (objectUtils.ifValid(res)) {
           ElMessage.success(Operate.success)
           dialogVisible.value = false
           config.updateCallback && config.updateCallback(dialogType.value)
@@ -177,7 +178,7 @@ export const funcTablePage = <T extends { id: number | string }, T2 = T>({
     tableLoadingRef.value = true
     config.beforeDeleteCallback && config.beforeDeleteCallback()
     api.deleteList(...ids).then(res => {
-      if (ifValid(res)) {
+      if (objectUtils.ifValid(res)) {
         ElMessage.success(Operate.success)
         config.deleteCallback && config.deleteCallback()
         getData()
@@ -398,7 +399,7 @@ export const funcTablePage = <T extends { id: number | string }, T2 = T>({
       sheetValues.slice(2).forEach(item => {
         const obj = (item as any[]).reduce((a, c, i) => ({...a, [(sheetValues[1] as any[])[i]]: c}), {});
         if (config.selectParam) {
-          copyObject(obj, config.selectParam)
+          objectUtils.copyObject(obj, config.selectParam)
         }
         importIgnoreKeys.forEach(key => {
           delete obj[key]
@@ -477,7 +478,7 @@ export const funcTablePage = <T extends { id: number | string }, T2 = T>({
           api.selectByIds(multipleSelection.value.map(item => item.id)).then(res => {
             res.forEach((obj, i) => {
               state.dialogForms![i] = structuredClone(initialStateDialogForm)
-              copyObject(state.dialogForms![i], obj as unknown as T2)
+              objectUtils.copyObject(state.dialogForms![i], obj as unknown as T2)
             })
           }).catch((e) => {
             dialogVisible.value = false
@@ -498,7 +499,7 @@ export const funcTablePage = <T extends { id: number | string }, T2 = T>({
             }
           }
           datas.forEach((_, i) => {
-            copyObject(state.dialogForms![i], datas[i])
+            objectUtils.copyObject(state.dialogForms![i], datas[i])
           })
           dialogLoadingRef.value = false
           config.dialogFormLoadingFinishCallback && config.dialogFormLoadingFinishCallback(activeTabName.value)
@@ -508,7 +509,7 @@ export const funcTablePage = <T extends { id: number | string }, T2 = T>({
           activeTabName.value = final.one
         }
         api.selectById(id).then(res => {
-          copyObject(state.dialogForm, res as unknown as T2, exportIgnoreKeys)
+          objectUtils.copyObject(state.dialogForm, res as unknown as T2, exportIgnoreKeys)
         }).catch(() => {
           dialogVisible.value = false
         }).finally(() => {
@@ -558,7 +559,7 @@ export const funcTablePage = <T extends { id: number | string }, T2 = T>({
     state.dialogForms!.splice(index, 1)
   }
 
-  const filterFormVisible1 = computed(() => ifHasKey(state, 'filterForm') && Object.keys(state.filterForm).length > 0)
+  const filterFormVisible1 = computed(() => objectUtils.ifHasKey(state, 'filterForm') && Object.keys(state.filterForm).length > 0)
 
   return {
     dialogFormRef,

@@ -18,12 +18,13 @@ import { InterfaceGroupDto, InterfaceGroupUpdDto } from "@/type/module/algorithm
 import Divider from "@/views/module/algorithm/interfacePermission/divider.vue";
 import { UserGroupPermissionDto, UserGroupPermissionUpdDto } from "@/type/module/algorithm/userGroupPermission.ts";
 import { userGroupPermissionApi } from "@/api/module/algorithm/userGroupPermission.ts"
-import { copyObject, deepClone } from "@/utils/ObjectUtils.ts";
+import { deepClone } from "@/utils/ObjectUtils.ts";
 import LogAlgorithmCall from "@/views/module/algorithm/interfacePermission/logAlgorithmCall.vue";
 import { interfaceGroupDict } from "@/dict/module/algorithm/interfaceGroup.ts";
 import { interfaceGroupApi } from "@/api/module/algorithm/interfaceGroup.ts";
 import { userGroupDict } from "@/dict/module/algorithm/userGroup.ts";
 import { userGroupPermissionDict } from "@/dict/module/algorithm/userGroupPermission.ts";
+import { objectUtils } from "@ms/common";
 
 const userGroupState = reactive<State2<UserGroupDto, UserGroupUpdDto>>({
   dialogForm: {
@@ -293,14 +294,14 @@ const userGroupHandleCurrentChangeSelectRow = reactive<UserGroupDto>({
 const userGroupHandleCurrentChange = (row: UserGroupDto) => {
   if (row) {
     interfaceGroupTableRef.value?.setCurrentRow(null)
-    copyObject(userGroupHandleCurrentChangeSelectRow, row)
+    objectUtils.copyObject(userGroupHandleCurrentChangeSelectRow, row)
   } else {
     return
   }
   selectType.value = USER_GROUP
   leftCardLoading.value = true
   userGroupApi.selectById(row.id).then(res => {
-    copyObject(selectUserGroupInfo, res)
+    objectUtils.copyObject(selectUserGroupInfo, res)
     leftCardLoading.value = false
   })
   userGroupHandleCurrentChange2()
@@ -334,7 +335,7 @@ const detailInterfaceGroupOfThisUserGroup = (userGroupPermissionId: number) => {
   if (find) {
     userGroupPermissionDialogLoadingRef.value = true
     userGroupPermissionApi.selectById(find.id).then(res => {
-      copyObject(userGroupPermissionState.dialogForm, res)
+      objectUtils.copyObject(userGroupPermissionState.dialogForm, res)
       userGroupPermissionState.dialogForm.permissionTime = [
         userGroupPermissionState.dialogForm.permissionStartTime,
         userGroupPermissionState.dialogForm.permissionEndTime
@@ -366,14 +367,14 @@ const interfaceGroupHandleCurrentChangeSelectRow = reactive<InterfaceGroupDto>(n
 const interfaceGroupHandleCurrentChange = (row: InterfaceGroupDto) => {
   if (row) {
     userGroupTableRef.value?.setCurrentRow(null)
-    copyObject(interfaceGroupHandleCurrentChangeSelectRow, row)
+    objectUtils.copyObject(interfaceGroupHandleCurrentChangeSelectRow, row)
   } else {
     return
   }
   selectType.value = INTERFACE_GROUP
   rightCardLoading.value = true
   interfaceGroupApi.selectById(row.id).then(res => {
-    copyObject(selectInterfaceGroupInfo, res)
+    objectUtils.copyObject(selectInterfaceGroupInfo, res)
     rightCardLoading.value = false
   })
   interfaceGroupHandleCurrentChange2()
@@ -407,7 +408,7 @@ const detailUserGroupOfThisInterfaceGroup = (userGroupPermissionId: number) => {
   if (find) {
     userGroupPermissionDialogLoadingRef.value = true
     userGroupPermissionApi.selectById(find.id).then(res => {
-      copyObject(userGroupPermissionState.dialogForm, res)
+      objectUtils.copyObject(userGroupPermissionState.dialogForm, res)
       userGroupPermissionState.dialogForm.permissionTime = [
         userGroupPermissionState.dialogForm.permissionStartTime,
         userGroupPermissionState.dialogForm.permissionEndTime

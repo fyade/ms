@@ -1,15 +1,15 @@
 import { Injectable, LoggerService } from "@nestjs/common";
 import * as winston from "winston";
-import { currentEnv } from "../../../config/config";
 import "winston-daily-rotate-file";
-import { formatDate } from "../../util/TimeUtils";
+import { serverConfig } from "@ms/config";
+import { timeUtils } from "@ms/common";
 
 @Injectable()
 export class WinstonService implements LoggerService {
   private logger: winston.Logger
 
   constructor() {
-    const env = currentEnv();
+    const env = serverConfig.currentConfig();
     const errorTransport = new winston.transports.DailyRotateFile({
       level: 'error',
       dirname: env.log.logSavePath + '/errors/',
@@ -19,7 +19,7 @@ export class WinstonService implements LoggerService {
       maxSize: env.log.maxSizeOfKogFile,
       format: winston.format.combine(
         winston.format.printf(info => {
-          return `${formatDate(new Date(), 'YYYY-MM-DD HH:mm:ss')} [${info.level.padEnd(15)}]: ${info.message}`
+          return `${timeUtils.formatDate(new Date(), 'YYYY-MM-DD HH:mm:ss')} [${info.level.padEnd(15)}]: ${info.message}`
         })
       ),
     });
@@ -32,7 +32,7 @@ export class WinstonService implements LoggerService {
       maxSize: env.log.maxSizeOfKogFile,
       format: winston.format.combine(
         winston.format.printf(info => {
-          return `${formatDate(new Date(), 'YYYY-MM-DD HH:mm:ss')} [${info.level.padEnd(15)}]: ${info.message}`
+          return `${timeUtils.formatDate(new Date(), 'YYYY-MM-DD HH:mm:ss')} [${info.level.padEnd(15)}]: ${info.message}`
         })
       ),
     });

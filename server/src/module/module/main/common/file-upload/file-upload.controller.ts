@@ -2,7 +2,6 @@ import { Body, Controller, Get, Param, Post, Query, UploadedFile, UseInterceptor
 import { FileUploadService } from './file-upload.service';
 import { R } from '../../../../../common/R';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { currentEnv } from '../../../../../../config/config';
 import {
   FileSelListDto,
   FileUploadOneChunk_check,
@@ -14,16 +13,17 @@ import { Authorize } from '../../../../../decorator/authorizeDecorator';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ValidationPipe } from '../../../../../pipe/validation/validation.pipe';
 import { Exception } from "../../../../../exception/Exception";
+import { serverConfig } from "@ms/config";
 
 @Controller('/main/sys/file-upload')
 @ApiTags('通用/文件上传')
 @ApiBearerAuth()
 @UsePipes(new ValidationPipe())
 export class FileUploadController {
-  private env: ReturnType<typeof currentEnv>;
+  private env: ReturnType<typeof serverConfig.currentConfig>;
 
   constructor(private readonly fileUploadService: FileUploadService) {
-    this.env = currentEnv();
+    this.env = serverConfig.currentConfig();
   }
 
   @Get()

@@ -2,9 +2,9 @@
 import { reactive, ref } from 'vue'
 import { useUserStore } from "@/store/module/user.ts";
 import { useSysStore } from "@/store/module/sys.ts";
-import { APP_NAME } from "~/config/config.ts";
 import { allLoginRoles } from "@/utils/base.ts";
 import { getVerificationCode } from "@/api/module/main/sysManage/user.ts";
+import { adminConfig } from "@ms/config";
 
 const userStore = useUserStore();
 const sysStore = useSysStore();
@@ -40,7 +40,7 @@ refreshVerificationCode()
 
 <template>
   <div class="main">
-    <p class="title">{{ APP_NAME }}</p>
+    <p class="title">{{ adminConfig.APP_NAME }}</p>
     <el-form
         :model="form"
         label-width="80px"
@@ -95,7 +95,6 @@ refreshVerificationCode()
   width: 500px;
   height: 500px;
   transform: translate(-50%, -50%);
-  //background: #ffffff;
 }
 
 .bottom-text {

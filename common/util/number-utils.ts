@@ -1,3 +1,11 @@
+/**
+ * 补0
+ * @param num
+ */
+export function addZero(num: number, {} = {}) {
+  return num < 10 ? '0' + num : num;
+}
+
 class TypeUnitConversion {
   scale?: number
   units?: string[]

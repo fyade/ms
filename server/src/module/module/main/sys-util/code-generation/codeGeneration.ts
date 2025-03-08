@@ -15,16 +15,10 @@
  */
 import { CodeGenTableDto } from '../code-gen-table/dto';
 import { CodeGenColumnDto } from '../code-gen-column/dto';
-import {
-  capitalizeFirstLetter,
-  lowercaseFirstLetter,
-  toCamelCase,
-  toKebabCase,
-  typeOf,
-} from '../../../../../util/BaseUtils';
 import { base } from '../../../../../util/base';
 import { Exception } from '../../../../../exception/Exception';
 import { SysDto } from '../../sys-manage/sys/dto';
+import { baseUtils } from "@ms/common";
 
 const publicDict = {
   id: '主键id',
@@ -61,17 +55,17 @@ export function codeGeneration({ table, columns, sys }: { table: CodeGenTableDto
     throw new Exception('无id字段。');
   }
   // 驼峰 首字母小写
-  const businessName1 = lowercaseFirstLetter(table.businessName);
-  const moduleName1 = lowercaseFirstLetter(table.moduleName);
-  const entityName1 = lowercaseFirstLetter(table.entityName);
+  const businessName1 = baseUtils.lowercaseFirstLetter(table.businessName);
+  const moduleName1 = baseUtils.lowercaseFirstLetter(table.moduleName);
+  const entityName1 = baseUtils.lowercaseFirstLetter(table.entityName);
   // 驼峰 首字母大写
-  const businessName2 = capitalizeFirstLetter(businessName1);
-  const moduleName2 = capitalizeFirstLetter(moduleName1);
-  const entityName2 = capitalizeFirstLetter(entityName1);
+  const businessName2 = baseUtils.capitalizeFirstLetter(businessName1);
+  const moduleName2 = baseUtils.capitalizeFirstLetter(moduleName1);
+  const entityName2 = baseUtils.capitalizeFirstLetter(entityName1);
   // 短横线
-  const businessName3 = toKebabCase(businessName1);
-  const moduleName3 = toKebabCase(moduleName1);
-  const entityName3 = toKebabCase(entityName1);
+  const businessName3 = baseUtils.toKebabCase(businessName1);
+  const moduleName3 = baseUtils.toKebabCase(moduleName1);
+  const entityName3 = baseUtils.toKebabCase(entityName1);
   // 系统
   const sysPath = sys.path;
   // 是否有业务模块
@@ -88,19 +82,19 @@ export function codeGeneration({ table, columns, sys }: { table: CodeGenTableDto
       selKeys: columns
         .filter(item => !baseInterfaceColumns2.includes(item.tsName))
         .filter(item => item.ifSelMore === base.Y)
-        .map(item => toCamelCase(item.colName)),
+        .map(item => baseUtils.toCamelCase(item.colName)),
       notNullKeys: columns
         .filter(item => !baseInterfaceColumns2.includes(item.tsName))
         .filter(item => item.ifRequired === base.Y)
-        .map(item => toCamelCase(item.colName)),
+        .map(item => baseUtils.toCamelCase(item.colName)),
       numberKeys: columns
         .filter(item => !baseInterfaceColumns2.includes(item.tsName))
         .filter(item => item.tsType === 'number')
-        .map(item => toCamelCase(item.colName)),
+        .map(item => baseUtils.toCamelCase(item.colName)),
       completeMatchingKeys: columns
         .filter(item => !baseInterfaceColumns2.includes(item.tsName))
         .filter(item => item.selType === 'equals')
-        .map(item => toCamelCase(item.colName)),
+        .map(item => baseUtils.toCamelCase(item.colName)),
       ifDeleted: false,
     };
     o['notNullKeys'] = selListParam.notNullKeys;
@@ -120,7 +114,7 @@ export function codeGeneration({ table, columns, sys }: { table: CodeGenTableDto
     const selAllParam = selListParam;
 
     const selOnesParam = {
-      selKeys: columns.filter(item => item.ifSelMore === base.Y).map(item => toCamelCase(item.colName)),
+      selKeys: columns.filter(item => item.ifSelMore === base.Y).map(item => baseUtils.toCamelCase(item.colName)),
       ifDeleted: false,
     };
     if (ifDelSelKeys(selOnesParam.selKeys)) delete selOnesParam.selKeys;
@@ -129,7 +123,7 @@ export function codeGeneration({ table, columns, sys }: { table: CodeGenTableDto
     delete selOnesParam.ifDeleted;
 
     const selOneParam = {
-      selKeys: columns.filter(item => item.ifSelOne === base.Y).map(item => toCamelCase(item.colName)),
+      selKeys: columns.filter(item => item.ifSelOne === base.Y).map(item => baseUtils.toCamelCase(item.colName)),
       ifDeleted: false,
     };
     if (ifDelSelKeys(selOneParam.selKeys)) delete selOneParam.selKeys;
@@ -195,13 +189,13 @@ export function codeGeneration({ table, columns, sys }: { table: CodeGenTableDto
 
     function _(param) {
       return Object.keys(param).length === 0 ? '' : ', {\n' + Object.keys(param).map(key => {
-        if (typeOf(param[key]) === 'string') {
+        if (baseUtils.typeOf(param[key]) === 'string') {
           return `      ${key}: ${param[key]}`;
         }
-        if (typeOf(param[key]) === 'boolean') {
+        if (baseUtils.typeOf(param[key]) === 'boolean') {
           return `      ${key}: ${param[key]}`;
         }
-        if (typeOf(param[key]) === 'array') {
+        if (baseUtils.typeOf(param[key]) === 'array') {
           return `      ${key}: [${(param[key] as string[]).map(t => `'${t}'`).join(', ')}]`;
         }
       }).join(',\n') + ',\n    }';
@@ -209,10 +203,10 @@ export function codeGeneration({ table, columns, sys }: { table: CodeGenTableDto
 
     function __(o) {
       return Object.keys(o).reduce((obj, key) => {
-        if (typeOf(o[key]) === 'boolean' && o[key] === true) {
+        if (baseUtils.typeOf(o[key]) === 'boolean' && o[key] === true) {
           return obj
         }
-        if (typeOf(o[key]) === 'array' && o[key].length === 0) {
+        if (baseUtils.typeOf(o[key]) === 'array' && o[key].length === 0) {
           return obj
         }
         return {

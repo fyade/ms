@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { UnknownException } from '../exception/UnknownException';
 import { PageDto } from '../common/dto/PageDto';
-import { objToCamelCase, objToSnakeCase, toSnakeCase, toSnakeCases, typeOf } from '../util/BaseUtils';
 import { PageVo } from '../common/vo/PageVo';
 import { deepClone } from '../util/ObjectUtils';
 import { PrismaParam, SelectParamObj } from './dto';
@@ -9,6 +8,7 @@ import { PrismaoService } from './prismao.service';
 import { AuthService } from '../module/auth/auth.service';
 import { BaseContextService } from '../module/base-context/base-context.service';
 import { T_DEPT, T_ROLE } from '../util/base';
+import { baseUtils } from "@ms/common";
 
 @Injectable()
 export class PrismaService {
@@ -99,31 +99,31 @@ export class PrismaService {
     return modelInstance;
   }
 
-  private genSelParams<T, P>({
-                               data,
-                               orderBy,
-                               range = {},
-                               selKeys = [],
-                               notNullKeys = [],
-                               numberKeys = [],
-                               completeMatchingKeys = [],
-                               ifDeleted = true,
-                               ifUseSelfData = false,
-                             }: {
-                               data?: P,
-                               orderBy?: boolean | object,
-                               range?: object,
-                               selKeys?: string[],
-                               notNullKeys?: string[],
-                               numberKeys?: string[],
-                               completeMatchingKeys?: string[],
-                               ifDeleted?: boolean,
-                               ifUseSelfData?: boolean,
-                             } = {},
+  private genSelParams<T, P = object>({
+                                        data,
+                                        orderBy,
+                                        range = {},
+                                        selKeys = [],
+                                        notNullKeys = [],
+                                        numberKeys = [],
+                                        completeMatchingKeys = [],
+                                        ifDeleted = true,
+                                        ifUseSelfData = false,
+                                      }: {
+                                        data?: P,
+                                        orderBy?: boolean | object,
+                                        range?: object,
+                                        selKeys?: string[],
+                                        notNullKeys?: string[],
+                                        numberKeys?: string[],
+                                        completeMatchingKeys?: string[],
+                                        ifDeleted?: boolean,
+                                        ifUseSelfData?: boolean,
+                                      } = {},
   ) {
-    const data_ = objToSnakeCase(data);
+    const data_ = baseUtils.objToSnakeCase(data as object);
     const publicData = this.prismao.defaultSelArg({ selKeys, ifDeleted, ifUseSelfData }).where;
-    return {
+    const ret = {
       AND: [
         ...Object.keys(publicData).reduce((obj, item) => [
           ...obj,
@@ -143,13 +143,13 @@ export class PrismaService {
             OR: [],
           };
           // 如果这个字段接收到的是对象类型
-          if (typeOf(datum) === 'object') {
+          if (baseUtils.typeOf(datum) === 'object') {
             const items = { [item]: {} };
             const datum_ = new SelectParamObj(datum as unknown as SelectParamObj);
             for (const itm of Object.keys(datum_)) {
               // 如果指定为数值类型
               if (datum_[itm].type === 'number') {
-                switch (typeOf(datum_[itm].value)) {
+                switch (baseUtils.typeOf(datum_[itm].value)) {
                   case 'array':
                     items[item][itm] = datum_[itm].value.map(n => Number(n));
                     break;
@@ -167,7 +167,7 @@ export class PrismaService {
               }
               // 如果指定为日期类型
               if (datum_[itm].type === 'date') {
-                switch (typeOf(datum_[itm].value)) {
+                switch (baseUtils.typeOf(datum_[itm].value)) {
                   case 'array':
                     items[item][itm] = datum_[itm].value.map(n => new Date(n));
                     break;
@@ -189,8 +189,10 @@ export class PrismaService {
               }
               if (itm === 'between') {
                 delete items[item][itm];
-                items[item]['gte'] = datum_[itm].value[0];
-                items[item]['lte'] = datum_[itm].value[1];
+                if (datum_[itm].value[0] && datum_[itm].value[1]) {
+                  items[item]['gte'] = datum_[itm].value[0];
+                  items[item]['lte'] = datum_[itm].value[1];
+                }
               }
             }
             if (Object.keys(datum_).length > 0) {
@@ -198,11 +200,11 @@ export class PrismaService {
             }
           } else {
             // 数字
-            if (toSnakeCases(numberKeys).includes(item)) {
+            if (baseUtils.toSnakeCases(numberKeys).includes(item)) {
               obj2.OR.push({ [item]: Number(datum) });
             }
             // 字符串完整匹配
-            else if (toSnakeCases(completeMatchingKeys).includes(item) && !!datum) {
+            else if (baseUtils.toSnakeCases(completeMatchingKeys).includes(item) && !!datum) {
               obj2.OR.push({ [item]: `${datum}` });
             }
             // 字符串模糊匹配
@@ -210,7 +212,7 @@ export class PrismaService {
               obj2.OR.push({ [item]: { contains: `${datum}` } });
             }
             // 可以为空
-            if (!toSnakeCases(notNullKeys).includes(item)) {
+            if (!baseUtils.toSnakeCases(notNullKeys).includes(item)) {
               obj2.OR.push({ [item]: null });
             }
           }
@@ -222,7 +224,7 @@ export class PrismaService {
         }, []),
         ...Object.keys(range).map(item => (
           {
-            [toSnakeCase(item)]: {
+            [baseUtils.toSnakeCase(item)]: {
               gte: range[item].gte,
               lte: range[item].lte,
             },
@@ -230,6 +232,7 @@ export class PrismaService {
         )),
       ],
     };
+    return ret;
   }
 
   /**
@@ -284,7 +287,7 @@ export class PrismaService {
       };
     } else if (orderBy) {
       arg['orderBy'] = {
-        [toSnakeCase(Object.keys(orderBy)[0])]: Object.values(orderBy)[0],
+        [baseUtils.toSnakeCase(Object.keys(orderBy)[0])]: Object.values(orderBy)[0],
       };
     } else {
       arg['orderBy'] = {
@@ -293,7 +296,7 @@ export class PrismaService {
     }
     const model1 = this.getModel(model);
     const list = await model1.findMany(arg);
-    const list1 = list.map((item: object) => objToCamelCase(item));
+    const list1 = list.map((item: object) => baseUtils.objToCamelCase(item));
     const arg2 = {
       where: arg.where,
     };
@@ -355,7 +358,7 @@ export class PrismaService {
       };
     } else if (orderBy) {
       arg['orderBy'] = {
-        [toSnakeCase(Object.keys(orderBy)[0])]: Object.values(orderBy)[0],
+        [baseUtils.toSnakeCase(Object.keys(orderBy)[0])]: Object.values(orderBy)[0],
       };
     } else {
       arg['orderBy'] = {
@@ -363,7 +366,7 @@ export class PrismaService {
       };
     }
     const res2 = await this.getModel(model).findMany(arg);
-    const res3 = res2.map((item: object) => objToCamelCase(item));
+    const res3 = res2.map((item: object) => baseUtils.objToCamelCase(item));
     return new Promise(resolve => resolve(res3));
   }
 
@@ -387,12 +390,12 @@ export class PrismaService {
     const arg = {
       where: {
         ...publicData.where,
-        ...(objToSnakeCase(args) || {}),
+        ...(baseUtils.objToSnakeCase(args) || {}),
       },
       ...(publicData.select ? { select: publicData.select } : {}),
     };
     const first = await this.getModel(model).findFirst(arg);
-    const objToCamelCase1 = objToCamelCase<T>(first);
+    const objToCamelCase1 = baseUtils.objToCamelCase<T>(first);
     return new Promise(resolve => resolve(objToCamelCase1));
   }
 
@@ -441,7 +444,7 @@ export class PrismaService {
       ...(publicData.select ? { select: publicData.select } : {}),
     };
     const list = await this.getModel(model).findMany(arg);
-    const list2 = ids.map((id) => objToCamelCase<T>(list.find(item => item.id === id)));
+    const list2 = ids.map((id) => baseUtils.objToCamelCase<T>(list.find(item => item.id === id)));
     return new Promise(resolve => resolve(list2));
   }
 
@@ -506,12 +509,12 @@ export class PrismaService {
     }).data;
     const arg = {
       data: {
-        ...(objToSnakeCase(data2) || {}),
+        ...(baseUtils.objToSnakeCase(data2) || {}),
         ...publicData,
       },
     };
     const retData = await this.getModel(model).create(arg);
-    return new Promise(resolve => resolve(objToCamelCase(retData)));
+    return new Promise(resolve => resolve(baseUtils.objToCamelCase(retData)));
   }
 
   /**
@@ -542,7 +545,7 @@ export class PrismaService {
           delete dat.id;
         }
         return {
-          ...(objToSnakeCase(dat) || {}),
+          ...(baseUtils.objToSnakeCase(dat) || {}),
           ...publicData,
         };
       }),
@@ -580,13 +583,13 @@ export class PrismaService {
         id: id,
       },
       data: {
-        ...objToSnakeCase(data2),
+        ...baseUtils.objToSnakeCase(data2),
         ...publicData.data,
       },
     };
     try {
       const retData = await this.getModel(model).update(arg);
-      return new Promise(resolve => resolve(objToCamelCase(retData)));
+      return new Promise(resolve => resolve(baseUtils.objToCamelCase(retData)));
     } catch (e) {
       return new Promise(resolve => resolve(JSON.parse(JSON.stringify({}))));
     }

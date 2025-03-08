@@ -15,7 +15,7 @@ import { Delete, Download, Edit, Plus, Refresh, Upload, Search } from "@element-
 import { LogUserLoginDto, LogUserLoginUpdDto } from "@/type/module/main/sysLog/logUserLogin.ts";
 import { logUserLoginApi } from "@/api/module/main/sysLog/logUserLogin.ts";
 import { logUserLoginDict } from "@/dict/module/main/sysLog/logUserLogin.ts";
-import { formatDate } from "@/utils/TimeUtils.ts";
+import { timeUtils } from "@ms/common";
 
 const state = reactive<State2<LogUserLoginDto, LogUserLoginUpdDto>>({
   dialogForm: {
@@ -497,7 +497,7 @@ const fCan2 = () => {
       <!--<el-table-column prop="updateBy" :label="logUserLoginDict.updateBy" width='120'/>-->
       <el-table-column prop="createTime" :label="logUserLoginDict.createTime" width="220">
         <template #default="{row}">
-          {{ formatDate(new Date(row.createTime)) }}
+          {{ timeUtils.formatDate(new Date(row.createTime)) }}
         </template>
       </el-table-column>
       <!--<el-table-column prop="updateTime" :label="logUserLoginDict.updateTime" width='220'/>-->

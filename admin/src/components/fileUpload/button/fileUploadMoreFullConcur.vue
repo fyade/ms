@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { fileUploadOneFull } from "@/api/common/fileUpload.ts";
-import { unitConversion_storage } from "@/utils/NumberUtils.ts";
-import { CHUNK_SIZE } from "~/config/config.ts";
 import { computed, onBeforeUnmount, reactive, ref } from "vue";
 import { Upload } from '@element-plus/icons-vue'
 import { ElMessage } from "element-plus"
 import { FileUploadInterfaceMoreFullConcur } from "@/type/common/fileUpload.ts";
 import { selectFiles } from "@/utils/FileUtils.ts";
+import { adminConfig } from '@ms/config';
+import { numberUtils } from "@ms/common";
 
 interface ProgressI {
   started: number[],
@@ -53,10 +53,11 @@ const upload5 = async () => {
   state.currentStage = 'b'
   for (let i = 0; i < filepicks.length; i++) {
     const file = filepicks[i]
-    if (file.size > CHUNK_SIZE) {
+    const chunksize = adminConfig.currentConfig().CHUNK_SIZE;
+    if (file.size > chunksize) {
       state.beyondMaxSizeNum++
-      // MessagePlugin.error(file.name + '文件大小超过' + unitConversion_storage(CHUNK_SIZE) + '。')
-      ElMessage.warning(file.name + '文件大小超过' + unitConversion_storage(CHUNK_SIZE) + '。')
+      // MessagePlugin.error(file.name + '文件大小超过' + numberUtils.unitConversion_storage(CHUNK_SIZE) + '。')
+      ElMessage.warning(file.name + '文件大小超过' + numberUtils.unitConversion_storage(chunksize) + '。')
     } else {
       // const fd = new FormData();
       // fd.append('file', file)

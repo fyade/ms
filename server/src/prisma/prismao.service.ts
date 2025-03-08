@@ -1,12 +1,12 @@
-import { currentEnv, getMysqlUrlFromEnv } from '../../config/config';
 import { base } from '../util/base';
 import { Injectable } from '@nestjs/common';
-import { toSnakeCase, typeOf } from '../util/BaseUtils';
 import { BaseContextService } from '../module/base-context/base-context.service';
 import { baseInterfaceColumns2 } from '../module/module/main/sys-util/code-generation/codeGeneration';
 import { PrismaClient } from '@prisma/client';
+import { serverConfig } from "@ms/config";
+import { baseUtils } from "@ms/common";
 
-const env = currentEnv();
+const env = serverConfig.currentConfig();
 const { PrismaClient: PrismaClientOrigin } = require(env.mode === base.DEV ? '@prisma/client' : '../../generated/client');
 
 @Injectable()
@@ -17,10 +17,10 @@ export class PrismaoService extends PrismaClientOrigin {
     const dbConfig = {
       datasources: {
         db: {
-          url: getMysqlUrlFromEnv(env),
+          url: serverConfig.getMysqlUrlFromEnv(env),
         },
       },
-      log: (env.prismaLogLevel && typeOf(env.prismaLogLevel) === 'array') ? env.prismaLogLevel : [],
+      log: (env.prismaLogLevel && baseUtils.typeOf(env.prismaLogLevel) === 'array') ? env.prismaLogLevel : [],
     };
     super(dbConfig);
     // 使用中间件对查询结果中的 Bigint 类型进行序列化
@@ -28,7 +28,7 @@ export class PrismaoService extends PrismaClientOrigin {
       const t1 = Date.now();
       const result = await next(params);
       const t2 = Date.now();
-      if (currentEnv().ifLogSQLExecutionTime) {
+      if (env.ifLogSQLExecutionTime) {
         console.info(`Query ${params.model}.${params.action} took ${t2 - t1}ms`);
       }
       return this.serialize(result);
@@ -48,18 +48,18 @@ export class PrismaoService extends PrismaClientOrigin {
   }
 
   private serialize(obj) {
-    if (typeOf(obj) === 'bigint') {
+    if (baseUtils.typeOf(obj) === 'bigint') {
       return parseInt(`${obj}`);
-    } else if (typeOf(obj) === 'object') {
+    } else if (baseUtils.typeOf(obj) === 'object') {
       return JSON.parse(
         JSON.stringify(obj, (key, value) => {
-          if (typeOf(value) === 'bigint') {
+          if (baseUtils.typeOf(value) === 'bigint') {
             return parseInt(`${value}`);
           }
           return value;
         }),
       );
-    } else if (typeOf(obj) === 'array') {
+    } else if (baseUtils.typeOf(obj) === 'array') {
       return obj.map(item => {
         return this.serialize(item);
       });
@@ -81,7 +81,7 @@ export class PrismaoService extends PrismaClientOrigin {
       ...(selKeys.length > 0 ? {
         select: [...selKeys, ...baseInterfaceColumns2].reduce((o, a) => ({
           ...o,
-          [toSnakeCase(a)]: true,
+          [baseUtils.toSnakeCase(a)]: true,
         }), {}),
       } : {}),
       where: {},

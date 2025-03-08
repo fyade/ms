@@ -5,9 +5,9 @@ import { R } from '../../../../../common/R';
 import { Authorize } from '../../../../../decorator/authorizeDecorator';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ValidationPipe } from '../../../../../pipe/validation/validation.pipe';
-import { decrypt } from '../../../../../util/EncryptUtils';
 import { getIpInfoFromRequest } from '../../../../../util/RequestUtils';
 import { Request } from 'express';
+import { encryptUtils } from '@ms/common'
 
 @Controller('/sys/user')
 @ApiTags('主系统/系统管理/用户登录')
@@ -29,7 +29,7 @@ export class UserLoginController {
   })
   async regist(@Body() dto: RegistDto): Promise<R> {
     if (dto.psdType === 'b') {
-      dto.password = decrypt(dto.password);
+      dto.password = encryptUtils.decrypt(dto.password);
     }
     delete dto.psdType;
     return this.userService.regist(dto);
@@ -47,7 +47,7 @@ export class UserLoginController {
   })
   async login(@Body() dto: LoginDto, @Req() request: Request): Promise<R> {
     if (dto.psdType === 'b') {
-      dto.password = decrypt(dto.password);
+      dto.password = encryptUtils.decrypt(dto.password);
     }
     delete dto.psdType;
     const { ip: loginIp, browser: loginBrowser, os: loginOs } = getIpInfoFromRequest(request);
@@ -66,7 +66,7 @@ export class UserLoginController {
   })
   async adminLogin(@Body() dto: LoginDto, @Req() request: Request): Promise<R> {
     if (dto.psdType === 'b') {
-      dto.password = decrypt(dto.password);
+      dto.password = encryptUtils.decrypt(dto.password);
     }
     delete dto.psdType;
     const { ip: loginIp, browser: loginBrowser, os: loginOs } = getIpInfoFromRequest(request);

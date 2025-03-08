@@ -1,3 +1,17 @@
+import { typeOf } from "./base-utils.js";
+
+export function time() {
+  return formatDate(new Date());
+}
+
+export function timestamp(tim: Date | string | number = new Date()) {
+  if (typeOf(tim) === 'date') {
+    return (tim as Date).getTime();
+  } else {
+    return new Date(tim).getTime();
+  }
+}
+
 /**
  * @param format
  * @param ifUseUTC
@@ -7,13 +21,13 @@ class FormatDateParam {
   ifUseUTC!: boolean
 
   constructor(
-      {
-        format = 'YYYY-MM-DD HH:mm:ss',
-        ifUseUTC = false,
-      }: {
-        format?: string
-        ifUseUTC?: boolean
-      } = {}
+    {
+      format = 'YYYY-MM-DD HH:mm:ss',
+      ifUseUTC = false,
+    }: {
+      format?: string
+      ifUseUTC?: boolean
+    } = {}
   ) {
     this.format = format
     this.ifUseUTC = ifUseUTC
@@ -27,7 +41,7 @@ class FormatDateParam {
  */
 export function formatDate(date: Date, param?: string | FormatDateParam): string {
   const pad: (n: number) => string = (n: number) => (n < 10 ? '0' + n : n.toString());
-  const fdp = param ? (typeof param === 'string' ? new FormatDateParam({format: param}) : new FormatDateParam(param)) : new FormatDateParam()
+  const fdp = param ? (typeof param === 'string' ? new FormatDateParam({ format: param }) : new FormatDateParam(param)) : new FormatDateParam()
   const format = fdp.format
   const ifUseUTC = fdp.ifUseUTC;
   return format.replace(/YYYY|MMMM|MM|DD|Do|HH|hh|mm|ss|a|A/g, (match: string) => {

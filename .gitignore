@@ -1,3 +1,15 @@
 .idea
 node_modules
 */node_modules
+*/dist
+pnpm-lock.yaml
+
+/config/admin-prod.config.ts
+/config/server-prod.config.ts
+/config/public-prod.config.ts
+
+/admin/stats.html
+/admin/tsconfig.tsbuildinfo
+
+/server/generated
+/server/prisma/migrations

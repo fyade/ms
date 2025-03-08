@@ -1,9 +1,9 @@
 import { getScriptTagFromHtmlText } from "@/utils/RegularUtils.ts";
 import { ifSameArray } from "@/utils/ObjectUtils.ts";
-import { sleep } from "@/utils/baseUtils.ts";
+import { baseUtils } from "@ms/common";
 
 async function main() {
-  await sleep(3000)
+  await baseUtils.sleep(3000)
   const oldHtml = document.documentElement.outerHTML
   const oldTag_ = getScriptTagFromHtmlText(oldHtml)
   // 去除一些干扰项

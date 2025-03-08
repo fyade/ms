@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../../../prisma/prisma.service';
 import { R } from '../../../../../common/R';
 import { AdminNewUserDto, LoginDto, RegistDto, ResetUserPsdDto, UpdPsdDto, UserDto, UserSelListDto } from './dto';
-import { genId, randomUUID } from '../../../../../util/IdUtils';
 import { AuthService } from '../../../../auth/auth.service';
 import { HTTP } from '../../../../../common/Enum';
 import { base } from '../../../../../util/base';
@@ -11,20 +10,19 @@ import { UserUnknownException } from '../../../../../exception/UserUnknownExcept
 import { AdminTopDto } from '../../../../admin-top/dto';
 import { UserPermissionDeniedException } from '../../../../../exception/UserPermissionDeniedException';
 import { LogUserLoginService } from '../../sys-log/log-user-login/log-user-login.service';
-import { comparePassword, hashPassword } from '../../../../../util/EncryptUtils';
 import { UserDeptDto } from '../user-dept/dto';
 import { UserGroupDto } from '../../../algorithm/user-group/dto';
 import { UserUserGroupDto } from '../../../algorithm/user-user-group/dto';
 import { RoleDto } from '../role/dto';
 import { DeptDto } from '../dept/dto';
 import { CacheTokenService } from '../../../../cache/cache.token.service';
-import { timestamp } from '../../../../../util/TimeUtils';
 import { BaseContextService } from '../../../../base-context/base-context.service';
 import { NOT_ADMIN, PASSWORD_ERROR } from '../../sys-log/log-user-login/dto';
 import { UserVisitorDto } from '../../other-user/user-visitor/dto';
 import * as svgCaptcha from 'svg-captcha';
-import { currentEnv } from '../../../../../../config/config';
 import { Exception } from "../../../../../exception/Exception";
+import { encryptUtils, idUtils, timeUtils } from '@ms/common'
+import { serverConfig } from "@ms/config";
 
 @Injectable()
 export class UserService {
@@ -179,8 +177,8 @@ export class UserService {
     }
     await this.prisma.create('sys_user', {
       ...dto,
-      password: await hashPassword(dto.password),
-      id: genId(5, false),
+      password: await encryptUtils.hashPassword(dto.password),
+      id: idUtils.genId(5, false),
     }, { ifCustomizeId: true });
     return R.ok();
   }
@@ -204,25 +202,25 @@ export class UserService {
     const userId = this.bcs.getUserData().userId;
     if (loginRole === 'admin') {
       const user_ = await this.prisma.findById<UserDto>('sys_user', userId);
-      const ifUserYes = await comparePassword(dto.oldp, user_.password);
+      const ifUserYes = await encryptUtils.comparePassword(dto.oldp, user_.password);
       if (!ifUserYes) {
         throw new Exception('旧密码错误。');
       }
       await this.prisma.updateById('sys_user', {
         id: user_.id,
-        password: await hashPassword(dto.newp1),
+        password: await encryptUtils.hashPassword(dto.newp1),
       });
       return R.ok();
     }
     if (loginRole === 'visitor') {
       const user_ = await this.prisma.findById<UserVisitorDto>('sys_user_visitor', userId);
-      const ifUserYes = await comparePassword(dto.oldp, user_.password);
+      const ifUserYes = await encryptUtils.comparePassword(dto.oldp, user_.password);
       if (!ifUserYes) {
         throw new Exception('旧密码错误。');
       }
       await this.prisma.updateById('sys_user_visitor', {
         id: user_.id,
-        password: await hashPassword(dto.newp1),
+        password: await encryptUtils.hashPassword(dto.newp1),
       });
       return R.ok();
     }
@@ -233,7 +231,7 @@ export class UserService {
     if (!await this.authService.ifAdminUserUpdNotAdminUser(this.bcs.getUserData().userId, dto.id)) {
       throw new UserPermissionDeniedException();
     }
-    await this.prisma.updateById('sys_user', { ...dto, password: await hashPassword(dto.password) });
+    await this.prisma.updateById('sys_user', { ...dto, password: await encryptUtils.hashPassword(dto.password) });
     return R.ok();
   }
 
@@ -245,11 +243,11 @@ export class UserService {
       if (user) {
         throw new Exception('用户名已被使用。');
       }
-      const userid = genId(5, false);
+      const userid = idUtils.genId(5, false);
       await this.prisma.create<UserDto>('sys_user', {
         id: userid,
         username: dto.username,
-        password: await hashPassword(dto.password),
+        password: await encryptUtils.hashPassword(dto.password),
         createRole: dto.loginRole,
         updateRole: dto.loginRole,
         createBy: userid,
@@ -264,11 +262,11 @@ export class UserService {
       if (user) {
         throw new Exception('用户名已被使用。');
       }
-      const userid = genId(10, false);
+      const userid = idUtils.genId(10, false);
       await this.prisma.create<UserVisitorDto>('sys_user_visitor', {
         id: userid,
         username: dto.username,
-        password: await hashPassword(dto.password),
+        password: await encryptUtils.hashPassword(dto.password),
         createRole: dto.loginRole,
         updateRole: dto.loginRole,
         createBy: userid,
@@ -283,7 +281,7 @@ export class UserService {
     user: UserDto,
     loginRole: string,
   }>> {
-    if (!currentEnv().ifIgnoreVerificationCode) {
+    if (!serverConfig.currentConfig().ifIgnoreVerificationCode) {
       const vcode = await this.cacheTokenService.getVerificationCode(dto.verificationCodeUuid);
       if (!vcode) {
         throw new Exception('验证码已过期。');
@@ -302,11 +300,11 @@ export class UserService {
       }
       const loginlogs = await this.getLoginLogsOfPasswordError(user.id, loginIp, dto.loginRole);
       if (loginlogs.length >= this.maxLoginFailCount) {
-        const sort = loginlogs.sort((a, b) => timestamp(a.createTime) - timestamp(b.createTime));
-        const number = Math.ceil(24 - (timestamp() - timestamp(sort[0].createTime)) / (1000 * 60 * 60));
+        const sort = loginlogs.sort((a, b) => timeUtils.timestamp(a.createTime) - timeUtils.timestamp(b.createTime));
+        const number = Math.ceil(24 - (timeUtils.timestamp() - timeUtils.timestamp(sort[0].createTime)) / (1000 * 60 * 60));
         throw new Exception(`您的账号在当前IP密码错误次数过多，请${number}小时后重试或更换网络环境重试。`);
       }
-      const b1 = await comparePassword(dto.password, user.password);
+      const b1 = await encryptUtils.comparePassword(dto.password, user.password);
       if (!b1) {
         await this.insLoginLog(loginIp, loginBrowser, '', loginOs, user.id, dto.loginRole, b1, PASSWORD_ERROR);
         throw new Exception(`密码错误，还剩${this.maxLoginFailCount - loginlogs.length - 1}次机会。`);
@@ -331,11 +329,11 @@ export class UserService {
       }
       const loginlogs = await this.getLoginLogsOfPasswordError(user.id, loginIp, dto.loginRole);
       if (loginlogs.length >= this.maxLoginFailCount) {
-        const sort = loginlogs.sort((a, b) => timestamp(a.createTime) - timestamp(b.createTime));
-        const number = Math.ceil(24 - (timestamp() - timestamp(sort[0].createTime)) / (1000 * 60 * 60));
+        const sort = loginlogs.sort((a, b) => timeUtils.timestamp(a.createTime) - timeUtils.timestamp(b.createTime));
+        const number = Math.ceil(24 - (timeUtils.timestamp() - timeUtils.timestamp(sort[0].createTime)) / (1000 * 60 * 60));
         throw new Exception(`您的账号在当前IP密码错误次数过多，请${number}小时后重试或更换网络环境重试。`);
       }
-      const b1 = await comparePassword(dto.password, user.password);
+      const b1 = await encryptUtils.comparePassword(dto.password, user.password);
       if (!b1) {
         await this.insLoginLog(loginIp, loginBrowser, '', loginOs, user.id, dto.loginRole, b1, PASSWORD_ERROR);
         throw new Exception(`密码错误，还剩${this.maxLoginFailCount - loginlogs.length - 1}次机会。`);
@@ -382,7 +380,7 @@ export class UserService {
       fontSize: 45,
     });
     const text = captcha.text;
-    const uuid = randomUUID();
+    const uuid = idUtils.randomUUID()
     await this.cacheTokenService.saveVerificationCode(uuid, text);
     return R.ok({ uuid, svg: captcha.data });
   }
@@ -398,8 +396,8 @@ export class UserService {
       orderBy: { createTime: 'desc' },
       range: {
         createTime: {
-          gte: new Date(timestamp() - 1000 * 60 * 60 * 24),
-          lte: new Date(timestamp()),
+          gte: new Date(timeUtils.timestamp() - 1000 * 60 * 60 * 24),
+          lte: new Date(timeUtils.timestamp()),
         },
       },
     });

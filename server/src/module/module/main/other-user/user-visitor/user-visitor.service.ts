@@ -2,8 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../../../prisma/prisma.service';
 import { R } from '../../../../../common/R';
 import { UserVisitorDto, UserVisitorSelListDto, AdminNewUserVisitorDto, ResetUserVisitorPsdDto } from './dto';
-import { hashPassword } from '../../../../../util/EncryptUtils';
-import { genId } from '../../../../../util/IdUtils';
 import { base } from '../../../../../util/base';
 import { UserRoleDto } from '../../sys-manage/user-role/dto';
 import { RoleDto } from '../../sys-manage/role/dto';
@@ -13,6 +11,7 @@ import { UserUserGroupDto } from '../../../algorithm/user-user-group/dto';
 import { UserGroupDto } from '../../../algorithm/user-group/dto';
 import { BaseContextService } from '../../../../base-context/base-context.service';
 import { Exception } from "../../../../../exception/Exception";
+import { encryptUtils, idUtils } from '@ms/common'
 
 @Injectable()
 export class UserVisitorService {
@@ -127,14 +126,14 @@ export class UserVisitorService {
     }
     await this.prisma.create('sys_user_visitor', {
       ...dto,
-      password: await hashPassword(dto.password),
-      id: genId(10, false),
+      password: await encryptUtils.hashPassword(dto.password),
+      id: idUtils.genId(10, false),
     }, { ifCustomizeId: true });
     return R.ok();
   }
 
   async adminResetUserVisitorPsd(dto: ResetUserVisitorPsdDto): Promise<R> {
-    await this.prisma.updateById('sys_user_visitor', { ...dto, password: await hashPassword(dto.password) });
+    await this.prisma.updateById('sys_user_visitor', { ...dto, password: await encryptUtils.hashPassword(dto.password) });
     return R.ok();
   }
 }

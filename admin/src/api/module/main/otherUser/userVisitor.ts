@@ -6,7 +6,7 @@ import {
   UserVisitorRegistDto,
   UserVisitorUpdDto
 } from "@/type/module/main/otherUser/userVisitor.ts";
-import { encrypt } from "@/utils/EncryptUtils.ts";
+import { encryptUtils } from "@ms/common";
 
 export const userVisitorApi: ApiConfig<UserVisitorDto, UserVisitorUpdDto> = {
   /**
@@ -97,7 +97,7 @@ export function newUserVisitor(params: UserVisitorRegistDto) {
     method: 'POST',
     data: {
       ...params,
-      password: encrypt(params.password),
+      password: encryptUtils.encrypt(params.password),
       psdType: 'b'
     }
   })
@@ -109,7 +109,7 @@ export function resetUserVisitorPsd(params: AdminResetUserVisitorPsdDto) {
     method: 'POST',
     data: {
       ...params,
-      password: encrypt(params.password),
+      password: encryptUtils.encrypt(params.password),
       psdType: 'b'
     }
   })

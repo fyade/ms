@@ -1,4 +1,4 @@
-import { typeOf } from "@/utils/ObjectUtils.ts";
+import { baseUtils } from "@ms/common";
 
 /**
  * v-no-more-click 禁止多次点击
@@ -8,7 +8,7 @@ import { typeOf } from "@/utils/ObjectUtils.ts";
 const noMoreClick = {
   mounted: (el: any, binding: any) => {
     el.addEventListener('click', () => {
-      if (typeOf(binding.value) === 'undefined' || typeOf(binding.value.disabled) === 'undefined' || binding.value.disabled === false) {
+      if (baseUtils.typeOf(binding.value) === 'undefined' || baseUtils.typeOf(binding.value.disabled) === 'undefined' || binding.value.disabled === false) {
         const time = binding.value?.interval || 2
         let dom: any
         if (el.classList.contains('el-button')) dom = el.children[0]

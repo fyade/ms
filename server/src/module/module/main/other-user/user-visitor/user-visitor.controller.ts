@@ -5,7 +5,7 @@ import { Authorize } from '../../../../../decorator/authorizeDecorator';
 import { R } from '../../../../../common/R';
 import { ValidationPipe } from '../../../../../pipe/validation/validation.pipe';
 import { UserVisitorSelListDto, AdminNewUserVisitorDto, ResetUserVisitorPsdDto } from './dto';
-import { decrypt } from '../../../../../util/EncryptUtils';
+import { encryptUtils } from '@ms/common';
 
 @Controller('/main/other-user/user-visitor')
 @ApiTags('主系统/非系统用户管理/访客用户')
@@ -37,7 +37,7 @@ export class UserVisitorController {
   })
   async insUserVisitor(@Body() dto: AdminNewUserVisitorDto): Promise<R> {
     if (dto.psdType === 'b') {
-      dto.password = decrypt(dto.password);
+      dto.password = encryptUtils.decrypt(dto.password);
     }
     delete dto.psdType;
     return this.userVisitorService.insUserVisitor(dto);
@@ -53,7 +53,7 @@ export class UserVisitorController {
   })
   async adminResetUserVisitorPsd(@Body() dto: ResetUserVisitorPsdDto): Promise<R> {
     if (dto.psdType === 'b') {
-      dto.password = decrypt(dto.password);
+      dto.password = encryptUtils.decrypt(dto.password);
     }
     delete dto.psdType;
     return this.userVisitorService.adminResetUserVisitorPsd(dto);

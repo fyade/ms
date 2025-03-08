@@ -1,7 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../../../prisma/prisma.service';
 import { R } from '../../../../../common/R';
-import { currentEnv } from '../../../../../../config/config';
 import { join } from 'path';
 import * as fs from 'fs';
 import { base } from '../../../../../util/base';
@@ -13,24 +12,25 @@ import {
   FileUploadOneChunk_merge,
   FileUploadOneChunk_upload,
 } from './dto';
-import { randomUUID } from '../../../../../util/IdUtils';
 import { BaseContextService } from '../../../../base-context/base-context.service';
 import { saveFile } from '../../../../../util/FileUtils';
-import { formatDate } from '../../../../../util/TimeUtils';
 import { Exception } from "../../../../../exception/Exception";
+import { UnknownException } from "../../../../../exception/UnknownException";
+import { serverConfig } from "@ms/config";
+import { idUtils, timeUtils } from "@ms/common";
 
 const SparkMD5 = require('spark-md5');
 
 @Injectable()
 export class FileUploadService {
-  private env: ReturnType<typeof currentEnv>;
+  private env: ReturnType<typeof serverConfig.currentConfig>;
   private directoryPrefix = 'YYYY/MM/DD/';
 
   constructor(
     private readonly prisma: PrismaService,
     private readonly bcs: BaseContextService,
   ) {
-    this.env = currentEnv();
+    this.env = serverConfig.currentConfig();
     this.bcs.setFieldSelectParam('tbl_file', {
       notNullKeys: ['fileName', 'fileNewName', 'fileSize', 'fileMd5', 'ifChunk', 'chunkNum', 'ifMerge', 'ifFirst', 'ifFinished', 'module'],
       numberKeys: ['fileSize', 'chunkNum'],
@@ -85,8 +85,8 @@ export class FileUploadService {
       });
       const fileSize = file.size;
       const fileSuffix = fileName2.substring(fileName2.lastIndexOf('.'));
-      const fileUUID = randomUUID();
-      const s = formatDate(new Date(), { format: this.directoryPrefix, ifUseUTC: true });
+      const fileUUID = idUtils.randomUUID();
+      const s = timeUtils.formatDate(new Date(), { format: this.directoryPrefix, ifUseUTC: true });
       const fileNewName1 = fileUUID + fileSuffix;
       const fileNewName2 = s + fileNewName1;
       const fillObj = {
@@ -118,15 +118,15 @@ export class FileUploadService {
       return R.ok(fillObj.fileNewName);
     } catch (e) {
       console.error(e);
-      throw new Exception(e.message);
+      throw new UnknownException(this.bcs.getUserData().reqId, e as HttpException);
     }
   }
 
   async fileUploadOneChunkCheck(dto: FileUploadOneChunk_check): Promise<R> {
     const fileName = dto.fileName;
     const fileSuffix = fileName.substring(fileName.lastIndexOf('.'));
-    const fileUUID = randomUUID();
-    const s = formatDate(new Date(), { format: this.directoryPrefix, ifUseUTC: true });
+    const fileUUID = idUtils.randomUUID();
+    const s = timeUtils.formatDate(new Date(), { format: this.directoryPrefix, ifUseUTC: true });
     const fileNewName1 = fileUUID + fileSuffix;
     const fileNewName2 = s + fileNewName1;
     const sameFile = await this.prisma.findAll<FileDto>('tbl_file', {
@@ -219,8 +219,8 @@ export class FileUploadService {
   async fileUploadOneChunkUpload(dto: FileUploadOneChunk_upload): Promise<R> {
     dto.chunkIndex = Number(dto.chunkIndex);
     try {
-      const s = formatDate(new Date(), { format: this.directoryPrefix, ifUseUTC: true });
-      const chunkName1 = randomUUID();
+      const s = timeUtils.formatDate(new Date(), { format: this.directoryPrefix, ifUseUTC: true });
+      const chunkName1 = idUtils.randomUUID();
       const chunkName2 = s + chunkName1;
       // 保存文件信息至数据库
       const info = await this.prisma.create<FileChunkDto>('tbl_file_chunk', {
@@ -240,7 +240,7 @@ export class FileUploadService {
       return R.ok();
     } catch (e) {
       console.error(e);
-      throw new Exception(e.message);
+      throw new UnknownException(this.bcs.getUserData().reqId, e as HttpException)
     }
   }
 

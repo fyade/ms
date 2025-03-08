@@ -15,10 +15,10 @@ import { Delete, Download, Edit, Plus, Refresh, Upload, Search } from "@element-
 import { downloadFullFile, fileUploadApi } from "@/api/common/fileUpload.ts";
 import { fileUploadDict } from "@/dict/common/file.ts";
 import { fileBaseUrl } from "@/api/request.ts";
-import { unitConversion_storage } from "@/utils/NumberUtils.ts";
 import { FileUploadDto, FileUploadUpdDto } from "@/type/common/file.ts";
 import { AxiosProgressEvent } from "axios";
 import { useSysStore } from "@/store/module/sys.ts";
+import { numberUtils } from "@ms/common";
 
 const sysStore = useSysStore();
 
@@ -180,7 +180,7 @@ const download = async (row: FileUploadDto) => {
       <!--<el-table-column prop="fileNewName" :label="fileUploadDict.fileNewName" width="120"/>-->
       <el-table-column prop="fileSize" :label="fileUploadDict.fileSize" width="100">
         <template #default="{row}">
-          <span>{{ unitConversion_storage(row.fileSize) }}</span>
+          <span>{{ numberUtils.unitConversion_storage(row.fileSize) }}</span>
         </template>
       </el-table-column>
       <el-table-column prop="fileMd5" :label="fileUploadDict.fileMd5" width="200"/>

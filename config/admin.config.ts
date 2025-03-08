@@ -3,7 +3,7 @@ import configProd from "./admin-prod.config.js";
 import { ImportMeta } from './index.js'
 
 export const APP_NAME = '知笙后台管理系统'
-export const currentVersion = '0.0.17.9'
+export const currentVersion = '0.1.01.1'
 
 export const currentConfig = (): typeof config.dev => {
   let environmentMode;

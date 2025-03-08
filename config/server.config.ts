@@ -2,7 +2,7 @@ import * as process from "process";
 import configProd from "./server-prod.config.js";
 import { ImportMeta } from "./index";
 
-export const currentVersion = '0.0.20.9';
+export const currentVersion = '0.1.01.1';
 
 export const currentConfig = (): typeof config.dev => {
   let environmentMode;

@@ -4,12 +4,13 @@ node_modules
 */dist
 pnpm-lock.yaml
 
-/config/admin-prod.config.ts
-/config/server-prod.config.ts
-/config/public-prod.config.ts
+/config/config/*.config.ts
 
 /admin/stats.html
 /admin/tsconfig.tsbuildinfo
+/admin/dist.zip
 
 /server/generated
 /server/prisma/migrations
+/server/dist.zip
+/server/generated.zip

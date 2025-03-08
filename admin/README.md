@@ -18,11 +18,17 @@
 
 2. 配置
 
-在 配置模块根目录/adminConfig.ts 中，根据注释，将每个配置改为自己的配置。
+在 配置模块根目录/config 目录中，新建 publicConfig.ts，将 publicConfig.txt 中的内容粘贴至 publicConfig.ts；
+
+在 配置模块根目录/config 目录中，新建 adminConfig.ts，将 adminConfig.txt 中的内容粘贴至 adminConfig.ts；
+
+在 配置模块根目录/config/publicConfig.ts 中，根据注释，将每个配置改为自己的配置；
+
+在 配置模块根目录/config/adminConfig.ts 中，根据注释，将每个配置改为自己的配置；
 
 3. 启动项目
 
-在项目根目录运行 `pnpm "[dev] [admin ] dev"` 命令；
+在项目根目录运行 `pnpm "[dev] [admin ] dev"` 命令。
 
 ## 打包教程
 

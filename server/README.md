@@ -21,7 +21,13 @@
 
 2. 配置
 
-在 配置模块根目录/serverConfig.ts 中，根据注释，将每个配置改为自己的配置；
+在 配置模块根目录/config 目录中，新建 publicConfig.ts，将 publicConfig.txt 中的内容粘贴至 publicConfig.ts；
+
+在 配置模块根目录/config 目录中，新建 adminConfig.ts，将 adminConfig.txt 中的内容粘贴至 adminConfig.ts；
+
+在 配置模块根目录/config/publicConfig.ts 中，根据注释，将每个配置改为自己的配置；
+
+在 配置模块根目录/config/adminConfig.ts 中，根据注释，将每个配置改为自己的配置；
 
 在 模块根目录/.env 中，将配置改为自己的配置；
 

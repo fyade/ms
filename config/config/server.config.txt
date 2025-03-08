@@ -1,6 +1,5 @@
 import * as process from "process";
-import configProd from "./server-prod.config.js";
-import { ImportMeta } from "./index";
+import { ImportMeta } from "../index";
 
 export const currentVersion = '0.1.01.1';
 
@@ -61,7 +60,6 @@ const config = {
     SECRET_KEY_HD_DB: 'safg1ws235gf1sw32g', // 后端-数据库敏感信息加密盐
     SECRET_CON_PROJ_AUTH: 'wefw35f4465wef46', // 后端主项目-后端子项目请求信息加密盐
   },
-  prod: configProd,
 };
 
 export function getMysqlUrlFromEnv(env: any): string {

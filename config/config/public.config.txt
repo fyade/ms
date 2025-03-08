@@ -1,6 +1,5 @@
 import * as process from "process";
-import configProd from "./public-prod.config.js";
-import { ImportMeta } from "./index";
+import { ImportMeta } from "../index";
 
 export const currentVersion = '0.2.01.00001'
 
@@ -23,5 +22,4 @@ const config = {
   dev: {
     SECRET_KEY: 'awefujhjka@*&$^564', // 前端-后端接口敏感信息加密盐
   },
-  prod: configProd,
 }

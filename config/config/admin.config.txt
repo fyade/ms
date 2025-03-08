@@ -1,6 +1,5 @@
 import * as process from "process";
-import configProd from "./admin-prod.config.js";
-import { ImportMeta } from './index.js'
+import { ImportMeta } from '../index'
 
 export const APP_NAME = '知笙后台管理系统'
 export const currentVersion = '0.1.01.1'
@@ -30,5 +29,4 @@ const config = {
     VITE_API_FILE_PREFIX: '/api-file-dev',
     CHUNK_SIZE: 1024 * 1024 * 2, // 允许上传的文件的最大体积，单位为 B
   },
-  prod: configProd,
 }

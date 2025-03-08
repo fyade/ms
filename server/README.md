@@ -29,7 +29,17 @@
 
 在 配置模块根目录/config/adminConfig.ts 中，根据注释，将每个配置改为自己的配置；
 
-在 模块根目录/.env 中，将配置改为自己的配置；
+在模块根目录下新建 .env 文件，然后将以下内容复制进去，并根据自身情况做修改：
+```
+# Environment variables declared in this file are automatically made available to Prisma.
+# See the documentation for more detail: https://pris.ly/d/prisma-schema#accessing-environment-variables-from-the-schema
+
+# Prisma supports the native connection string format for PostgreSQL, MySQL, SQLite, SQL Server, MongoDB and CockroachDB.
+# See the documentation for all the connection string options: https://pris.ly/d/connection-strings
+
+DATABASE_URL="mysql://root:123456@localhost:3306/table_name"
+
+```
 
 在项目根目录运行 `pnpm "[build] [config & common]"` 命令，构造 config 模块和 common 模块；
 

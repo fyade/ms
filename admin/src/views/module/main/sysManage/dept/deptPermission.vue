@@ -142,13 +142,13 @@ const handleCheckChange = (
 }
 
 // 右侧接口列表
-const loadNode = (node: Node, resolve: (data: MenuDto[]) => void) => {
+const loadNode = (node: Node, resolve: (data: (MenuDto & {leaf?: boolean, disabled?: boolean})[]) => void) => {
   menuApi.selectAll({
     parentId: node.level === 0 ? final.DEFAULT_PARENT_ID : node.data.id,
     type: JSON.stringify({in: {value: [T_IS, T_Inter]}}),
     sysId: selectSys.value || final.DEFAULT_PARENT_ID,
   }).then((res: MenuDto[]) => {
-    resolve(res)
+    resolve(res.map(item => ({...item, leaf: item.type === T_Inter, disabled: item.type === T_IS})))
   })
 }
 
@@ -252,6 +252,8 @@ const selectSysChange = (value: number | undefined) => {
               node-key="id"
               lazy
               show-checkbox
+              check-on-click-node
+              :props="{isLeaf: 'leaf', disabled: 'disabled'}"
               :load="loadNode"
               :check-strictly="true"
               :default-checked-keys="selectPermissionRight"

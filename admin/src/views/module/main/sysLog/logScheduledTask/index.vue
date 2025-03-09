@@ -368,11 +368,11 @@ const fCan2 = () => {
   <div class="zs-button-row">
     <div>
       <el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新</el-button>
-      <el-button type="primary" plain :icon="Plus" @click="gIns">新增</el-button>
-      <el-button type="success" plain :icon="Edit" :disabled="config.bulkOperation?multipleSelection.length===0:multipleSelection.length!==1" @click="gUpd">修改</el-button>
-      <el-button type="danger" plain :icon="Delete" :disabled="multipleSelection.length===0" @click="gDel()">删除</el-button>
+      <!--<el-button type="primary" plain :icon="Plus" @click="gIns">新增</el-button>-->
+      <!--<el-button type="success" plain :icon="Edit" :disabled="config.bulkOperation?multipleSelection.length===0:multipleSelection.length!==1" @click="gUpd">修改</el-button>-->
+      <!--<el-button type="danger" plain :icon="Delete" :disabled="multipleSelection.length===0" @click="gDel()">删除</el-button>-->
       <el-button type="warning" plain :icon="Download" :disabled="multipleSelection.length===0" @click="gExport()">导出</el-button>
-      <el-button type="warning" plain :icon="Upload" @click="gImport">上传</el-button>
+      <!--<el-button type="warning" plain :icon="Upload" @click="gImport">上传</el-button>-->
     </div>
     <div>
       <el-button v-if="filterFormVisible1" plain :icon="Search" circle @click="gChangeFilterFormVisible"/>
@@ -407,14 +407,14 @@ const fCan2 = () => {
       <!--<el-table-column prop="updateTime" :label="logScheduledTaskDict.updateTime" width="220"/>-->
       <!--<el-table-column prop="deleted" :label="logScheduledTaskDict.deleted" width="60"/>-->
       <!--上方几个酌情使用-->
-      <el-table-column fixed="right" label="操作" min-width="140">
-        <template #default="{row}">
-          <div class="zs-table-data-operate-button-row">
-            <el-button link type="primary" size="small" :icon="Edit" @click="tUpd(row.id)">修改</el-button>
-            <el-button link type="danger" size="small" :icon="Delete" @click="tDel(row.id)">删除</el-button>
-          </div>
-        </template>
-      </el-table-column>
+      <!--<el-table-column fixed="right" label="操作" min-width="140">-->
+      <!--  <template #default="{row}">-->
+      <!--    <div class="zs-table-data-operate-button-row">-->
+      <!--      <el-button link type="primary" size="small" :icon="Edit" @click="tUpd(row.id)">修改</el-button>-->
+      <!--      <el-button link type="danger" size="small" :icon="Delete" @click="tDel(row.id)">删除</el-button>-->
+      <!--    </div>-->
+      <!--  </template>-->
+      <!--</el-table-column>-->
       <template #append>
         <div class="el-table-append-box">
           <span>此表格的多选<span class="underline">不支持</span>{{ `跨分页保存，当前已选 ${multipleSelection.length} 条数据。` }}</span>

@@ -81,4 +81,11 @@ export class ScheduledTaskService {
     const res = await this.prisma.deleteById<ScheduledTaskDto>('sys_scheduled_task', ids);
     return R.ok(res);
   }
+
+  async runScheduleTaskOnce(ids: number[]): Promise<R> {
+    const res = await this.prisma.findByIds<ScheduledTaskDto>('sys_scheduled_task', ids);
+    const names = res.map(item => item.target);
+    await this.scheduleService.runScheduleOnce(...names);
+    return R.ok(true);
+  }
 }

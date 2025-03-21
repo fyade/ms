@@ -2,7 +2,7 @@ import { Body, Controller, Get, Post, Req, UsePipes } from '@nestjs/common';
 import { UserService } from './user.service';
 import { LoginDto, RegistDto } from './dto';
 import { R } from '../../../../../common/R';
-import { Authorize } from '../../../../../decorator/authorizeDecorator';
+import { Authorize } from '../../../../../decorator/authorize.decorator';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ValidationPipe } from '../../../../../pipe/validation/validation.pipe';
 import { getIpInfoFromRequest } from '../../../../../util/RequestUtils';
@@ -19,11 +19,11 @@ export class UserLoginController {
 
   @Post('/regist')
   @ApiOperation({
-    summary: '用户注册（支持不同登录角色）',
+    summary: '用户注册（支持不同登录身份）',
   })
   @Authorize({
     permission: '-',
-    label: '用户注册（支持不同登录角色）',
+    label: '用户注册（支持不同登录身份）',
     ifIgnore: true,
     ifIgnoreParamInLog: true,
   })
@@ -37,11 +37,11 @@ export class UserLoginController {
 
   @Post('/login')
   @ApiOperation({
-    summary: '用户登录（支持不同登录角色）',
+    summary: '用户登录（支持不同登录身份）',
   })
   @Authorize({
     permission: '-',
-    label: '用户登录（支持不同登录角色）',
+    label: '用户登录（支持不同登录身份）',
     ifIgnore: true,
     ifIgnoreParamInLog: true,
   })
@@ -56,11 +56,11 @@ export class UserLoginController {
 
   @Post('/adminlogin')
   @ApiOperation({
-    summary: '管理员登录（支持不同登录角色）',
+    summary: '管理员登录（支持不同登录身份）',
   })
   @Authorize({
     permission: '-',
-    label: '管理员登录（支持不同登录角色）',
+    label: '管理员登录（支持不同登录身份）',
     ifIgnore: true,
     ifIgnoreParamInLog: true,
   })
@@ -75,11 +75,11 @@ export class UserLoginController {
 
   @Post('/log-out')
   @ApiOperation({
-    summary: '登出（支持不同登录角色）',
+    summary: '登出（支持不同登录身份）',
   })
   @Authorize({
     permission: '-',
-    label: '登出（支持不同登录角色）',
+    label: '登出（支持不同登录身份）',
     ifIgnore: true,
     ifIgnoreButResolveToken: true,
     ifIgnoreParamInLog: true,

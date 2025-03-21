@@ -16,7 +16,7 @@
 import { CodeGenTableDto } from '../code-gen-table/dto';
 import { CodeGenColumnDto } from '../code-gen-column/dto';
 import { base } from '../../../../../util/base';
-import { Exception } from '../../../../../exception/Exception';
+import { Exception } from '../../../../../exception/exception';
 import { SysDto } from '../../sys-manage/sys/dto';
 import { baseUtils } from "@ms/common";
 
@@ -105,7 +105,7 @@ export function codeGeneration({ table, columns, sys }: { table: CodeGenTableDto
     if (selListParam.numberKeys.length === 0) delete selListParam.numberKeys;
     if (selListParam.completeMatchingKeys.length === 0) delete selListParam.completeMatchingKeys;
     if (tsNames.includes('deleted')) delete selListParam.ifDeleted;
-    
+
     delete selListParam.notNullKeys;
     delete selListParam.numberKeys;
     delete selListParam.completeMatchingKeys;
@@ -364,7 +364,7 @@ ${index % 2 === 1 || ifLastAndSingular ? `          </el-col>
     ]
   ]
   const hd1 =
-`${`import { BaseDto } from '../../../../${isBusiness?'../':''}common/dto/BaseDto';`}
+    `${`import { BaseDto } from '../../../../${isBusiness?'../':''}common/dto/BaseDto';`}
 ${`import { PageDto } from '../../../../${isBusiness?'../':''}common/dto/PageDto';`}
 ${`import { IsNotEmpty } from 'class-validator';`}
 ${`import { Type } from 'class-transformer';`}
@@ -424,7 +424,7 @@ ${`  id: ${columns.find(item => item.colName === 'id').tsType};`}
 ${`}`}
 `;
   const hd2 =
-`${`import { Injectable } from '@nestjs/common';`}
+    `${`import { Injectable } from '@nestjs/common';`}
 ${`import { PrismaService } from '../../../../${isBusiness?'../':''}prisma/prisma.service';`}
 ${`import { R } from '../../../../${isBusiness?'../':''}common/R';`}
 ${`import { ${moduleName2}Dto, ${moduleName2}SelListDto, ${moduleName2}SelAllDto, ${moduleName2}InsOneDto, ${moduleName2}UpdOneDto } from './dto';`}
@@ -486,10 +486,10 @@ ${`  }`}
 ${`}`}
 `;
   const hd3 =
-`${`import { Body, Controller, Delete, Get, Param, ParseArrayPipe, Post, Put, Query, UsePipes } from '@nestjs/common';`}
+    `${`import { Body, Controller, Delete, Get, Param, ParseArrayPipe, Post, Put, Query, UsePipes } from '@nestjs/common';`}
 ${`import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';`}
 ${`import { ${moduleName2}Service } from './${moduleName3}.service';`}
-${`import { Authorize } from '../../../../${isBusiness?'../':''}decorator/authorizeDecorator';`}
+${`import { Authorize } from '../../../../${isBusiness?'../':''}decorator/authorize.decorator';`}
 ${`import { R } from '../../../../${isBusiness?'../':''}common/R';`}
 ${`import { ValidationPipe } from '../../../../${isBusiness?'../':''}pipe/validation/validation.pipe';`}
 ${`import { ${moduleName2}SelListDto, ${moduleName2}SelAllDto, ${moduleName2}InsOneDto, ${moduleName2}UpdOneDto } from './dto';`}
@@ -638,7 +638,7 @@ ${`  }`}
 ${`}`}
 `;
   const hd4 =
-`${`import { Module } from '@nestjs/common';`}
+    `${`import { Module } from '@nestjs/common';`}
 ${`import { ${moduleName2}Controller } from './${moduleName3}.controller';`}
 ${`import { ${moduleName2}Service } from './${moduleName3}.service';`}
 ${``}
@@ -650,20 +650,20 @@ ${`export class ${moduleName2}Module {`}
 ${`}`}
 `;
   const hd5 =
-`在 app.module.ts 中，导入 module 文件，并在 @module().imports 中添加，具体语句如下：
+    `在 app.module.ts 中，导入 module 文件，并在 @module().imports 中添加，具体语句如下：
 import { ${moduleName2}Module } from './module/${businessName3}/${moduleName3}/${moduleName3}.module';
 ${moduleName2}Module
 `;
   const qd1 =
-`${`import { BaseClass, PageDto } from "@/type/tablePage.ts";`}
+    `${`import { BaseClass, PageDto } from "@/type/tablePage.ts";`}
 ${``}
 ${`export class ${moduleName2}Dto extends BaseClass {`}
 ${
-  columns
-    .filter(column => baseInterfaceColumns.indexOf(column.tsName) === -1)
-    .map(column => `  ${column.tsName}!: ${column.tsType};`)
-    .join('\n')
-}
+      columns
+        .filter(column => baseInterfaceColumns.indexOf(column.tsName) === -1)
+        .map(column => `  ${column.tsName}!: ${column.tsType};`)
+        .join('\n')
+    }
 ${`}`}
 ${``}
 ${`export class ${moduleName2}SelDto extends PageDto {`}
@@ -674,11 +674,11 @@ ${`}`}
 ${``}
 ${`export class ${moduleName2}InsDto {`}
 ${
-    columns
-      .filter(item => item.ifIns === base.Y)
-      .map(column => `  ${column.tsName}!: ${column.tsType};`)
-      .join('\n')
-  }
+      columns
+        .filter(item => item.ifIns === base.Y)
+        .map(column => `  ${column.tsName}!: ${column.tsType};`)
+        .join('\n')
+    }
 ${`}`}
 ${``}
 ${`export class ${moduleName2}UpdDto extends ${moduleName2}InsDto {`}
@@ -686,21 +686,21 @@ ${`  id!: ${columns.find(item => item.colName === 'id').tsType};`}
 ${`}`}
 `;
   const qd2 =
-`${`import { publicDict } from "@/utils/base.ts";`}
+    `${`import { publicDict } from "@/utils/base.ts";`}
 ${`import { ${moduleName2}Dto } from "@/type/module/${sysPath}${isBusiness?`/${businessName1}`:''}/${moduleName1}.ts";`}
 ${``}
 ${`export const ${moduleName1}Dict: { [P in keyof ${moduleName2}Dto]: string } = {`}
 ${`  ...publicDict,`}
 ${
-    columns
-      .filter(item=>Object.keys(publicDict).indexOf(item.tsName)===-1)
-      .map(item=>`  ${item.tsName}: '${item.colDescr}',`)
-      .join('\n')
-  }
+      columns
+        .filter(item=>Object.keys(publicDict).indexOf(item.tsName)===-1)
+        .map(item=>`  ${item.tsName}: '${item.colDescr}',`)
+        .join('\n')
+    }
 ${`}`}
 `;
   const qd3 =
-`${`import request from "@/api/request.ts";`}
+    `${`import request from "@/api/request.ts";`}
 ${`import { ApiConfig } from "@/type/tablePage.ts";`}
 ${`import { ${moduleName2}Dto, ${moduleName2}UpdDto } from "@/type/module/${sysPath}${isBusiness?`/${businessName1}`:''}/${moduleName1}.ts";`}
 ${``}
@@ -788,7 +788,7 @@ ${`  })`}
 ${`}`}
 `;
   const qd4 =
-`${`<script lang="ts">`}
+    `${`<script lang="ts">`}
 ${`export default {`}
 ${`  name: '${sysPath}${isBusiness?`:${businessName1}`:''}:${moduleName1}'`}
 ${`}`}
@@ -810,11 +810,11 @@ ${`const state = reactive<State2<${moduleName2}Dto, ${moduleName2}UpdDto>>({`}
 ${`  dialogForm: {`}
 ${`    id: ${columns.find(item => item.colName === 'id').tsType === 'number' ? -1 : ''},`}
 ${
-    columns
-      .filter(item => item.ifIns === base.Y)
-      .map(column => `    ${column.tsName}: ${qd3_dialogFormDefaultData.find(funcs => funcs[0](column.tsName))[1]()},`)
-      .join('\n')
-  }
+      columns
+        .filter(item => item.ifIns === base.Y)
+        .map(column => `    ${column.tsName}: ${qd3_dialogFormDefaultData.find(funcs => funcs[0](column.tsName))[1]()},`)
+        .join('\n')
+    }
 ${`  },`}
 ${`  dialogForms: [],`}
 ${`  dialogForms_error: {},`}
@@ -822,11 +822,11 @@ ${`  filterForm: {},`}
 ${`})`}
 ${`const dFormRules: FormRules = {`}
 ${
-    columns
-      .filter(item=>item.ifRequired===base.Y)
-      .map(item=>`  ${item.tsName}: [{required: true, trigger: 'change'}],`)
-      .join('\n')
-  }
+      columns
+        .filter(item=>item.ifRequired===base.Y)
+        .map(item=>`  ${item.tsName}: [{required: true, trigger: 'change'}],`)
+        .join('\n')
+    }
 ${`}`}
 ${`const config = new TablePageConfig({`}
 ${`  bulkOperation: true,`}
@@ -908,28 +908,28 @@ ${`          <span>{{ state.dialogForm.id }}</span>`}
 ${`        </el-form-item>`}
 ${`        <!--在此下方添加表单项-->`}
 ${
-    [
-      ...columns
-        .filter(item => item.ifIns === base.Y)
-        .filter(item => item.tsName !== 'remark')
-        .map((item, index) => `${qd3_dialogFormForm.find(funcs => funcs[0](item.formType, 0, 0))[1](
-          item.tsName,
-          index,
-          columns.filter(item => item.ifIns === base.Y).filter(item => item.tsName !== 'remark').length)}`
-        ),
-      ...columns
-        .filter(item => item.ifIns === base.Y)
-        .filter(item => item.tsName === 'remark')
-        .map(() => `        <el-row>
+      [
+        ...columns
+          .filter(item => item.ifIns === base.Y)
+          .filter(item => item.tsName !== 'remark')
+          .map((item, index) => `${qd3_dialogFormForm.find(funcs => funcs[0](item.formType, 0, 0))[1](
+            item.tsName,
+            index,
+            columns.filter(item => item.ifIns === base.Y).filter(item => item.tsName !== 'remark').length)}`
+          ),
+        ...columns
+          .filter(item => item.ifIns === base.Y)
+          .filter(item => item.tsName === 'remark')
+          .map(() => `        <el-row>
           <el-col :span="24">
             <el-form-item :label="${moduleName1}Dict.remark" prop="remark">
               <el-input type="textarea" v-model="state.dialogForm.remark" :placeholder="${moduleName1}Dict.remark"/>
             </el-form-item>
           </el-col>
         </el-row>`)
-    ]
-      .join('\n')
-  }
+      ]
+        .join('\n')
+    }
 ${`        <!--在此上方添加表单项-->`}
 ${`        <!--<el-form-item :label="${moduleName1}Dict.orderNum" prop='orderNum'>-->`}
 ${`        <!--  <el-input-number v-model="state.dialogForm.orderNum" controls-position="right"/>-->`}
@@ -964,11 +964,11 @@ ${`              #`}
 ${`            </template>`}
 ${`          </el-table-column>`}
 ${`          <!--在此下方添加表格列-->`}${
-    columns
-      .filter(item => item.ifIns === base.Y)
-      .map((item, index) => `${qd3_dialogFormForm.find(funcs => funcs[0](item.formType, 0, 0))[2](item.tsName, index, columns.filter(item => item.ifIns === base.Y).length)}`)
-      .join('')
-  }
+      columns
+        .filter(item => item.ifIns === base.Y)
+        .map((item, index) => `${qd3_dialogFormForm.find(funcs => funcs[0](item.formType, 0, 0))[2](item.tsName, index, columns.filter(item => item.ifIns === base.Y).length)}`)
+        .join('')
+    }
 ${`          <!--在此上方添加表格列-->`}
 ${`          <el-table-column fixed="right" label="操作" min-width="120">`}
 ${`            <template v-if="dialogType.value===final.ins" #default="{$index}">`}
@@ -1037,12 +1037,12 @@ ${`      <!--<el-table-column fixed prop="id" :label="${moduleName1}Dict.id" wid
 ${`      <!--上面id列的宽度改一下-->`}
 ${`      <!--在此下方添加表格列-->`}
 ${
-    columns
-      .filter(item => item.ifSelMore === base.Y)
-      .map(item => `      <el-table-column prop="${item.tsName}" :label="${moduleName1}Dict.${item.tsName}" width="120"/>`,
-      )
-      .join('\n')
-  }
+      columns
+        .filter(item => item.ifSelMore === base.Y)
+        .map(item => `      <el-table-column prop="${item.tsName}" :label="${moduleName1}Dict.${item.tsName}" width="120"/>`,
+        )
+        .join('\n')
+    }
 ${`      <!--在此上方添加表格列-->`}
 ${`      <!--<el-table-column prop="createRole" :label="${moduleName1}Dict.createRole" width="120"/>-->`}
 ${`      <!--<el-table-column prop="updateRole" :label="${moduleName1}Dict.updateRole" width="120"/>-->`}
@@ -1106,12 +1106,12 @@ ${`</style>`}
       canCopy: true,
       code: hd4,
     },
-    {
-      fileName: `app.module.ts`,
-      filePath: `/src`,
-      canCopy: false,
-      code: hd5,
-    },
+    // {
+    //   fileName: `app.module.ts`,
+    //   filePath: `/src`,
+    //   canCopy: false,
+    //   code: hd5,
+    // },
     {
       fileName: `${moduleName1}.ts`,
       filePath: `/src/type/module/${sysPath}${isBusiness?`/${businessName1}`:''}`,

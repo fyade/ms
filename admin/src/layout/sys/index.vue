@@ -147,7 +147,7 @@ const sysConfigStore = useSysConfigStore();
     flex: none;
     padding: 8px 0;
     height: 30px;
-    //overflow: auto hidden;
+
     > * {
       &:first-child {
         padding-left: 8px;

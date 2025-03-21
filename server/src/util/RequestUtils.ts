@@ -24,6 +24,7 @@ export function getIpInfoFromRequest(request: Request) {
     browser: loginBrowser,
     os: loginOs,
     proto: proto,
+    referer: request.headers.referer,
   };
 }
 

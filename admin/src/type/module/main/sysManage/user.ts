@@ -41,12 +41,19 @@ export class UserDto2 {
   nickname!: string;
 }
 
-export class LoginDto {
+export class LoginDto2 {
   username!: string
   password!: string
+  loginRole!: string
+  psdType?: string
 }
 
-export class RegistDto extends LoginDto {
+export class LoginDto extends LoginDto2 {
+  verificationCode!: string
+  verificationCodeUuid!: string
+}
+
+export class RegistDto extends LoginDto2 {
 }
 
 export class UserUpdPsdDto {

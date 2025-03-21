@@ -85,3 +85,19 @@ function ordinal(n: number): string {
   const v: number = n % 100;
   return n + (s[(v - 20) % 10] || s[v] || s[0]);
 }
+
+/**
+ * 时间差转为字符串格式
+ * @param number
+ */
+export function timeDiffToStr(number: number) {
+  let num = number;
+  const ms = num % 1000;
+  num = (num - ms) / 1000;
+  const s = num % 60;
+  num = (num - s) / 60;
+  const m = num % 60;
+  num = (num - m) / 60;
+  const h = num;
+  return `${h}时${m}分${s}秒`;
+}

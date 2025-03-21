@@ -1,5 +1,21 @@
 <script setup lang="ts">
 import { CONFIG } from "@/utils/base.ts";
+import { BCService } from "@/services/broadcastChannel.ts";
+import { useUserStore } from "@/store/module/user.ts";
+import { ElMessageBox } from 'element-plus'
+
+const userStore = useUserStore()
+
+BCService.on('login', (data) => {
+  if (userStore.ifLogin && (data.username !== userStore.userinfo.username || data.loginRole !== userStore.loginRole)) {
+    ElMessageBox.alert(
+        '在其他标签页有其他用户登录，当前标签页用户即将退出。',
+        '警告',
+    ).finally(() => {
+      userStore.logOut()
+    })
+  }
+})
 </script>
 
 <template>

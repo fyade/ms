@@ -21,6 +21,7 @@ import { SysDto } from "@/type/module/main/sysManage/sys.ts";
 import { sysApi } from "@/api/module/main/sysManage/sys.ts";
 import MenuIpWhiteList from "@/views/module/main/sysManage/menu/menuIpWhiteList.vue";
 import { objectUtils } from "@ms/common";
+import MenuThrottle from "@/views/module/main/sysManage/menu/menuThrottle.vue";
 
 const state = reactive<State2<MenuDto, MenuUpdDto>>({
   dialogForm: {
@@ -458,15 +459,38 @@ const gInsI22 = () => {
   gInsI2()
 }
 
-const drawerIpWhiteList = ref(false)
 const selectMenu = ref<MenuDto>(new MenuDto())
+const drawerIpWhiteList = ref(false)
 const setIpWhiteList = (row: MenuDto) => {
   selectMenu.value = row
   drawerIpWhiteList.value = true
 }
+
+const throttleVisible = ref(false)
+const setThrottle = (row: MenuDto) => {
+  selectMenu.value = row
+  throttleVisible.value = true
+}
 </script>
 
 <template>
+  <!--请求限速管理-->
+  <el-dialog
+      v-model="throttleVisible"
+      :width="CONFIG.dialog_width_wider"
+      draggable
+      append-to-body
+      destroy-on-close
+      title="请求限速管理"
+  >
+    <MenuThrottle
+        :menu="selectMenu"
+    />
+    <template #footer>
+      <el-button plain @click="throttleVisible=false">取消</el-button>
+    </template>
+  </el-dialog>
+
   <!--ip白名单管理-->
   <el-dialog
       v-model="drawerIpWhiteList"
@@ -1470,88 +1494,88 @@ const setIpWhiteList = (row: MenuDto) => {
       </div>
 
       <div class="zs-table-data">
-          <!--数据表格-->
-          <el-table
-              v-loading="tableLoadingRef"
-              :data="tableData2"
-              :expand-row-keys="expandRowKeys"
-              row-key="id"
-              :default-expand-all="false"
-              @selection-change="handleSelectionChange"
-          >
-            <el-table-column fixed type="selection" width="55"/>
-            <!--<el-table-column fixed prop="id" :label="menuDict.id" width="180"/>-->
-            <!--上面id列的宽度改一下-->
-            <!--在此下方添加表格列-->
-            <el-table-column fixed prop="label" :label="menuDict.label" width="240"/>
-            <el-table-column prop="icon" :label="menuDict.icon" width="120">
-              <template #default="{row}">
-                <SvgIcon :name="row.icon" :color="CONFIG.icon_black"/>
-              </template>
-            </el-table-column>
-            <el-table-column prop="path" :label="menuDict.path" width="200"/>
-            <el-table-column prop="perms" :label="menuDict.perms" width="280"/>
-            <el-table-column prop="orderNum" :label="menuDict.orderNum" width="120"/>
-            <el-table-column prop="ifLink" :label="menuDict.ifLink" width="120">
-              <template #default="{row}">
-                <el-tag v-if="row.ifLink===final.Y" type="primary">是</el-tag>
+        <!--数据表格-->
+        <el-table
+            v-loading="tableLoadingRef"
+            :data="tableData2"
+            :expand-row-keys="expandRowKeys"
+            row-key="id"
+            :default-expand-all="false"
+            @selection-change="handleSelectionChange"
+        >
+          <el-table-column fixed type="selection" width="55"/>
+          <!--<el-table-column fixed prop="id" :label="menuDict.id" width="180"/>-->
+          <!--上面id列的宽度改一下-->
+          <!--在此下方添加表格列-->
+          <el-table-column fixed prop="label" :label="menuDict.label" width="240"/>
+          <el-table-column prop="icon" :label="menuDict.icon" width="120">
+            <template #default="{row}">
+              <SvgIcon :name="row.icon" :color="CONFIG.icon_black"/>
+            </template>
+          </el-table-column>
+          <el-table-column prop="path" :label="menuDict.path" width="200"/>
+          <el-table-column prop="perms" :label="menuDict.perms" width="280"/>
+          <el-table-column prop="orderNum" :label="menuDict.orderNum" width="120"/>
+          <el-table-column prop="ifLink" :label="menuDict.ifLink" width="120">
+            <template #default="{row}">
+              <el-tag v-if="row.ifLink===final.Y" type="primary">是</el-tag>
+              <el-tag v-else type="info">否</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column prop="ifVisible" :label="menuDict.ifVisible" width="120">
+            <template #default="{row}">
+              <el-tag v-if="row.ifVisible===final.Y" type="primary">是</el-tag>
+              <el-tag v-else type="info">否</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column prop="ifDisabled" :label="menuDict.ifDisabled" width="120">
+            <template #default="{row}">
+              <el-tag v-if="row.ifDisabled===final.Y" type="primary">是</el-tag>
+              <el-tag v-else type="info">否</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column prop="ifFixed" :label="menuDict.ifFixed" width="120">
+            <template #default="{row}">
+              <template v-if="row.type === T_COMP">
+                <el-tag v-if="row.ifFixed===final.Y" type="primary">是</el-tag>
                 <el-tag v-else type="info">否</el-tag>
               </template>
-            </el-table-column>
-            <el-table-column prop="ifVisible" :label="menuDict.ifVisible" width="120">
-              <template #default="{row}">
-                <el-tag v-if="row.ifVisible===final.Y" type="primary">是</el-tag>
-                <el-tag v-else type="info">否</el-tag>
-              </template>
-            </el-table-column>
-            <el-table-column prop="ifDisabled" :label="menuDict.ifDisabled" width="120">
-              <template #default="{row}">
-                <el-tag v-if="row.ifDisabled===final.Y" type="primary">是</el-tag>
-                <el-tag v-else type="info">否</el-tag>
-              </template>
-            </el-table-column>
-            <el-table-column prop="ifFixed" :label="menuDict.ifFixed" width="120">
-              <template #default="{row}">
-                <template v-if="row.type === T_COMP">
-                  <el-tag v-if="row.ifFixed===final.Y" type="primary">是</el-tag>
-                  <el-tag v-else type="info">否</el-tag>
-                </template>
-                <template v-else></template>
-              </template>
-            </el-table-column>
-            <el-table-column prop="component" :label="menuDict.component" width="280"/>
-            <el-table-column prop="remark" :label="menuDict.remark" width="200"/>
-            <!--在此上方添加表格列-->
-            <!--<el-table-column prop="createBy" :label="menuDict.createBy" width="120"/>-->
-            <!--<el-table-column prop="updateBy" :label="menuDict.updateBy" width="120"/>-->
-            <!--<el-table-column prop="createTime" :label="menuDict.createTime" width="220"/>-->
-            <!--<el-table-column prop="updateTime" :label="menuDict.updateTime" width="220"/>-->
-            <!--<el-table-column prop="deleted" :label="menuDict.deleted" width="60"/>-->
-            <!--上方几个酌情使用-->
-            <el-table-column fixed="right" label="操作" min-width="140">
-              <template #default="{row}">
-                <div class="zs-table-data-operate-button-row">
-                  <el-button v-if="row.type!==T_Inter" link type="primary" size="small" :icon="Plus" @click="tIns(row.id)">新增</el-button>
-                  <el-button link type="primary" size="small" :icon="Edit" @click="tUpd(row.id)">修改</el-button>
-                  <el-button link type="danger" size="small" :icon="Delete" @click="tDel(row.id)">删除</el-button>
-                </div>
-              </template>
-            </el-table-column>
-            <template #append>
-              <div class="el-table-append-box">
-                <span>此表格的多选<span class="underline">不支持</span>{{ `跨分页保存，当前已选 ${multipleSelection.length} 条数据。` }}</span>
+              <template v-else></template>
+            </template>
+          </el-table-column>
+          <el-table-column prop="component" :label="menuDict.component" width="280"/>
+          <el-table-column prop="remark" :label="menuDict.remark" width="200"/>
+          <!--在此上方添加表格列-->
+          <!--<el-table-column prop="createBy" :label="menuDict.createBy" width="120"/>-->
+          <!--<el-table-column prop="updateBy" :label="menuDict.updateBy" width="120"/>-->
+          <!--<el-table-column prop="createTime" :label="menuDict.createTime" width="220"/>-->
+          <!--<el-table-column prop="updateTime" :label="menuDict.updateTime" width="220"/>-->
+          <!--<el-table-column prop="deleted" :label="menuDict.deleted" width="60"/>-->
+          <!--上方几个酌情使用-->
+          <el-table-column fixed="right" label="操作" min-width="140">
+            <template #default="{row}">
+              <div class="zs-table-data-operate-button-row">
+                <el-button v-if="row.type!==T_Inter" link type="primary" size="small" :icon="Plus" @click="tIns(row.id)">新增</el-button>
+                <el-button link type="primary" size="small" :icon="Edit" @click="tUpd(row.id)">修改</el-button>
+                <el-button link type="danger" size="small" :icon="Delete" @click="tDel(row.id)">删除</el-button>
               </div>
             </template>
-          </el-table>
+          </el-table-column>
+          <template #append>
+            <div class="el-table-append-box">
+              <span>此表格的多选<span class="underline">不支持</span>{{ `跨分页保存，当前已选 ${multipleSelection.length} 条数据。` }}</span>
+            </div>
+          </template>
+        </el-table>
 
-          <!--分页-->
-          <Pagination
-              v-if="config.pageQuery"
-              :total="total"
-              :page-num="pageParam.pageNum"
-              :page-size="pageParam.pageSize"
-              @page-change="pageChange"
-          />
+        <!--分页-->
+        <Pagination
+            v-if="config.pageQuery"
+            :total="total"
+            :page-num="pageParam.pageNum"
+            :page-size="pageParam.pageSize"
+            @page-change="pageChange"
+        />
       </div>
     </el-tab-pane>
 
@@ -1623,6 +1647,7 @@ const setIpWhiteList = (row: MenuDto) => {
                     <el-dropdown-menu>
                       <el-dropdown-item><el-button link type="info" size="small" :icon="Edit" @click="manageInter(row)">接口管理</el-button></el-dropdown-item>
                       <el-dropdown-item><el-button link type="info" size="small" :icon="Edit" @click="setIpWhiteList(row)">IP白名单管理</el-button></el-dropdown-item>
+                      <el-dropdown-item><el-button link type="info" size="small" :icon="Edit" @click="setThrottle(row)">请求限速管理</el-button></el-dropdown-item>
                     </el-dropdown-menu>
                   </template>
                 </el-dropdown>

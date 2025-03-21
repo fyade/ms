@@ -7,7 +7,7 @@ import { AuthService } from '../../../auth/auth.service';
 import { requestSF } from '../../../../api/request';
 import { base } from '../../../../util/base';
 import { BaseContextService } from '../../../base-context/base-context.service';
-import { Exception } from "../../../../exception/Exception";
+import { Exception } from "../../../../exception/exception";
 
 @Injectable()
 export class AlgorithmService {

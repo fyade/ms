@@ -5,7 +5,7 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { reactive } from "vue";
+import { reactive, ref } from "vue";
 import { CONFIG, final } from "@/utils/base.ts";
 import Pagination from "@/components/pagination/pagination.vue";
 import { funcTablePage } from "@/composition/tablePage/tablePage2.ts";
@@ -13,7 +13,7 @@ import { State2, TablePageConfig } from "@/type/tablePage.ts";
 import { FormRules } from "element-plus";
 import { Delete, Download, Edit, Plus, Refresh, Upload, Search } from "@element-plus/icons-vue";
 import { ScheduledTaskDto, ScheduledTaskUpdDto } from "@/type/module/main/sysMonitor/scheduledTask.ts";
-import { scheduledTaskApi } from "@/api/module/main/sysMonitor/scheduledTask.ts";
+import { runScheduleTaskOnce, scheduledTaskApi } from "@/api/module/main/sysMonitor/scheduledTask.ts";
 import { scheduledTaskDict } from "@/dict/module/main/sysMonitor/scheduledTask.ts";
 
 const state = reactive<State2<ScheduledTaskDto, ScheduledTaskUpdDto>>({
@@ -28,7 +28,11 @@ const state = reactive<State2<ScheduledTaskDto, ScheduledTaskUpdDto>>({
   },
   dialogForms: [],
   dialogForms_error: {},
-  filterForm: {},
+  filterForm: {
+    name: '',
+    target: '',
+    cronExpression: '',
+  },
 })
 const dFormRules: FormRules = {
   name: [{required: true, trigger: 'change'}],
@@ -98,6 +102,15 @@ const changeStatus = (row: ScheduledTaskDto) => {
     refresh()
   }).finally(() => {
     isLoading = false
+  })
+}
+
+const runOnceLoading = ref<Map<number, boolean>>(new Map())
+const runOnce = (id: number) => {
+  runOnceLoading.value.set(id, true);
+  runScheduleTaskOnce([id]).then(res => {
+  }).finally(() => {
+    runOnceLoading.value.set(id, false);
   })
 }
 </script>
@@ -296,9 +309,15 @@ const changeStatus = (row: ScheduledTaskDto) => {
         @keyup.enter="fEnter"
     >
       <!--在此下方添加表单项-->
-      <!--<el-form-item :label="scheduledTaskDict." prop="">-->
-      <!--  <el-input v-model="state.filterForm." :placeholder="scheduledTaskDict."/>-->
-      <!--</el-form-item>-->
+      <el-form-item :label="scheduledTaskDict.name" prop="name">
+        <el-input v-model="state.filterForm.name" :placeholder="scheduledTaskDict.name"/>
+      </el-form-item>
+      <el-form-item :label="scheduledTaskDict.target" prop="target">
+        <el-input v-model="state.filterForm.target" :placeholder="scheduledTaskDict.target"/>
+      </el-form-item>
+      <el-form-item :label="scheduledTaskDict.cronExpression" prop="cronExpression">
+        <el-input v-model="state.filterForm.cronExpression" :placeholder="scheduledTaskDict.cronExpression"/>
+      </el-form-item>
       <!--在此上方添加表单项-->
       <el-form-item>
         <el-button type="primary" @click="fCon">筛选</el-button>
@@ -359,6 +378,7 @@ const changeStatus = (row: ScheduledTaskDto) => {
       <el-table-column fixed="right" label="操作" min-width="140">
         <template #default="{row}">
           <div class="zs-table-data-operate-button-row">
+            <el-button :loading="runOnceLoading.get(row.id)" :disabled="runOnceLoading.get(row.id)" link type="primary" size="small" :icon="Edit" @click="runOnce(row.id)">运行一次</el-button>
             <el-button link type="primary" size="small" :icon="Edit" @click="tUpd(row.id)">修改</el-button>
             <el-button link type="danger" size="small" :icon="Delete" @click="tDel(row.id)">删除</el-button>
           </div>

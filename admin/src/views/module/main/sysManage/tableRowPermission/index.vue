@@ -93,14 +93,14 @@ const allRoles2 = computed(() => allRoles.value)
 const allDepts2 = computed(() => arr2ToDiguiObj(allDepts.value))
 const selectRTChange = () => {
   // if (selectRT.value === T_ROLE) {
-    roleApi.selectAll({}).then(res => {
-      allRoles.value = res
-    })
+  roleApi.selectAll({}).then(res => {
+    allRoles.value = res
+  })
   // }
   // if (selectRT.value === T_DEPT) {
-    deptApi.selectAll({}).then(res => {
-      allDepts.value = res
-    })
+  deptApi.selectAll({}).then(res => {
+    allDepts.value = res
+  })
   // }
 }
 selectRTChange()
@@ -151,24 +151,24 @@ const nodeClick = (row: MenuDto) => {
       <!--  <el-radio-button :value="T_DEPT" border>{{ uTDPTypeDict[T_DEPT] }}</el-radio-button>-->
       <!--</el-radio-group>-->
       <!--<div v-if="selectRT===T_ROLE">-->
-        <el-divider content-position="left" border-style="dashed">{{ uTDPTypeDict[T_ROLE] }}</el-divider>
-        <el-tree
-            ref="treeRole"
-            :data="allRoles2"
-            node-key="id"
-            highlight-current
-            @node-click="nodeClickRole"
-        />
+      <el-divider content-position="left" border-style="dashed">{{ uTDPTypeDict[T_ROLE] }}</el-divider>
+      <el-tree
+          ref="treeRole"
+          :data="allRoles2"
+          node-key="id"
+          highlight-current
+          @node-click="nodeClickRole"
+      />
       <!--</div>-->
       <!--<div v-if="selectRT===T_DEPT">-->
-        <el-divider content-position="left" border-style="dashed">{{ uTDPTypeDict[T_DEPT] }}</el-divider>
-        <el-tree
-            ref="treeDept"
-            :data="allDepts2"
-            node-key="id"
-            highlight-current
-            @node-click="nodeClickDept"
-        />
+      <el-divider content-position="left" border-style="dashed">{{ uTDPTypeDict[T_DEPT] }}</el-divider>
+      <el-tree
+          ref="treeDept"
+          :data="allDepts2"
+          node-key="id"
+          highlight-current
+          @node-click="nodeClickDept"
+      />
       <!--</div>-->
     </div>
     <!--中间，选择具体的接口-->

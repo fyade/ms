@@ -92,7 +92,8 @@ refreshVerificationCode()
   z-index: 1;
   left: 50%;
   top: 50%;
-  width: 500px;
+  width: calc(100% - 20px);
+  max-width: 500px;
   height: 500px;
   transform: translate(-50%, -50%);
 }

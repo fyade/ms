@@ -4,7 +4,7 @@ import { R } from '../../../../../common/R';
 import { MenuDto, MenuSelListDto, MenuSelAllDto, MenuInsOneDto, MenuUpdOneDto } from './dto';
 import { CachePermissionService } from '../../../../cache/cache.permission.service';
 import { BaseContextService } from '../../../../base-context/base-context.service';
-import { Exception } from "../../../../../exception/Exception";
+import { Exception } from "../../../../../exception/exception";
 
 @Injectable()
 export class MenuService {

@@ -17,6 +17,10 @@ export class RedisService {
     });
   }
 
+  getRedis(): Redis {
+    return this.redis;
+  }
+
   // 字符串操作
 
   async set(key: string, value: string): Promise<void> {
@@ -27,8 +31,15 @@ export class RedisService {
     return await this.redis.get(key);
   }
 
-  async del(key: string): Promise<number> {
-    return await this.redis.del(key);
+  async del(...keys: string[]): Promise<number> {
+    return await this.redis.del(...keys);
+  }
+
+  async mget(...keys: string[]): Promise<(string | null)[]> {
+    if (keys.length === 0) {
+      return [];
+    }
+    return this.redis.mget(...keys);
   }
 
   async incr(key: string): Promise<number> {

@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { LogAlgorithmCallDto } from '../module/algorithm/log-algorithm-call/dto';
 import { getIpInfoFromRequest } from '../../util/RequestUtils';
 import { UserGroupPermissionDto } from '../module/algorithm/user-group-permission/dto';
-import { Exception } from '../../exception/Exception';
+import { Exception } from '../../exception/exception';
 import { Request } from 'express';
 import { MenuDto } from '../module/main/sys-manage/menu/dto';
 import { MenuIpWhiteListDto } from '../module/main/sys-manage/menu-ip-white-list/dto';
@@ -13,6 +13,7 @@ import { UserTableDefaultPermissionDto } from '../module/main/other-user/user-ta
 import { SysDto } from '../module/main/sys-manage/sys/dto';
 import { PrismaoService } from '../../prisma/prismao.service';
 import { baseUtils, timeUtils } from "@ms/common";
+import { MenuThrottleDto } from "../module/main/sys-manage/menu-throttle/dto";
 
 @Injectable()
 export class AuthService {
@@ -109,65 +110,47 @@ export class AuthService {
    */
   async ifIpInWhiteListOfPermission(permission: string, request: Request): Promise<boolean> {
     const menuIpWhiteLists = await this.cachePermissionService.getIpWhiteListOfPermissionInCache(permission);
-    const ips = [];
+    const ips: MenuIpWhiteListDto[] = [];
     if (menuIpWhiteLists) {
       const parse = JSON.parse(menuIpWhiteLists) as MenuIpWhiteListDto[];
       ips.push(...parse);
     } else {
       // 接口是否存在
-      const menu: MenuDto[] = await this.prismao.$queryRaw`
-          select id          as id,
-                 label       as label,
-                 type        as type,
-                 path        as path,
-                 parent_id   as parentId,
-                 component   as component,
-                 icon        as icon,
-                 order_num   as orderNum,
-                 if_link     as ifLink,
-                 if_visible  as ifVisible,
-                 if_disabled as ifDisabled,
-                 if_public   as ifPublic,
-                 perms       as perms,
-                 sys_id      as sysId,
-                 remark      as remark,
-                 create_by   as createBy,
-                 update_by   as updateBy,
-                 create_time as createTime,
-                 update_time as updateTime,
-                 deleted     as deleted
-          from sys_menu
-          where deleted = ${base.N}
-            and if_disabled = ${base.N}
-            and type = ${T_IS}
-            and id =
-                (select parent_id
-                 from sys_menu
-                 where deleted = ${base.N}
-                   and if_disabled = ${base.N}
-                   and type = ${T_Inter}
-                   and perms = ${permission});
-      `;
-      if (menu.length === 0) {
+      const menus = await this.prismao.getOrigin().sys_menu.findMany({
+        where: {
+          if_disabled: base.N,
+          type: T_IS,
+          id: {
+            in: (
+              await this.prismao.getOrigin().sys_menu.findMany({
+                where: {
+                  if_disabled: base.N,
+                  type: T_Inter,
+                  perms: permission,
+                  ...this.prismao.defaultSelArg().where,
+                },
+                select: {
+                  parent_id: true,
+                },
+              })
+            ).map((item) => item.parent_id),
+          },
+          ...this.prismao.defaultSelArg().where,
+        },
+      });
+      if (menus.length === 0) {
         return true;
       }
-      const ips_: MenuIpWhiteListDto[] = await this.prismao.$queryRaw`
-          select id          as id,
-                 menu_id     as menuId,
-                 white_list  as whiteList,
-                 from_type   as fromType,
-                 type        as type,
-                 remark      as remark,
-                 create_by   as createBy,
-                 update_by   as updateBy,
-                 create_time as createTime,
-                 update_time as updateTime,
-                 deleted     as deleted
-          from sys_menu_ip_white_list
-          where deleted = ${base.N}
-            and menu_id = ${menu[0].id}
-            and type = ${T_IS};
-      `;
+      const ips__ = await this.prismao.getOrigin().sys_menu_ip_white_list.findMany({
+        where: {
+          type: T_IS,
+          menu_id: {
+            in: menus.map((item) => item.id),
+          },
+          ...this.prismao.defaultSelArg().where,
+        },
+      });
+      const ips_ = baseUtils.objToCamelCase<MenuIpWhiteListDto[]>(ips__);
       ips.push(...ips_);
       await this.cachePermissionService.setIpWhiteListOfPermissionInCache(permission, ips_);
     }
@@ -367,6 +350,85 @@ export class AuthService {
   }
 
   /**
+   * 是否请求频繁
+   * @param request
+   * @param permission
+   */
+  async ifRequestThrottle(request: Request, permission: string) {
+    const ipInfo = getIpInfoFromRequest(request);
+    const menuThrottles: MenuThrottleDto[] = [];
+    const s = await this.cachePermissionService.getMenuThrottleInCache(permission);
+    if (s) {
+      const parse = JSON.parse(s) as MenuThrottleDto[];
+      menuThrottles.push(...parse);
+    } else {
+      const menus = await this.prismao.getOrigin().sys_menu.findMany({
+        where: {
+          if_disabled: base.N,
+          type: T_IS,
+          id: {
+            in: (
+              await this.prismao.getOrigin().sys_menu.findMany({
+                where: {
+                  if_disabled: base.N,
+                  type: T_Inter,
+                  perms: permission,
+                  ...this.prismao.defaultSelArg().where,
+                },
+                select: {
+                  parent_id: true,
+                },
+              })
+            ).map((item) => item.parent_id),
+          },
+          ...this.prismao.defaultSelArg().where,
+        },
+      });
+      if (menus.length === 0) {
+        return true;
+      }
+      const menuThrottles_ = await this.prismao.getOrigin().sys_menu_throttle.findMany({
+        where: {
+          menu_id: {
+            in: menus.map((item) => item.id),
+          },
+          type: T_IP,
+          ...this.prismao.defaultSelArg().where,
+        },
+      });
+      const menuThrottles__ = baseUtils.objToCamelCase<MenuThrottleDto[]>(menuThrottles_);
+      menuThrottles.push(...menuThrottles__);
+      await this.cachePermissionService.setMenuThrottleInCache(permission, menuThrottles__);
+    }
+    if (menuThrottles.length === 0) {
+      return true;
+    }
+    menuThrottles.sort((a, b) => b.ttl - a.ttl);
+    const now = timeUtils.timestamp();
+    const logs = await this.prismao.getOrigin().log_operation.findMany({
+      where: {
+        call_ip: ipInfo.ip,
+        perms: permission,
+        create_time: {
+          gte: new Date(now - menuThrottles[0].ttl),
+          lte: new Date(now),
+        },
+        if_success: base.Y,
+        ...this.prismao.defaultSelArg({ ifDeleted: false }).where,
+      },
+    });
+    const ifThrottle = menuThrottles.every((menuThrottle) => {
+      const filter = logs.filter((item) => {
+        return (
+          timeUtils.timestamp(item.create_time) < now && timeUtils.timestamp(item.create_time) > now - menuThrottle.ttl
+        );
+      });
+      return filter.length < menuThrottle.limit;
+    });
+    return ifThrottle;
+  }
+
+  /**
    * 是否管理员用户操作非管理员用户
    * @param controlUserId
    * @param controledUserId
@@ -558,6 +620,12 @@ export class AuthService {
     return userSFPermissions;
   }
 
+  /**
+   * 用户的角色和部门
+   * @param userId
+   * @param loginRole
+   * @param ifAdmin
+   */
   async rolesAndDeptsOfUser(userId: string, loginRole: string, ifAdmin: boolean = false) {
     const allRoleIds1: { role_id: number }[] = await this.prismao.$queryRaw`
         select sur.role_id

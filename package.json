@@ -7,18 +7,32 @@
     "[dev] [admin ] dev": "cross-env NODE_ENV=dev pnpm --filter @ms/admin dev",
     "[dev] [server] start:dev": "cross-env NODE_ENV=dev pnpm --filter @ms/server start:dev",
     "[dev] [server] start:debug": "cross-env NODE_ENV=dev pnpm --filter @ms/server start:debug",
+    "[dev] [blog  ] dev": "cross-env NODE_ENV=dev pnpm --filter @ms/blog dev",
     "[build] [config] build": "pnpm -filter @ms/config build",
     "[build] [common] build": "pnpm -filter @ms/common build",
     "[build] [config & common]": "pnpm -filter @ms/config build && pnpm -filter @ms/common build",
     "[build] [admin ] build:prod": "cross-env NODE_ENV=prod pnpm --filter @ms/admin build:prod",
+    "[build] [blog  ] build:prod": "cross-env NODE_ENV=prod pnpm --filter @ms/blog build:prod",
     "[build] [server] build:wp": "cross-env NODE_ENV=prod pnpm --filter @ms/server build:wp"
   },
   "keywords": [],
   "author": "",
   "packageManager": "pnpm@10.5.2",
+  "dependencies": {
+    "alova": "^3.2.10",
+    "pinia": "^3.0.1",
+    "pinia-plugin-persistedstate": "^4.2.0",
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.0"
+  },
   "devDependencies": {
     "@types/node": "^22.13.9",
+    "@vitejs/plugin-vue": "^5.2.1",
     "cross-env": "^7.0.3",
-    "typescript": "^5.8.2"
+    "typescript": "^5.8.2",
+    "unplugin-auto-import": "^19.1.1",
+    "unplugin-vue-components": "^28.4.1",
+    "vite": "^6.2.1",
+    "vue-tsc": "^2.2.8"
   }
 }

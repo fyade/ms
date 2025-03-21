@@ -50,9 +50,8 @@ const serverMonitor = () => {
 }
 serverMonitor()
 
-const tips = [
-  'W3C 标准规定：当一个 form 元素中只有一个输入框时，在该输入框中按下回车应提交该表单；本项目批量阻止了此事件，详见 /src/loaded/singleInputNoEnterSubmit.ts。'
-]
+// const tips = [
+// ]
 </script>
 
 <template>
@@ -117,14 +116,14 @@ const tips = [
       </div>
     </div>
 
-    <div>
-      <el-divider content-position="left">注意事项</el-divider>
-      <el-card shadow="never">
-        <ul>
-          <li v-for="(item, index) in tips" :key="index">{{ item }}</li>
-        </ul>
-      </el-card>
-    </div>
+    <!--<div>-->
+    <!--  <el-divider content-position="left">注意事项</el-divider>-->
+    <!--  <el-card shadow="never">-->
+    <!--    <ul>-->
+    <!--      <li v-for="(item, index) in tips" :key="index">{{ item }}</li>-->
+    <!--    </ul>-->
+    <!--  </el-card>-->
+    <!--</div>-->
   </div>
 
   <div class="bottom-text">

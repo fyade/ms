@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { R } from '../../../../../common/R';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import { NonSupportedException } from '../../../../../exception/NonSupportedException';
+import { NonSupportException } from '../../../../../exception/non-support.exception';
 import { PrismaService } from '../../../../../prisma/prisma.service';
 import { codeGeneration } from './codeGeneration';
 import { CodeGenTableDto } from '../code-gen-table/dto';
@@ -26,7 +26,7 @@ export class CodeGenerationService {
         text = text + '\n' + fs.readFileSync(file, 'utf-8');
       }
     } catch (e) {
-      throw new NonSupportedException('读取数据库信息');
+      throw new NonSupportException('读取数据库信息');
     }
     const regex1 = /\/\/ .+/;
     const regex2 = /^model (\w+) {/;

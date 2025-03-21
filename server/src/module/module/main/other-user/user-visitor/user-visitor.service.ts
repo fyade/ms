@@ -10,7 +10,7 @@ import { DeptDto } from '../../sys-manage/dept/dto';
 import { UserUserGroupDto } from '../../../algorithm/user-user-group/dto';
 import { UserGroupDto } from '../../../algorithm/user-group/dto';
 import { BaseContextService } from '../../../../base-context/base-context.service';
-import { Exception } from "../../../../../exception/Exception";
+import { Exception } from "../../../../../exception/exception";
 import { encryptUtils, idUtils } from '@ms/common'
 
 @Injectable()

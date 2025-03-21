@@ -16,6 +16,20 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// 1.0 系统配置
+model sys_config {
+  id                   Int      @id @default(autoincrement()) @db.Int
+  if_allow_user_regist String   @db.Char(1)
+  remark               String?  @db.VarChar(300)
+  create_role          String   @db.VarChar(30)
+  update_role          String   @db.VarChar(30)
+  create_by            String   @db.VarChar(10)
+  update_by            String   @db.VarChar(10)
+  create_time          DateTime @default(now())
+  update_time          DateTime @updatedAt
+  deleted              String   @default("N") @db.Char(1)
+}
+
 // 1.1 用户表
 model sys_user {
   id             String          @id @db.VarChar(10)
@@ -205,6 +219,7 @@ model sys_menu {
   sys_role_permissions      sys_role_permission[]
   sys_dept_permissions      sys_dept_permission[]
   sys_menu_ip_white_lists   sys_menu_ip_white_list[]
+  sys_menu_throttles        sys_menu_throttle[]
   sys_table_row_permissions sys_table_row_permission[]
 }
 
@@ -385,7 +400,25 @@ model sys_menu_ip_white_list {
   menu_id_    sys_menu @relation(fields: [menu_id], references: [id])
 }
 
-// 2.12 菜单-数据表行权限表
+// 2.12 菜单-请求限制表
+model sys_menu_throttle {
+  id          Int      @id @default(autoincrement()) @db.Int
+  menu_id     Int      @db.Int
+  ttl         Int      @db.Int
+  limit       Int      @db.Int
+  type        String   @db.VarChar(2)
+  remark      String?  @db.VarChar(300)
+  create_role String   @db.VarChar(30)
+  update_role String   @db.VarChar(30)
+  create_by   String   @db.VarChar(10)
+  update_by   String   @db.VarChar(10)
+  create_time DateTime @default(now())
+  update_time DateTime @updatedAt
+  deleted     String   @default("N") @db.Char(1)
+  menu_id_    sys_menu @relation(fields: [menu_id], references: [id])
+}
+
+// 2.13 菜单-数据表行权限表
 model sys_table_row_permission {
   id             Int      @id @default(autoincrement()) @db.Int
   permission_id  Int      @db.Int
@@ -402,7 +435,7 @@ model sys_table_row_permission {
   permission_id_ sys_menu @relation(fields: [permission_id], references: [id])
 }
 
-// 2.13 用户组表
+// 2.14 用户组表
 model sys_user_group {
   id                         Int                         @id @default(autoincrement()) @db.Int
   label                      String                      @db.VarChar(30)
@@ -420,7 +453,7 @@ model sys_user_group {
   sys_user_group_permissions sys_user_group_permission[]
 }
 
-// 2.14 用户用户组表
+// 2.15 用户用户组表
 model sys_user_user_group {
   id             Int            @id @default(autoincrement()) @db.Int
   user_id        String         @db.VarChar(10)
@@ -436,7 +469,7 @@ model sys_user_user_group {
   user_group_id_ sys_user_group @relation(fields: [user_group_id], references: [id])
 }
 
-// 2.15 接口表
+// 2.16 接口表
 model sys_interface {
   id                             Int                             @id @default(autoincrement()) @db.Int
   label                          String                          @db.VarChar(30)
@@ -457,7 +490,7 @@ model sys_interface {
   sys_interface_interface_groups sys_interface_interface_group[]
 }
 
-// 2.16 接口组表
+// 2.17 接口组表
 model sys_interface_group {
   id                             Int                             @id @default(autoincrement()) @db.Int
   label                          String                          @db.VarChar(30)
@@ -477,7 +510,7 @@ model sys_interface_group {
   sys_user_group_permissions     sys_user_group_permission[]
 }
 
-// 2.17 接口接口组
+// 2.18 接口接口组
 model sys_interface_interface_group {
   id                  Int                 @id @default(autoincrement()) @db.Int
   interface_id        Int                 @db.Int
@@ -493,7 +526,7 @@ model sys_interface_interface_group {
   interface_group_id_ sys_interface_group @relation(fields: [interface_group_id], references: [id])
 }
 
-// 2.18 用户组接口组表
+// 2.19 用户组接口组表
 model sys_user_group_permission {
   id                       Int                  @id @default(autoincrement()) @db.Int
   user_group_id            Int                  @db.Int
@@ -519,7 +552,7 @@ model sys_user_group_permission {
   log_algorithm_calls      log_algorithm_call[]
 }
 
-// 2.19 定时任务表
+// 2.20 定时任务表
 model sys_scheduled_task {
   id              Int      @id @default(autoincrement()) @db.Int
   name            String   @db.VarChar(100)

@@ -1,8 +1,7 @@
 import { defineStore } from 'pinia'
 import { computed, Ref, ref } from "vue";
-import router from "@/router";
 import { diguiObjToArr2 } from "@/utils/baseUtils.ts";
-import { RouteRecordName, RouteRecordNormalized } from "vue-router";
+import { RouteRecordName, RouteRecordNormalized, useRouter } from "vue-router";
 import { useSysStore } from "@/store/module/sys.ts";
 import { final } from "@/utils/base.ts";
 
@@ -25,6 +24,7 @@ const getFixedMenus = (sysPerm: string) => {
 }
 
 export const useRouterStore = defineStore('routerStore', () => {
+  const router = useRouter()
   const allMenus1 = ref<RouteRecordNormalized[]>([])
   const allMenus2 = computed(() => {
     return diguiObjToArr2<RouteRecordNormalized>(allMenus1.value).map(ar => {

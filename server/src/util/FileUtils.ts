@@ -1,9 +1,6 @@
-import { join } from 'path';
-import * as fs2 from 'fs';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 import { splitStrByLine } from './RegularUtils';
-
-const fs = require('fs').promises;
-const path = require('path');
 
 /**
  * 获取某文件夹下的所有文件（包括子文件夹）
@@ -15,7 +12,7 @@ export async function getAllFiles(directoryPath: string) {
   return ret;
 
   async function _(directoryPath: string) {
-    const files: string[] = await fs.readdir(directoryPath);
+    const files: string[] = fs.readdirSync(directoryPath);
     if (files.length > 0) {
       for (const path of files) {
         if (path.includes('.')) {
@@ -45,8 +42,8 @@ export function saveFile(directoryPath: string, fileName: string, fileBuffer,
                          } = {},
 ) {
   if (!dirIfExist.get(directoryPath)) {
-    if (!fs2.existsSync(directoryPath)) {
-      fs2.mkdirSync(directoryPath);
+    if (!fs.existsSync(directoryPath)) {
+      fs.mkdirSync(directoryPath);
     }
     dirIfExist.set(directoryPath, true);
   }
@@ -56,13 +53,13 @@ export function saveFile(directoryPath: string, fileName: string, fileBuffer,
     for (const string of strings) {
       uploadPath += `/${string}/`;
       if (!dirIfExist.get(uploadPath)) {
-        if (!fs2.existsSync(uploadPath)) {
-          fs2.mkdirSync(uploadPath);
+        if (!fs.existsSync(uploadPath)) {
+          fs.mkdirSync(uploadPath);
         }
         dirIfExist.set(uploadPath, true);
       }
     }
   }
-  const filePath = join(uploadPath, fileName);
-  fs2.writeFileSync(filePath, fileBuffer);
+  const filePath = path.join(uploadPath, fileName);
+  fs.writeFileSync(filePath, fileBuffer);
 }

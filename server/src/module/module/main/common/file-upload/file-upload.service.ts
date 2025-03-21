@@ -1,8 +1,8 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../../../prisma/prisma.service';
 import { R } from '../../../../../common/R';
-import { join } from 'path';
-import * as fs from 'fs';
+import * as path from 'node:path';
+import * as fs from 'node:fs';
 import { base } from '../../../../../util/base';
 import {
   FileChunkDto,
@@ -14,8 +14,8 @@ import {
 } from './dto';
 import { BaseContextService } from '../../../../base-context/base-context.service';
 import { saveFile } from '../../../../../util/FileUtils';
-import { Exception } from "../../../../../exception/Exception";
-import { UnknownException } from "../../../../../exception/UnknownException";
+import { Exception } from "../../../../../exception/exception";
+import { UnknownException } from "../../../../../exception/unknown.exception";
 import { serverConfig } from "@ms/config";
 import { idUtils, timeUtils } from "@ms/common";
 
@@ -265,11 +265,11 @@ export class FileUploadService {
     if (chunks.length !== fileInfo.chunkNum) {
       throw new Exception('合并失败，请重试。');
     }
-    const outputFile = join(this.env.file.uploadPath, fileInfo.fileNewName);
+    const outputFile = path.join(this.env.file.uploadPath, fileInfo.fileNewName);
     const outputFd = fs.openSync(outputFile, 'w');
     // 创建一个 Promise 数组，每个 Promise 处理一个文件块的写入
     const promises = chunks.map((chunk) => {
-      const file = join(this.env.file.uploadPath, chunk.chunkName);
+      const file = path.join(this.env.file.uploadPath, chunk.chunkName);
       const inputFd = fs.openSync(file, 'r');
       const buffer = Buffer.alloc(4096); // 4KB 缓冲区，你可以根据实际情况调整大小
       function write() {

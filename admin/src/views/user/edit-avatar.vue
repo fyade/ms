@@ -2,6 +2,7 @@
 import ImageCrop from "@/components/imageCrop/imageCrop.vue";
 import { updUser } from "@/api/module/main/sysManage/user.ts";
 import { useUserStore } from "@/store/module/user.ts";
+import { ElMessage } from 'element-plus'
 
 const userStore = useUserStore();
 

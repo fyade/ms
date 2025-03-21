@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, ParseArrayPipe, Post, Put, Query, UsePipes } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { CodeGenTableService } from './code-gen-table.service';
-import { Authorize } from '../../../../../decorator/authorizeDecorator';
+import { Authorize } from '../../../../../decorator/authorize.decorator';
 import { R } from '../../../../../common/R';
 import { ValidationPipe } from '../../../../../pipe/validation/validation.pipe';
 import { CodeGenTableSelListDto, CodeGenTableSelAllDto, CodeGenTableInsOneDto, CodeGenTableUpdOneDto } from './dto';

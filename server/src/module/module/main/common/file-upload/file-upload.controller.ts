@@ -9,10 +9,10 @@ import {
   FileUploadOneChunk_upload,
   FileUploadOneFull_upload,
 } from './dto';
-import { Authorize } from '../../../../../decorator/authorizeDecorator';
+import { Authorize } from '../../../../../decorator/authorize.decorator';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ValidationPipe } from '../../../../../pipe/validation/validation.pipe';
-import { Exception } from "../../../../../exception/Exception";
+import { Exception } from "../../../../../exception/exception";
 import { serverConfig } from "@ms/config";
 
 @Controller('/main/sys/file-upload')

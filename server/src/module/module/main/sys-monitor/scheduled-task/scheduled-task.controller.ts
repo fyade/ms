@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, ParseArrayPipe, Post, Put, Query, UsePipes } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { ScheduledTaskService } from './scheduled-task.service';
-import { Authorize } from '../../../../../decorator/authorizeDecorator';
+import { Authorize } from '../../../../../decorator/authorize.decorator';
 import { R } from '../../../../../common/R';
 import { ValidationPipe } from '../../../../../pipe/validation/validation.pipe';
 import { ScheduledTaskSelListDto, ScheduledTaskSelAllDto, ScheduledTaskInsOneDto, ScheduledTaskUpdOneDto } from './dto';
@@ -146,5 +146,21 @@ export class ScheduledTaskController {
   })
   async delScheduledTask(@Body() ids: number[]): Promise<R> {
     return this.scheduledTaskService.delScheduledTask(ids);
+  }
+
+  @Post('/run')
+  @ApiOperation({
+    summary: '运行一次定时任务',
+  })
+  @ApiBody({
+    isArray: true,
+    type: Number,
+  })
+  @Authorize({
+    permission: 'main:sysMonitor:scheduledTask:runOnce',
+    label: '运行一次定时任务',
+  })
+  async runScheduleTaskOnce(@Body() ids: number[]): Promise<R> {
+    return this.scheduledTaskService.runScheduleTaskOnce(ids);
   }
 }

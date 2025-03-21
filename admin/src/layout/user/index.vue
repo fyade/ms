@@ -2,10 +2,10 @@
 import { computed, ref, watch } from 'vue'
 import PublicIndex from "@/layout/publicIndex.vue";
 import { CONFIG } from "@/utils/base.ts";
-import { useRoute } from 'vue-router';
-import router from "@/router";
+import { useRoute, useRouter } from 'vue-router';
 
 const route = useRoute()
+const router = useRouter()
 const defaultActive = ref('')
 watch(route, () => {
   defaultActive.value = route.path

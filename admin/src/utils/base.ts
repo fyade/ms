@@ -37,6 +37,12 @@ export const mIWLTypeDict = {
   [T_HOST]: 'host',
 }
 
+// export const T_IP = 'ip'
+// export type T_IP = 'ip'
+export const mTTypeDict = {
+  [T_IP]: 'ip',
+}
+
 export const T_ROLE = 'ro'
 export const T_DEPT = 'de'
 export const T_UG = 'ug'

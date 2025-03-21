@@ -732,62 +732,62 @@ const gUpd2 = () => {
   </div>
 
   <div class="zs-table-data">
-  <!--数据表格-->
-  <el-table
-      v-loading="tableLoadingRef"
-      :data="tableData"
-      @selection-change="handleSelectionChange"
-  >
-    <el-table-column fixed type="selection" width="55"/>
-    <!--<el-table-column fixed prop="id" :label="state.dict.id" width="180"/>-->
-    <!--上面id列的宽度改一下-->
-    <!--在此下方添加表格列-->
-    <el-table-column prop="colName" :label="codeGenColumnDict.colName" width="120"/>
-    <el-table-column prop="colDescr" :label="codeGenColumnDict.colDescr" width="120"/>
-    <el-table-column prop="mysqlType" :label="codeGenColumnDict.mysqlType" width="120"/>
-    <el-table-column prop="tsType" :label="codeGenColumnDict.tsType" width="120">
-      <template #default="{row}">
-        {{ tsTypeDicts.find(item => item.value === row.tsType)?.label }}
-      </template>
-    </el-table-column>
-    <el-table-column prop="tsName" :label="codeGenColumnDict.tsName" width="120"/>
-    <el-table-column prop="ifIns" :label="codeGenColumnDict.ifIns" width="60"/>
-    <el-table-column prop="ifUpd" :label="codeGenColumnDict.ifUpd" width="60"/>
-    <el-table-column prop="ifSelOne" :label="codeGenColumnDict.ifSelOne" width="60"/>
-    <el-table-column prop="ifSelMore" :label="codeGenColumnDict.ifSelMore" width="60"/>
-    <el-table-column prop="ifRequired" :label="codeGenColumnDict.ifRequired" width="60"/>
-    <el-table-column prop="formType" :label="codeGenColumnDict.formType" width="120">
-      <template #default="{row}">
-        {{ formTypeDicts.find(item => item.value === row.formType)?.label }}
-      </template>
-    </el-table-column>
-    <el-table-column prop="selType" :label="codeGenColumnDict.selType" width="120">
-      <template #default="{row}">
-        {{ selTypeDicts.find(item => item.value === row.selType)?.label }}
-      </template>
-    </el-table-column>
-    <el-table-column prop="orderNum" :label="codeGenColumnDict.orderNum" width="120"/>
-    <!--在此上方添加表格列-->
-    <!--<el-table-column prop="createBy" :label="codeGenColumnDict.createBy" width="120"/>-->
-    <!--<el-table-column prop="updateBy" :label="codeGenColumnDict.updateBy" width="120"/>-->
-    <!--<el-table-column prop="createTime" :label="codeGenColumnDict.createTime" width="220"/>-->
-    <!--<el-table-column prop="updateTime" :label="codeGenColumnDict.updateTime" width="220"/>-->
-    <!--<el-table-column prop="deleted" :label="codeGenColumnDict.deleted" width="60"/>-->
-    <!--上方几个酌情使用-->
-    <el-table-column fixed="right" label="操作" min-width="140">
-      <template #default="{row}">
-        <div class="zs-table-data-operate-button-row">
-          <el-button link type="primary" size="small" :icon="Edit" @click="tUpd(row.id)">修改</el-button>
-          <el-button link type="danger" size="small" :icon="Delete" @click="tDel(row.id)">删除</el-button>
+    <!--数据表格-->
+    <el-table
+        v-loading="tableLoadingRef"
+        :data="tableData"
+        @selection-change="handleSelectionChange"
+    >
+      <el-table-column fixed type="selection" width="55"/>
+      <!--<el-table-column fixed prop="id" :label="state.dict.id" width="180"/>-->
+      <!--上面id列的宽度改一下-->
+      <!--在此下方添加表格列-->
+      <el-table-column prop="colName" :label="codeGenColumnDict.colName" width="120"/>
+      <el-table-column prop="colDescr" :label="codeGenColumnDict.colDescr" width="120"/>
+      <el-table-column prop="mysqlType" :label="codeGenColumnDict.mysqlType" width="120"/>
+      <el-table-column prop="tsType" :label="codeGenColumnDict.tsType" width="120">
+        <template #default="{row}">
+          {{ tsTypeDicts.find(item => item.value === row.tsType)?.label }}
+        </template>
+      </el-table-column>
+      <el-table-column prop="tsName" :label="codeGenColumnDict.tsName" width="120"/>
+      <el-table-column prop="ifIns" :label="codeGenColumnDict.ifIns" width="60"/>
+      <el-table-column prop="ifUpd" :label="codeGenColumnDict.ifUpd" width="60"/>
+      <el-table-column prop="ifSelOne" :label="codeGenColumnDict.ifSelOne" width="60"/>
+      <el-table-column prop="ifSelMore" :label="codeGenColumnDict.ifSelMore" width="60"/>
+      <el-table-column prop="ifRequired" :label="codeGenColumnDict.ifRequired" width="60"/>
+      <el-table-column prop="formType" :label="codeGenColumnDict.formType" width="120">
+        <template #default="{row}">
+          {{ formTypeDicts.find(item => item.value === row.formType)?.label }}
+        </template>
+      </el-table-column>
+      <el-table-column prop="selType" :label="codeGenColumnDict.selType" width="120">
+        <template #default="{row}">
+          {{ selTypeDicts.find(item => item.value === row.selType)?.label }}
+        </template>
+      </el-table-column>
+      <el-table-column prop="orderNum" :label="codeGenColumnDict.orderNum" width="120"/>
+      <!--在此上方添加表格列-->
+      <!--<el-table-column prop="createBy" :label="codeGenColumnDict.createBy" width="120"/>-->
+      <!--<el-table-column prop="updateBy" :label="codeGenColumnDict.updateBy" width="120"/>-->
+      <!--<el-table-column prop="createTime" :label="codeGenColumnDict.createTime" width="220"/>-->
+      <!--<el-table-column prop="updateTime" :label="codeGenColumnDict.updateTime" width="220"/>-->
+      <!--<el-table-column prop="deleted" :label="codeGenColumnDict.deleted" width="60"/>-->
+      <!--上方几个酌情使用-->
+      <el-table-column fixed="right" label="操作" min-width="140">
+        <template #default="{row}">
+          <div class="zs-table-data-operate-button-row">
+            <el-button link type="primary" size="small" :icon="Edit" @click="tUpd(row.id)">修改</el-button>
+            <el-button link type="danger" size="small" :icon="Delete" @click="tDel(row.id)">删除</el-button>
+          </div>
+        </template>
+      </el-table-column>
+      <template #append>
+        <div class="el-table-append-box">
+          <span>此表格的多选<span class="underline">不支持</span>{{ `跨分页保存，当前已选 ${multipleSelection.length} 条数据。` }}</span>
         </div>
       </template>
-    </el-table-column>
-    <template #append>
-      <div class="el-table-append-box">
-        <span>此表格的多选<span class="underline">不支持</span>{{ `跨分页保存，当前已选 ${multipleSelection.length} 条数据。` }}</span>
-      </div>
-    </template>
-  </el-table>
+    </el-table>
 
     <!--分页-->
     <Pagination

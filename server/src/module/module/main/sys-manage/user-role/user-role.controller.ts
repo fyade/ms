@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Post, Query, UsePipes } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UserRoleService } from './user-role.service';
-import { Authorize } from '../../../../../decorator/authorizeDecorator';
+import { Authorize } from '../../../../../decorator/authorize.decorator';
 import { R } from '../../../../../common/R';
 import { ValidationPipe } from '../../../../../pipe/validation/validation.pipe';
 import { UserRoleDto, UserRoleSelListDto, UserRoleSelAllDto, UserRoleInsOneDto, UserRoleUpdOneDto, UserRoleUpdManyURDto, UserRoleUpdManyRUDto } from './dto';

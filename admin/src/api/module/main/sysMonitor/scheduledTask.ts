@@ -84,3 +84,11 @@ export const scheduledTaskApi: ApiConfig<ScheduledTaskDto, ScheduledTaskUpdDto> 
     data: ids
   })
 }
+
+export function runScheduleTaskOnce(ids: number[]) {
+  return request({
+    url: '/main/sys-monitor/scheduled-task/run',
+    method: 'POST',
+    data: ids
+  })
+}

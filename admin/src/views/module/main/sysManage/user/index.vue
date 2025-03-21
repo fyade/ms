@@ -10,7 +10,7 @@ import { CONFIG, final, Operate } from "@/utils/base.ts";
 import Pagination from "@/components/pagination/pagination.vue";
 import { funcTablePage } from "@/composition/tablePage/tablePage2.ts";
 import { State2, TablePageConfig } from "@/type/tablePage.ts";
-import { FormRules } from "element-plus";
+import { FormRules, ElMessage } from "element-plus";
 import { Delete, Download, Edit, Plus, Refresh, Upload, Search, DArrowRight } from "@element-plus/icons-vue";
 import { UserDto, UserDto2, UserDto_, UserSelDto, UserUpdDto } from "@/type/module/main/sysManage/user.ts";
 import { newUser, resetUserPsd, userApi } from "@/api/module/main/sysManage/user.ts";

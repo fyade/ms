@@ -3,7 +3,7 @@ import { ifSameArray } from "@/utils/ObjectUtils.ts";
 import { baseUtils } from "@ms/common";
 
 async function main() {
-  await baseUtils.sleep(3000)
+  await baseUtils.sleep(1000)
   const oldHtml = document.documentElement.outerHTML
   const oldTag_ = getScriptTagFromHtmlText(oldHtml)
   // 去除一些干扰项

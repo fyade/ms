@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { UnknownException } from '../exception/UnknownException';
+import { UnknownException } from '../exception/unknown.exception';
 import { PageDto } from '../common/dto/PageDto';
 import { PageVo } from '../common/vo/PageVo';
 import { deepClone } from '../util/ObjectUtils';
@@ -8,7 +8,7 @@ import { PrismaoService } from './prismao.service';
 import { AuthService } from '../module/auth/auth.service';
 import { BaseContextService } from '../module/base-context/base-context.service';
 import { T_DEPT, T_ROLE } from '../util/base';
-import { baseUtils } from "@ms/common";
+import { baseUtils, objectUtils } from "@ms/common";
 
 @Injectable()
 export class PrismaService {
@@ -169,7 +169,7 @@ export class PrismaService {
               if (datum_[itm].type === 'date') {
                 switch (baseUtils.typeOf(datum_[itm].value)) {
                   case 'array':
-                    items[item][itm] = datum_[itm].value.map(n => new Date(n));
+                    items[item][itm] = datum_[itm].value.map((n) => new Date(n));
                     break;
                   // case 'object':
                   //   items[item][itm] = Object.keys(datum_[itm].value)
@@ -189,13 +189,20 @@ export class PrismaService {
               }
               if (itm === 'between') {
                 delete items[item][itm];
-                if (datum_[itm].value[0] && datum_[itm].value[1]) {
+                const valid0 = objectUtils.ifValid(datum_[itm].value[0]);
+                if (valid0) {
                   items[item]['gte'] = datum_[itm].value[0];
+                }
+                const valid1 = objectUtils.ifValid(datum_[itm].value[1]);
+                if (valid1) {
                   items[item]['lte'] = datum_[itm].value[1];
+                }
+                if (!valid0 && !valid1) {
+                  delete items[item];
                 }
               }
             }
-            if (Object.keys(datum_).length > 0) {
+            if (Object.keys(items).length > 0) {
               obj2.OR.push(items);
             }
           } else {
@@ -222,14 +229,26 @@ export class PrismaService {
             return [...obj];
           }
         }, []),
-        ...Object.keys(range).map(item => (
-          {
+        ...Object.keys(range).map(item => {
+          const retObj = {
             [baseUtils.toSnakeCase(item)]: {
               gte: range[item].gte,
               lte: range[item].lte,
             },
+          };
+          const gteNotValid = objectUtils.ifNotValid(range[item].gte);
+          if (gteNotValid) {
+            delete retObj[baseUtils.toSnakeCase(item)].gte
           }
-        )),
+          const lteNotValid = objectUtils.ifNotValid(range[item].lte);
+          if (lteNotValid) {
+            delete retObj[baseUtils.toSnakeCase(item)].lte
+          }
+          if (gteNotValid && lteNotValid) {
+            return null;
+          }
+          return retObj
+        }).filter(item => item),
       ],
     };
     return ret;

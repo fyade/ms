@@ -60,6 +60,15 @@ export class ScheduleService implements OnModuleInit {
     }
   }
 
+  async runScheduleOnce(...names: string[]) {
+    for (const name of names) {
+      const func = this.schedules.get(name);
+      if (func) {
+        await func();
+      }
+    }
+  }
+
   addScheduleFunc(name: string, func: () => Promise<void>) {
     this.schedules.set(name, func)
   }

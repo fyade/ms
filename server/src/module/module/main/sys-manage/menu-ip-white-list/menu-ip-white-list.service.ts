@@ -46,29 +46,31 @@ export class MenuIpWhiteListService {
 
   async insMenuIpWhiteList(dto: MenuIpWhiteListInsOneDto): Promise<R> {
     const res = await this.prisma.create<MenuIpWhiteListDto>('sys_menu_ip_white_list', dto);
+    await this.cachePermissionService.clearIpWhiteListOfPermissionInCache();
     return R.ok(res);
   }
 
   async insMenuIpWhiteLists(dtos: MenuIpWhiteListInsOneDto[]): Promise<R> {
     const res = await this.prisma.createMany<MenuIpWhiteListDto>('sys_menu_ip_white_list', dtos);
+    await this.cachePermissionService.clearIpWhiteListOfPermissionInCache();
     return R.ok(res);
   }
 
   async updMenuIpWhiteList(dto: MenuIpWhiteListUpdOneDto): Promise<R> {
     const res = await this.prisma.updateById<MenuIpWhiteListDto>('sys_menu_ip_white_list', dto);
-    await this.cachePermissionService.clearPermissionsInCache();
+    await this.cachePermissionService.clearIpWhiteListOfPermissionInCache();
     return R.ok(res);
   }
 
   async updMenuIpWhiteLists(dtos: MenuIpWhiteListUpdOneDto[]): Promise<R> {
     const res = await this.prisma.updateMany<MenuIpWhiteListDto>('sys_menu_ip_white_list', dtos);
-    await this.cachePermissionService.clearPermissionsInCache();
+    await this.cachePermissionService.clearIpWhiteListOfPermissionInCache();
     return R.ok(res);
   }
 
   async delMenuIpWhiteList(ids: number[]): Promise<R> {
     const res = await this.prisma.deleteById<MenuIpWhiteListDto>('sys_menu_ip_white_list', ids);
-    await this.cachePermissionService.clearPermissionsInCache();
+    await this.cachePermissionService.clearIpWhiteListOfPermissionInCache();
     return R.ok(res);
   }
 }

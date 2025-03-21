@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Post, Query, UsePipes } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { UserGroupPermissionService } from './user-group-permission.service';
-import { Authorize } from '../../../../decorator/authorizeDecorator';
+import { Authorize } from '../../../../decorator/authorize.decorator';
 import { R } from '../../../../common/R';
 import { ValidationPipe } from '../../../../pipe/validation/validation.pipe';
 import { UserGroupPermissionDto, UserGroupPermissionSelListDto, UserGroupPermissionSelAllDto, UserGroupPermissionInsOneDto, UserGroupPermissionUpdOneDto } from './dto';

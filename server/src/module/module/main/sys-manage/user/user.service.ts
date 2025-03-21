@@ -6,9 +6,8 @@ import { AuthService } from '../../../../auth/auth.service';
 import { HTTP } from '../../../../../common/Enum';
 import { base } from '../../../../../util/base';
 import { UserRoleDto } from '../user-role/dto';
-import { UserUnknownException } from '../../../../../exception/UserUnknownException';
-import { AdminTopDto } from '../../../../admin-top/dto';
-import { UserPermissionDeniedException } from '../../../../../exception/UserPermissionDeniedException';
+import { UserUnknownException } from '../../../../../exception/user-unknown.exception';
+import { UserPermissionDeniedException } from '../../../../../exception/user-permission-denied.exception';
 import { LogUserLoginService } from '../../sys-log/log-user-login/log-user-login.service';
 import { UserDeptDto } from '../user-dept/dto';
 import { UserGroupDto } from '../../../algorithm/user-group/dto';
@@ -20,9 +19,10 @@ import { BaseContextService } from '../../../../base-context/base-context.servic
 import { NOT_ADMIN, PASSWORD_ERROR } from '../../sys-log/log-user-login/dto';
 import { UserVisitorDto } from '../../other-user/user-visitor/dto';
 import * as svgCaptcha from 'svg-captcha';
-import { Exception } from "../../../../../exception/Exception";
+import { Exception } from "../../../../../exception/exception";
 import { encryptUtils, idUtils, timeUtils } from '@ms/common'
 import { serverConfig } from "@ms/config";
+import { PrismaoService } from "../../../../../prisma/prismao.service";
 
 @Injectable()
 export class UserService {
@@ -30,6 +30,7 @@ export class UserService {
 
   constructor(
     private readonly prisma: PrismaService,
+    private readonly prismao: PrismaoService,
     private readonly authService: AuthService,
     private readonly logUserLoginService: LogUserLoginService,
     private readonly cacheTokenService: CacheTokenService,
@@ -54,7 +55,7 @@ export class UserService {
     if (ifWithRole !== base.Y) {
       return R.ok(res);
     }
-    const topAdminUser = await this.prisma.findAll<AdminTopDto>('sys_admin_top', {
+    const topAdminUser = await this.prisma.findAll<{ id: number; userId: string }>('sys_admin_top', {
       data: {
         userId: {
           in: {
@@ -236,6 +237,17 @@ export class UserService {
   }
 
   async regist(dto: RegistDto): Promise<R> {
+    const sysConfigs = await this.prismao.getOrigin().sys_config.findMany({
+      where: {
+        ...this.prismao.defaultSelArg().where
+      }
+    });
+    if (sysConfigs.length > 0) {
+      const sysConfig = sysConfigs[0];
+      if (sysConfig.if_allow_user_regist === base.N) {
+        throw new Exception('当前不允许新用户注册。')
+      }
+    }
     if (dto.loginRole === 'admin') {
       const user = await this.prisma.findFirst<UserDto>('sys_user', {
         username: dto.username,
@@ -313,7 +325,7 @@ export class UserService {
         await this.insLoginLog(loginIp, loginBrowser, '', loginOs, user.id, dto.loginRole, b1);
       }
       delete user.password;
-      const token = await this.cacheTokenService.genToken(user.id, user.username, dto.loginRole);
+      const token = await this.cacheTokenService.genToken(user.id, user.username, dto.loginRole, loginIp, loginOs, loginBrowser);
       return R.ok({
         token: token,
         user: user,
@@ -342,7 +354,7 @@ export class UserService {
         await this.insLoginLog(loginIp, loginBrowser, '', loginOs, user.id, dto.loginRole, b1);
       }
       delete user.password;
-      const token = await this.cacheTokenService.genToken(user.id, user.username, dto.loginRole);
+      const token = await this.cacheTokenService.genToken(user.id, user.username, dto.loginRole, loginIp, loginOs, loginBrowser);
       return R.ok({
         token: token,
         user: user,

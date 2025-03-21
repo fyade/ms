@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { CONFIG, PAGINATION, publicDict } from "@/utils/base.ts";
 import { computed, reactive, ref, useTemplateRef } from "vue";
-import { ElMessageBox, FormInstance } from "element-plus";
+import { ElMessageBox, ElMessage, FormInstance } from "element-plus";
 import { userApi } from "@/api/module/main/sysManage/user.ts";
 import { userUserGroupApi, userUserGroupUpdUGU } from "@/api/module/algorithm/userUserGroup.ts";
 import { fileBaseUrl } from "@/api/request.ts";

@@ -2,18 +2,17 @@ import { RedisService } from '../../redis/redis.service';
 import { Injectable } from '@nestjs/common';
 import { base } from '../../util/base';
 import { MenuIpWhiteListDto } from '../module/main/sys-manage/menu-ip-white-list/dto';
+import { MenuThrottleDto } from '../module/main/sys-manage/menu-throttle/dto';
 
 @Injectable()
 export class CachePermissionService {
   private readonly USER_PERMISSION = 'user:permission';
   private readonly PERMISSION_PUBLIC = 'permission:public';
   private readonly PERMISSION_IP_WHITE_LIST = 'permission:ipWhiteList';
+  private readonly MENU_THROTTLE = 'menu:throttle';
   private readonly ADMIN_TOP = 'admin:top';
 
-  constructor(
-    private readonly redis: RedisService,
-  ) {
-  }
+  constructor(private readonly redis: RedisService) {}
 
   /**
    * 用户是否有权限在缓存中
@@ -83,6 +82,16 @@ export class CachePermissionService {
   }
 
   /**
+   * 删除缓存中的 ip 白名单
+   */
+  async clearIpWhiteListOfPermissionInCache() {
+    const allPIWLs = await this.redis.hgetall(this.PERMISSION_IP_WHITE_LIST);
+    if (Object.keys(allPIWLs).length > 0) {
+      await this.redis.hdel(this.PERMISSION_IP_WHITE_LIST, ...Object.keys(allPIWLs));
+    }
+  }
+
+  /**
    * 删除缓存中的所有权限记录
    */
   async clearPermissionsInCache() {
@@ -94,9 +103,33 @@ export class CachePermissionService {
     if (Object.keys(allUPs).length > 0) {
       await this.redis.hdel(this.USER_PERMISSION, ...Object.keys(allUPs));
     }
-    const allPIWLs = await this.redis.hgetall(this.PERMISSION_IP_WHITE_LIST);
-    if (Object.keys(allPIWLs).length > 0) {
-      await this.redis.hdel(this.PERMISSION_IP_WHITE_LIST, ...Object.keys(allPIWLs));
+  }
+
+  /**
+   * 设置接口请求限速
+   * @param permission
+   * @param list
+   */
+  async setMenuThrottleInCache(permission: string, list: MenuThrottleDto[]) {
+    await this.redis.hset(this.MENU_THROTTLE, permission, JSON.stringify(list));
+  }
+
+  /**
+   * 获取接口请求限速
+   * @param permission
+   */
+  async getMenuThrottleInCache(permission: string) {
+    const s = await this.redis.hget(this.MENU_THROTTLE, permission);
+    return s;
+  }
+
+  /**
+   * 删除缓存中的接口请求限速
+   */
+  async clearMenuThrottleInCache() {
+    const strings = await this.redis.hgetall(this.MENU_THROTTLE);
+    if (Object.keys(strings).length > 0) {
+      await this.redis.hdel(this.MENU_THROTTLE, ...Object.keys(strings));
     }
   }
 

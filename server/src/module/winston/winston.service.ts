@@ -1,12 +1,12 @@
-import { Injectable, LoggerService } from "@nestjs/common";
-import * as winston from "winston";
-import "winston-daily-rotate-file";
-import { serverConfig } from "@ms/config";
-import { timeUtils } from "@ms/common";
+import { Injectable, LoggerService } from '@nestjs/common';
+import * as winston from 'winston';
+import 'winston-daily-rotate-file';
+import { serverConfig } from '@ms/config';
+import { timeUtils } from '@ms/common';
 
 @Injectable()
 export class WinstonService implements LoggerService {
-  private logger: winston.Logger
+  private logger: winston.Logger;
 
   constructor() {
     const env = serverConfig.currentConfig();
@@ -18,9 +18,9 @@ export class WinstonService implements LoggerService {
       zippedArchive: true,
       maxSize: env.log.maxSizeOfKogFile,
       format: winston.format.combine(
-        winston.format.printf(info => {
-          return `${timeUtils.formatDate(new Date(), 'YYYY-MM-DD HH:mm:ss')} [${info.level.padEnd(15)}]: ${info.message}`
-        })
+        winston.format.printf((info) => {
+          return `${timeUtils.formatDate(new Date(), 'YYYY-MM-DD HH:mm:ss')} [${info.level.padEnd(15)}]: ${info.message}`;
+        }),
       ),
     });
     const infoTransport = new winston.transports.DailyRotateFile({
@@ -31,25 +31,18 @@ export class WinstonService implements LoggerService {
       zippedArchive: true,
       maxSize: env.log.maxSizeOfKogFile,
       format: winston.format.combine(
-        winston.format.printf(info => {
-          return `${timeUtils.formatDate(new Date(), 'YYYY-MM-DD HH:mm:ss')} [${info.level.padEnd(15)}]: ${info.message}`
-        })
+        winston.format.printf((info) => {
+          return `${timeUtils.formatDate(new Date(), 'YYYY-MM-DD HH:mm:ss')} [${info.level.padEnd(15)}]: ${info.message}`;
+        }),
       ),
     });
     this.logger = winston.createLogger({
       levels: winston.config.syslog.levels,
-      transports: [
-        errorTransport,
-        infoTransport,
-      ],
-      exceptionHandlers: [
-        errorTransport,
-      ],
-      rejectionHandlers: [
-        errorTransport,
-      ],
+      transports: [errorTransport, infoTransport],
+      exceptionHandlers: [errorTransport],
+      rejectionHandlers: [errorTransport],
       exitOnError: false,
-    })
+    });
   }
 
   log(message: any, ...optionalParams: any[]) {

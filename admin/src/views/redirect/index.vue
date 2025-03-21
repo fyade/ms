@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { useRoute } from "vue-router";
-import router from "@/router";
+import { useRoute, useRouter } from "vue-router";
 import { getSystems } from "@/api/common/sys.ts";
 import { ElLoading } from "element-plus";
 import { LoadingInstance } from "element-plus/es/components/loading/src/loading";
@@ -18,6 +17,7 @@ onBeforeUnmount(() => {
 
 const msg = ref('')
 const route = useRoute()
+const router = useRouter()
 const init = () => {
   msg.value = 'Loading...'
   const pushPath = route.path;

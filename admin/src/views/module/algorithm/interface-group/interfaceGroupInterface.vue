@@ -4,7 +4,7 @@ import { CONFIG, final } from "@/utils/base.ts";
 import Pagination from "@/components/pagination/pagination.vue";
 import { funcTablePage } from "@/composition/tablePage/tablePage2.ts";
 import { State2, TablePageConfig } from "@/type/tablePage.ts";
-import { FormRules } from "element-plus";
+import { FormRules, ElMessageBox } from 'element-plus'
 import { Delete, Download, Edit, Plus, Refresh, Upload, Search } from "@element-plus/icons-vue";
 import { InterfaceDto, InterfaceUpdDto } from "@/type/module/algorithm/interface.ts";
 import { interfaceApi } from "@/api/module/algorithm/interface.ts";

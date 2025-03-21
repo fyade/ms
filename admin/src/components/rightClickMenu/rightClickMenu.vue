@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { nextTick, reactive } from "vue";
-import eventBus from "@/utils/eventBus.ts";
+import eventBus from "@/services/eventBus.ts";
 import { MenusT } from "@/type/components/rightClickMenu.ts";
 
 class StateReaC {

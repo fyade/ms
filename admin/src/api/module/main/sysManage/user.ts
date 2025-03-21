@@ -139,7 +139,7 @@ export function getSelfInfo() {
   })
 }
 
-export function newUser(params: RegistDto) {
+export function newUser(params: Omit<RegistDto, 'loginRole'>) {
   return request({
     url: '/main/sys-manage/user/admin-new',
     method: 'POST',

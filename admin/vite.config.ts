@@ -73,7 +73,7 @@ export default defineConfig(({ mode }) => {
           target: config.VITE_FILE_BASEURL,
           changeOrigin: true,
           rewrite: path => path.substring(config.VITE_API_FILE_PREFIX.length)
-        }
+        },
       }
     },
     build: {
@@ -81,7 +81,8 @@ export default defineConfig(({ mode }) => {
         output: {
           manualChunks(id: string) {
             if (id.includes('node_modules')) {
-              return 'vendor'
+              const packageName = id.split('node_modules/')[1].split('/')[0];
+              return packageName + (packageName === 'lodash' ? '' : '-vendor');
             }
           }
         }

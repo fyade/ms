@@ -10,7 +10,11 @@ export const useSysConfigStore = defineStore('sysConfigStore', () => {
     menuCollapse.value = b
   }
   return {
+    // 请勿使用 menuCollapse，由于需要持久化的值必须要写在 return 里面，所以才会在这里 return 出去
+    menuCollapse,
     getMenuCollapse,
     setMenuCollapse,
   }
+}, {
+  persist: true,
 })

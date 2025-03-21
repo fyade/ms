@@ -1,6 +1,6 @@
 import { Controller, Get, Param, UsePipes } from '@nestjs/common';
 import { CodeGenerationService } from './code-generation.service';
-import { Authorize } from '../../../../../decorator/authorizeDecorator';
+import { Authorize } from '../../../../../decorator/authorize.decorator';
 import { R } from '../../../../../common/R';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ValidationPipe } from '../../../../../pipe/validation/validation.pipe';

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../../../prisma/prisma.service';
 import { R } from '../../../../../common/R';
-import { UserPermissionDeniedException } from '../../../../../exception/UserPermissionDeniedException';
+import { UserPermissionDeniedException } from '../../../../../exception/user-permission-denied.exception';
 import { AuthService } from '../../../../auth/auth.service';
 import { UserRoleDto, UserRoleSelListDto, UserRoleSelAllDto, UserRoleInsOneDto, UserRoleUpdOneDto, UserRoleUpdManyURDto, UserRoleUpdManyRUDto } from './dto';
 import { CachePermissionService } from '../../../../cache/cache.permission.service';

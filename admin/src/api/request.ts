@@ -1,6 +1,6 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { useUserStore } from "@/store/module/user.ts";
-import { ElMessage } from "element-plus";
+import { ElMessage, ElMessageBox } from "element-plus";
 import { useSysStore } from "@/store/module/sys.ts";
 import { AxiosRes } from "@/type/asiox.ts";
 import { adminConfig } from '@ms/config'
@@ -8,6 +8,8 @@ import { adminConfig } from '@ms/config'
 const env = adminConfig.currentConfig();
 export const baseURL = env.VITE_API_PREFIX
 export const fileBaseUrl = env.VITE_API_FILE_PREFIX + '/'
+
+let status401 = false;
 
 const request = axios.create({
   baseURL: baseURL,
@@ -40,8 +42,17 @@ request.interceptors.response.use(
   async error => {
     if (error.response.data.code === 401) {
       useUserStore().removeToken()
-      ElMessage.error('登录已过期，请重新登录。')
-      window.location.href = `/login?redirect=${window.location.pathname}`
+      // ElMessage.error('登录已过期，请重新登录。')
+      if (status401) {
+        return;
+      }
+      ElMessageBox.alert(
+        '登录已过期，请重新登录。',
+        '警告',
+      ).finally(() => {
+        window.location.href = `/login?redirect=${window.location.pathname}`
+      })
+      status401 = true;
     } else {
       let msg = error.response.data.msg
       if (error.response.data.code === 403) msg = msg
@@ -66,9 +77,7 @@ export default function <T = any>(param: AxiosRequestConfig): Promise<T> {
  * @param param
  * @param options
  */
-export async function request2<T = any>(param: AxiosRequestConfig, options: {
-  level: 0
-}): Promise<AxiosResponse<AxiosRes<T>>>;
+export async function request2<T = any>(param: AxiosRequestConfig, options: { level: 0 }): Promise<AxiosResponse<AxiosRes<T>>>;
 export async function request2<T = any>(param: AxiosRequestConfig, options: { level: 1 }): Promise<AxiosRes<T>>;
 export async function request2<T = any>(param: AxiosRequestConfig, options: { level: 2 }): Promise<T>;
 export async function request2<T = any>(param: AxiosRequestConfig, options?: { level?: 0 | 1 | 2 }): Promise<T>;

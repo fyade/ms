@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { R } from './common/R';
-import { NonSupportedException } from './exception/NonSupportedException';
+import { NonSupportException } from './exception/non-support.exception';
 import { AuthService } from './module/auth/auth.service';
 import { getAllFiles } from './util/FileUtils';
 import { T_COMP, T_Inter, T_MENU } from './util/base';
@@ -8,10 +8,10 @@ import { BaseContextService } from './module/base-context/base-context.service';
 import { CacheTokenService } from './module/cache/cache.token.service';
 import { PrismaoService } from "./prisma/prismao.service";
 import { serverConfig } from "@ms/config";
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 
 const si = require("systeminformation");
-const fs = require('fs').promises;
-const path = require('path');
 
 @Injectable()
 export class AppService {
@@ -62,7 +62,7 @@ export class AppService {
       files.push(path.join(__dirname, '../../src/app.controller.ts'));
       const filePaths = files.filter(fileName => fileName.endsWith('.controller.ts'));
       for (const filePath of filePaths) {
-        const text = await fs.readFile(filePath, 'utf-8');
+        const text = await fs.readFileSync(filePath, 'utf-8');
         // 正则表达式来匹配单引号或双引号内的字符串
         const simpleAuthorizeRegex = /@Authorize\('([^']*)'\)/g;
         const complexAuthorizeRegex = /@Authorize\(\s*{[^}]*}\s*\)/g;
@@ -96,7 +96,7 @@ export class AppService {
       }
     } catch (e) {
       console.error(e);
-      throw new NonSupportedException('读取源代码信息');
+      throw new NonSupportException('读取源代码信息');
     }
     return R.ok(allAuthApis);
   }

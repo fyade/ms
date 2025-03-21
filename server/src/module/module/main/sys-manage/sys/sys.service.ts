@@ -13,7 +13,7 @@ export class SysService {
     this.bcs.setFieldSelectParam('sys_sys', {
       notNullKeys: ['name', 'perms', 'orderNum', 'path', 'ifDisabled'],
       numberKeys: ['orderNum'],
-    })
+    });
   }
 
   async selSys(dto: SysSelListDto): Promise<R> {

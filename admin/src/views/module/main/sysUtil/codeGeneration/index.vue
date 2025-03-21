@@ -10,7 +10,7 @@ import { CONFIG, final } from "@/utils/base.ts";
 import Pagination from "@/components/pagination/pagination.vue";
 import { funcTablePage } from "@/composition/tablePage/tablePage2.ts";
 import { State2, TablePageConfig } from "@/type/tablePage.ts";
-import { FormRules } from "element-plus";
+import { FormRules, ElMessage } from "element-plus";
 import { Delete, Download, Edit, Plus, Refresh, Upload, Search, DArrowRight, DocumentCopy } from "@element-plus/icons-vue";
 import { CodeGenTableDto, CodeGenTableUpdDto } from "@/type/module/main/sysUtil/codeGenTable.ts";
 import { codeGenTableApi } from "@/api/module/main/sysUtil/codeGenTable.ts";

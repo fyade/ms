@@ -1,15 +1,16 @@
 import { defineStore } from "pinia";
-import router from "@/router/index.ts";
 import { reactive, ref } from "vue";
-import { ElNotification, NotificationHandle } from "element-plus";
-import { useRoute } from "vue-router";
+import { ElNotification, NotificationHandle, ElMessage } from "element-plus";
+import { useRoute, useRouter } from "vue-router";
 import { LoginDto, UserDto } from "@/type/module/main/sysManage/user.ts";
 import { getSelfInfo, loginApi, logOutApi } from "@/api/module/main/sysManage/user.ts";
 import { ifWebsiteLink } from "@/utils/LinkUtils.ts";
 import { UserVisitorDto } from "@/type/module/main/otherUser/userVisitor.ts";
 import { objectUtils } from "@ms/common";
+import { BCService } from "@/services/broadcastChannel.ts";
 
 export const useUserStore = defineStore('userStore', () => {
+  const router = useRouter()
   const token = ref('')
   const loginRole = ref('')
   const userinfo = reactive<UserDto | UserVisitorDto>({
@@ -27,6 +28,8 @@ export const useUserStore = defineStore('userStore', () => {
   const login = async (user: LoginDto) => {
     return new Promise((resolve, reject) => {
       loginApi(user).then(async res => {
+        // 其他标签页如果有不同用户，则将其登出
+        BCService.emit('login', { username: user.username, loginRole: user.loginRole })
         if (res) {
           const notification: NotificationHandle = ElNotification({
             title: '提示',
@@ -92,4 +95,6 @@ export const useUserStore = defineStore('userStore', () => {
     logOut,
     refreshSelfInfo
   }
+}, {
+  persist: true,
 })

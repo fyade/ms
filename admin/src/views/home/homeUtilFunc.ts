@@ -1,14 +1,14 @@
 import { SysDto } from "@/type/module/main/sysManage/sys.ts";
 import { getButtons, getPages } from "@/api/common/sys.ts";
 import { RouteRecordNormalized, RouteRecordRaw } from "vue-router";
-import { deepClone } from "@/utils/ObjectUtils.ts";
 import { MenuDto } from "@/type/module/main/sysManage/menu.ts";
 import { final, T_COMP, T_MENU } from "@/utils/base.ts";
 import { arr2ToDiguiObj, diguiRun } from "@/utils/baseUtils.ts";
 import { useSysStore } from "@/store/module/sys.ts";
 import { useRouterStore } from "@/store/module/router.ts";
-import router from "@/router";
 import { splitUrlByX } from "@/utils/RegularUtils.ts";
+import { ElMessage } from 'element-plus'
+import router from "@/router";
 
 const sysStore = useSysStore();
 const routerStore = useRouterStore();
@@ -19,14 +19,14 @@ const modules = {
   ...import.meta.glob(`../../views/**/**/**/**.vue`),
 }
 export const goToSystem = async (
-    dto: SysDto,
-    {
-      pushPath = null,
-      errorCallback = null,
-    }: {
-      pushPath?: string | null
-      errorCallback?: Function | null
-    } = {}
+  dto: SysDto,
+  {
+    pushPath = null,
+    errorCallback = null,
+  }: {
+    pushPath?: string | null
+    errorCallback?: Function | null
+  } = {}
 ) => {
   try {
     const res = await getPages(dto.id)
@@ -34,26 +34,30 @@ export const goToSystem = async (
     const buttonPerms = res2.map(item => item.perms);
     sysStore.setVisibleButtons(dto.perms, buttonPerms)
     if (router.getRoutes().findIndex(item => item.name === `/${dto.path}`) === -1) {
-      const permissions = (await Promise.all((deepClone<MenuDto[]>(res).filter(item => {
-        return [T_MENU, T_COMP].indexOf(item.type) > -1 && item.ifVisible === final.Y
-      }) as unknown as (RouteRecordNormalized & MenuDto & { component: any })[]).map(async item => {
-        item.meta = {
+      const permissions: (RouteRecordNormalized & MenuDto & { component: any })[] = [];
+      for (const item of res) {
+        if (!([T_MENU, T_COMP].includes(item.type) && item.ifVisible === final.Y)) {
+          continue;
+        }
+        const permission = {
           ...item,
-          asideMenu: true,
-          sysPerms: dto.perms,
-        }
-        item.name = item.perms
-        if (item.type === T_COMP) {
-          const component = await modules[`../module/${dto.path}${item.component}`]()
-          item.component = component.default
+          name: item.perms,
+          meta: {
+            ...item,
+            asideMenu: true,
+            sysPerms: dto.perms,
+          },
+        } as unknown as (RouteRecordNormalized & MenuDto & { component: any })
+        if (permission.type === T_COMP) {
+          const component = await modules[`../module/${dto.path}${permission.component}`]()
+          permission.component = component.default
         } else {
-          delete item.component
+          delete permission.component
         }
-        return item
-      })))
-      const permissionsObj = arr2ToDiguiObj(permissions, {ifDeepClone: false}).sort((m1, m2) => {
-        return m1.orderNum - m2.orderNum
-      })
+        permissions.push(permission)
+      }
+      const permissionsObj = arr2ToDiguiObj(permissions, { ifDeepClone: false })
+        .sort((m1, m2) => m1.orderNum - m2.orderNum)
       router.addRoute({
         path: `/${dto.path}`,
         name: `/${dto.path}`,
@@ -70,7 +74,7 @@ export const goToSystem = async (
       const routes = router.getRoutes();
       const fixs = permissions.filter(item => item.ifFixed === final.Y).map(item => item.perms);
       const fixedMenus: string[] = []
-      diguiRun(permissionsObj, obj => {
+      diguiRun(permissionsObj, ({ obj, parent }) => {
         if (fixs.includes(obj.perms)) {
           const find = routes.find(item => item.name === obj.perms);
           if (find) {
@@ -90,28 +94,28 @@ export const goToSystem = async (
           let arr: RouteRecordRaw[] | void = []
           for (let i = 1; i < strs.length; i++) {
             const find: RouteRecordNormalized | RouteRecordRaw | void = i === 1 ?
-                router.getRoutes().find(item => item.path === `/${dto.path}${strs[1]}`) :
-                arr?.find(item => `${item.path}` === strs[i].replace('/', ''))
+              router.getRoutes().find(item => item.path === `/${dto.path}${strs[1]}`) :
+              arr?.find(item => `${item.path}` === strs[i].replace('/', ''))
             if (find) {
               if (i === strs.length - 1) {
-                router.push(pushPath)
+                await router.push(pushPath)
                 return;
               }
               arr = find.children
             } else {
-              router.push(`/${dto.path}`)
+              await router.push(`/${dto.path}`)
               return;
             }
           }
         }
-        router.push(`/${dto.path}`)
+        await router.push(`/${dto.path}`)
         return;
       } catch (e) {
-        router.push(`/${dto.path}`)
+        await router.push(`/${dto.path}`)
         return;
       }
     }
-    router.push(`/${dto.path}`)
+    await router.push(`/${dto.path}`)
     return;
   } catch (e) {
     if (errorCallback) {

@@ -3,7 +3,7 @@ import { PrismaService } from '../../../../prisma/prisma.service';
 import { R } from '../../../../common/R';
 import { UserUserGroupDto, UserUserGroupSelListDto, UserUserGroupSelAllDto, UserUserGroupInsOneDto, UserUserGroupUpdOneDto, UserUserGroupUpdUUGDtp, UserUserGroupUpdUGUDtp } from './dto';
 import { AuthService } from '../../../auth/auth.service';
-import { UserPermissionDeniedException } from '../../../../exception/UserPermissionDeniedException';
+import { UserPermissionDeniedException } from '../../../../exception/user-permission-denied.exception';
 import { BaseContextService } from '../../../base-context/base-context.service';
 
 @Injectable()

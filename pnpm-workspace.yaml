@@ -1,9 +1,11 @@
 packages:
-  # 前端
+  # 前端管理端
   - 'admin'
-  # 配置
-  - 'config'
   # 实体类及工具函数
   - 'common'
+  # 配置
+  - 'config'
+  # 子项目
+  - 'packages/*'
   # 后端
   - 'server'

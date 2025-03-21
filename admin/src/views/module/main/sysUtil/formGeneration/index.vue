@@ -9,7 +9,7 @@ export default {
 </script>
 
 <template>
-表单生成
+  表单生成
 </template>
 
 <style scoped>

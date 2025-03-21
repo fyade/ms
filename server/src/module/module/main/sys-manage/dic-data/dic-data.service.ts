@@ -4,7 +4,7 @@ import { R } from '../../../../../common/R';
 import { DicDataDto, DicDataSelListDto, DicDataSelAllDto, DicDataInsOneDto, DicDataUpdOneDto } from './dto';
 import { base } from '../../../../../util/base';
 import { BaseContextService } from '../../../../base-context/base-context.service';
-import { Exception } from "../../../../../exception/Exception";
+import { Exception } from "../../../../../exception/exception";
 import { CommonService } from "../../../../common/common.service";
 
 @Injectable()

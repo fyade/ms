@@ -1,15 +1,14 @@
-import { Body, Controller, Delete, Get, Param, ParseArrayPipe, Post, Put, Query, UsePipes } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { DeptSysService } from './dept-sys.service';
 import { Authorize } from '../../../../../decorator/authorize.decorator';
 import { R } from '../../../../../common/R';
-import { ValidationPipe } from '../../../../../pipe/validation/validation.pipe';
-import { DeptSysSelListDto, DeptSysSelAllDto, DeptSysInsOneDto, DeptSysUpdOneDto } from './dto';
+import { DeptSysSelListDto, DeptSysSelAllDto, DeptSysInsOneDto, DeptSysUpdOneDto, DeptSysInsMoreDto, DeptSysUpdMoreDto } from './dto';
 
 @Controller('/main/sys-manage/dept-sys')
 @ApiTags('主系统/系统管理/部门系统')
 @ApiBearerAuth()
-@UsePipes(new ValidationPipe())
+@UsePipes(new ValidationPipe({ transform: true }))
 export class DeptSysController {
   constructor(private readonly deptSysService: DeptSysService) {
   }
@@ -92,12 +91,8 @@ export class DeptSysController {
     permission: 'main:sysManage:deptSys:inss',
     label: '批量新增部门系统',
   })
-  async insDeptSyss(@Body(
-    new ParseArrayPipe({
-      items: DeptSysInsOneDto,
-    }),
-  ) dtos: DeptSysInsOneDto[]): Promise<R> {
-    return this.deptSysService.insDeptSyss(dtos);
+  async insDeptSyss(@Body() dto: DeptSysInsMoreDto): Promise<R> {
+    return this.deptSysService.insDeptSyss(dto.items);
   }
 
   @Put()
@@ -124,12 +119,8 @@ export class DeptSysController {
     permission: 'main:sysManage:deptSys:upds',
     label: '批量修改部门系统',
   })
-  async updDeptSyss(@Body(
-    new ParseArrayPipe({
-      items: DeptSysUpdOneDto,
-    }),
-  ) dtos: DeptSysUpdOneDto[]): Promise<R> {
-    return this.deptSysService.updDeptSyss(dtos);
+  async updDeptSyss(@Body() dto: DeptSysUpdMoreDto): Promise<R> {
+    return this.deptSysService.updDeptSyss(dto.items);
   }
 
   @Delete()

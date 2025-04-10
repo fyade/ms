@@ -63,7 +63,9 @@ export const menuThrottleApi: ApiConfig<MenuThrottleDto, MenuThrottleUpdDto> = {
   insertMore: (objs) => request({
     url: '/main/sys-manage/menu-throttle/s',
     method: 'POST',
-    data: objs
+    data: {
+      items: objs,
+    }
   }),
   /**
    * 修改多个
@@ -72,7 +74,9 @@ export const menuThrottleApi: ApiConfig<MenuThrottleDto, MenuThrottleUpdDto> = {
   updateMore: (objs) => request({
     url: '/main/sys-manage/menu-throttle/s',
     method: 'PUT',
-    data: objs
+    data: {
+      items: objs,
+    }
   }),
   /**
    * 删除

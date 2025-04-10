@@ -30,7 +30,10 @@ const state = reactive<State2<MenuIpWhiteListDto, MenuIpWhiteListUpdDto>>({
   },
   dialogForms: [],
   dialogForms_error: {},
-  filterForm: {},
+  filterForm: {
+    whiteList: '',
+    fromType: '',
+  },
 })
 const dFormRules: FormRules = {
   menuId: [{required: true, trigger: 'change'}],
@@ -263,9 +266,15 @@ const {
         @keyup.enter="fEnter"
     >
       <!--在此下方添加表单项-->
-      <!--<el-form-item :label="menuIpWhiteListDict." prop="">-->
-      <!--  <el-input v-model="state.filterForm." :placeholder="menuIpWhiteListDict."/>-->
-      <!--</el-form-item>-->
+      <el-form-item :label="menuIpWhiteListDict.whiteList" prop="whiteList">
+        <el-input v-model="state.filterForm.whiteList" :placeholder="menuIpWhiteListDict.whiteList"/>
+      </el-form-item>
+      <el-form-item :label="menuIpWhiteListDict.fromType" prop="fromType">
+        <el-select v-model="state.filterForm.fromType" :placeholder="menuIpWhiteListDict.fromType" clearable filterable>
+          <el-option :label="mIWLTypeDict[T_IP]" :value="T_IP"/>
+          <el-option :label="mIWLTypeDict[T_HOST]" :value="T_HOST"/>
+        </el-select>
+      </el-form-item>
       <!--在此上方添加表单项-->
       <el-form-item>
         <el-button type="primary" @click="fCon">筛选</el-button>

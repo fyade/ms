@@ -87,7 +87,7 @@ const sysConfigStore = useSysConfigStore();
       </el-aside>
       <el-main class="content">
         <div class="header">
-          <el-scrollbar>
+          <el-scrollbar always>
             <div class="header2">
               <RightClickMenu
                   v-for="(item,index) in routerStore.getMenuList()"
@@ -109,15 +109,11 @@ const sysConfigStore = useSysConfigStore();
           </el-scrollbar>
         </div>
         <div class="main">
-          <el-scrollbar always view-style="height: 100%;">
-            <div class="main2">
-              <router-view #default="{Component}">
-                <keep-alive :include="routerStore.getMenuListNames">
-                  <component :is="Component" :key="route.path"/>
-                </keep-alive>
-              </router-view>
-            </div>
-          </el-scrollbar>
+          <router-view #default="{Component}">
+            <keep-alive :include="routerStore.getMenuListNames">
+              <component :is="Component" :key="route.path"/>
+            </keep-alive>
+          </router-view>
         </div>
       </el-main>
     </el-container>
@@ -160,16 +156,11 @@ const sysConfigStore = useSysConfigStore();
   }
 
   > .main {
-    flex: auto;
+    position: relative;
     padding: 8px;
-    padding-right: 0;
+    flex: auto;
     overflow: auto;
     background-color: var(--theme-color-main-bg);;
-  }
-
-  .main2 {
-    height: 100%;
-    padding-right: 12px;
   }
 }
 </style>

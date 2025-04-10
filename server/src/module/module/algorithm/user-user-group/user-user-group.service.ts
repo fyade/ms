@@ -61,7 +61,7 @@ export class UserUserGroupService {
       userGroupId: item,
       loginRole: dto.loginRole
     })));
-    return R.ok();
+    return R.ok(true);
   }
 
   async updUserUserGroupUGU(dto: UserUserGroupUpdUGUDtp): Promise<R> {
@@ -83,7 +83,7 @@ export class UserUserGroupService {
       });
     }
     await this.prisma.createMany('sys_user_user_group', data);
-    return R.ok();
+    return R.ok(true);
   }
 
   async delUserUserGroup(ids: number[]): Promise<R> {

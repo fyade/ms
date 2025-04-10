@@ -10,9 +10,7 @@ import Header from "@/layout/sys/header.vue";
 
 let loading: LoadingInstance | null
 onBeforeUnmount(() => {
-  if (loading) {
-    loading.close()
-  }
+  loading?.close()
 })
 
 const msg = ref('')
@@ -34,9 +32,9 @@ const init = () => {
   getSystems().then(async res => {
     const find = res.find(item => `/${item.path}` === allPaths[0]);
     if (!find) {
-      router.push('/')
+      await router.push('/')
     } else {
-      goToSystem(find, {
+      await goToSystem(find, {
         pushPath: allPaths.reduce((a, b) => `${a}${b}`),
         errorCallback: () => {
           router.push('/')
@@ -45,9 +43,7 @@ const init = () => {
     }
   }).catch(() => {
     msg.value = 'Error...'
-    if (loading) {
-      loading.close()
-    }
+    loading?.close()
   })
 }
 init()

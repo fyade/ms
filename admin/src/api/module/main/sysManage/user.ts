@@ -71,7 +71,9 @@ export const userApi: ApiConfig<UserDto, UserUpdDto> = {
   insertMore: (objs) => request({
     url: '/main/sys-manage/user/s',
     method: 'POST',
-    data: objs
+    data: {
+      items: objs,
+    }
   }),
   /**
    * 修改多个
@@ -80,7 +82,9 @@ export const userApi: ApiConfig<UserDto, UserUpdDto> = {
   updateMore: (objs) => request({
     url: '/main/sys-manage/user/s',
     method: 'PUT',
-    data: objs
+    data: {
+      items: objs,
+    }
   }),
   /**
    * 删除
@@ -90,42 +94,6 @@ export const userApi: ApiConfig<UserDto, UserUpdDto> = {
     url: '/main/sys-manage/user',
     method: 'DELETE',
     data: ids
-  })
-}
-
-/**
- * 管理员登录
- * @param data
- */
-export function loginApi(data: LoginDto) {
-  return request({
-    url: '/sys/user/adminlogin',
-    method: 'POST',
-    data: {
-      ...data,
-      password: encryptUtils.encrypt(data.password),
-      psdType: 'b'
-    }
-  })
-}
-
-/**
- * 登出
- */
-export function logOutApi() {
-  return request({
-    url: '/sys/user/log-out',
-    method: 'POST',
-  })
-}
-
-/**
- * 获取验证码
- */
-export function getVerificationCode() {
-  return request({
-    url: '/sys/user/verification-code',
-    method: 'GET',
   })
 }
 

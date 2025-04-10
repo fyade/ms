@@ -8,6 +8,6 @@ export const currentConfig = () => {
 
 const config = {
   dev: {
-    SECRET_KEY: 'awefujhjka@*&$^564', // 前端-后端接口敏感信息加密盐
+    SECRET_KEY: 'aaaaaa', // 前端-后端接口敏感信息加密盐
   },
 }

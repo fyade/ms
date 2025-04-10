@@ -1,15 +1,14 @@
-import { Body, Controller, Delete, Get, Param, ParseArrayPipe, Post, Put, Query, UsePipes } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { DicDataService } from './dic-data.service';
 import { Authorize } from '../../../../../decorator/authorize.decorator';
 import { R } from '../../../../../common/R';
-import { ValidationPipe } from '../../../../../pipe/validation/validation.pipe';
-import { DicDataSelListDto, DicDataSelAllDto, DicDataInsOneDto, DicDataUpdOneDto } from './dto';
+import { DicDataSelListDto, DicDataSelAllDto, DicDataInsOneDto, DicDataUpdOneDto, DicDataInsMoreDto, DicDataUpdMoreDto } from './dto';
 
 @Controller('/main/sys-manage/dic-data')
 @ApiTags('主系统/系统管理/字典数据')
 @ApiBearerAuth()
-@UsePipes(new ValidationPipe())
+@UsePipes(new ValidationPipe({ transform: true }))
 export class DicDataController {
   constructor(private readonly dicDataService: DicDataService) {
   }
@@ -104,12 +103,8 @@ export class DicDataController {
     permission: 'main:sysManage:dicData:inss',
     label: '批量新增字典数据',
   })
-  async insDicDatas(@Body(
-    new ParseArrayPipe({
-      items: DicDataInsOneDto,
-    }),
-  ) dtos: DicDataInsOneDto[]): Promise<R> {
-    return this.dicDataService.insDicDatas(dtos);
+  async insDicDatas(@Body() dto: DicDataInsMoreDto): Promise<R> {
+    return this.dicDataService.insDicDatas(dto.items);
   }
 
   @Put()
@@ -136,12 +131,8 @@ export class DicDataController {
     permission: 'main:sysManage:dicData:upds',
     label: '批量修改字典数据',
   })
-  async updDicDatas(@Body(
-    new ParseArrayPipe({
-      items: DicDataUpdOneDto,
-    }),
-  ) dtos: DicDataUpdOneDto[]): Promise<R> {
-    return this.dicDataService.updDicDatas(dtos);
+  async updDicDatas(@Body() dto: DicDataUpdMoreDto): Promise<R> {
+    return this.dicDataService.updDicDatas(dto.items);
   }
 
   @Delete()

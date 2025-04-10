@@ -1,15 +1,14 @@
-import { Body, Controller, Delete, Get, Param, ParseArrayPipe, Post, Put, Query, UsePipes } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { MenuThrottleService } from './menu-throttle.service';
 import { Authorize } from '../../../../../decorator/authorize.decorator';
 import { R } from '../../../../../common/R';
-import { ValidationPipe } from '../../../../../pipe/validation/validation.pipe';
-import { MenuThrottleSelListDto, MenuThrottleSelAllDto, MenuThrottleInsOneDto, MenuThrottleUpdOneDto } from './dto';
+import { MenuThrottleSelListDto, MenuThrottleSelAllDto, MenuThrottleInsOneDto, MenuThrottleUpdOneDto, MenuThrottleInsMoreDto, MenuThrottleUpdMoreDto } from './dto';
 
 @Controller('/main/sys-manage/menu-throttle')
 @ApiTags('主系统/系统管理/请求限速')
 @ApiBearerAuth()
-@UsePipes(new ValidationPipe())
+@UsePipes(new ValidationPipe({ transform: true }))
 export class MenuThrottleController {
   constructor(private readonly menuThrottleService: MenuThrottleService) {
   }
@@ -92,12 +91,8 @@ export class MenuThrottleController {
     permission: 'main:sysManage:menuThrottle:inss',
     label: '批量新增请求限速',
   })
-  async insMenuThrottles(@Body(
-    new ParseArrayPipe({
-      items: MenuThrottleInsOneDto,
-    }),
-  ) dtos: MenuThrottleInsOneDto[]): Promise<R> {
-    return this.menuThrottleService.insMenuThrottles(dtos);
+  async insMenuThrottles(@Body() dto: MenuThrottleInsMoreDto): Promise<R> {
+    return this.menuThrottleService.insMenuThrottles(dto.items);
   }
 
   @Put()
@@ -124,12 +119,8 @@ export class MenuThrottleController {
     permission: 'main:sysManage:menuThrottle:upds',
     label: '批量修改请求限速',
   })
-  async updMenuThrottles(@Body(
-    new ParseArrayPipe({
-      items: MenuThrottleUpdOneDto,
-    }),
-  ) dtos: MenuThrottleUpdOneDto[]): Promise<R> {
-    return this.menuThrottleService.updMenuThrottles(dtos);
+  async updMenuThrottles(@Body() dto: MenuThrottleUpdMoreDto): Promise<R> {
+    return this.menuThrottleService.updMenuThrottles(dto.items);
   }
 
   @Delete()

@@ -1,15 +1,14 @@
-import { Body, Controller, Delete, Get, Param, Post, Query, UsePipes } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { UserGroupPermissionService } from './user-group-permission.service';
 import { Authorize } from '../../../../decorator/authorize.decorator';
 import { R } from '../../../../common/R';
-import { ValidationPipe } from '../../../../pipe/validation/validation.pipe';
-import { UserGroupPermissionDto, UserGroupPermissionSelListDto, UserGroupPermissionSelAllDto, UserGroupPermissionInsOneDto, UserGroupPermissionUpdOneDto } from './dto';
+import { UserGroupPermissionSelListDto, UserGroupPermissionSelAllDto, UserGroupPermissionInsOneDto, UserGroupPermissionUpdOneDto, UserGroupPermissionInsMoreDto, UserGroupPermissionUpdMoreDto } from './dto';
 
 @Controller('/algorithm/user-group-permission')
 @ApiTags('算法系统/用户组接口组')
 @ApiBearerAuth()
-@UsePipes(new ValidationPipe())
+@UsePipes(new ValidationPipe({ transform: true }))
 export class UserGroupPermissionController {
   constructor(private readonly userGroupPermissionService: UserGroupPermissionService) {
   }

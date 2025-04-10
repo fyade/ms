@@ -63,7 +63,9 @@ export const menuIpWhiteListApi: ApiConfig<MenuIpWhiteListDto, MenuIpWhiteListUp
   insertMore: (objs) => request({
     url: '/main/sys-manage/menu-ip-white-list/s',
     method: 'POST',
-    data: objs
+    data: {
+      items: objs,
+    }
   }),
   /**
    * 修改多个
@@ -72,7 +74,9 @@ export const menuIpWhiteListApi: ApiConfig<MenuIpWhiteListDto, MenuIpWhiteListUp
   updateMore: (objs) => request({
     url: '/main/sys-manage/menu-ip-white-list/s',
     method: 'PUT',
-    data: objs
+    data: {
+      items: objs,
+    }
   }),
   /**
    * 删除

@@ -35,7 +35,7 @@ const config = new TablePageConfig<MenuDto<String>>({
   getDataOnMounted: false,
   bulkOperation: true,
   selectParam: {
-    type: JSON.stringify({in: {value: [T_IS]}}),
+    type: JSON.stringify({ in: { value: [T_IS] } }),
     sysId: final.DEFAULT_PARENT_ID,
   },
 })
@@ -143,7 +143,7 @@ const nodeClick = (row: MenuDto) => {
 </script>
 
 <template>
-  <div class="zs-two-col">
+  <div class="el zs-two-col">
     <!--最左侧，选择角色或者部门-->
     <div class="left">
       <!--<el-radio-group v-model="selectRT" @change="selectRTChange">-->
@@ -201,4 +201,14 @@ const nodeClick = (row: MenuDto) => {
 </template>
 
 <style scoped>
+.el {
+  overflow: hidden;
+  margin: -8px;
+  padding: 8px;
+}
+
+.right {
+  margin: -12px;
+  padding: 12px;
+}
 </style>

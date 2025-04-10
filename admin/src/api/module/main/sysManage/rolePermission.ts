@@ -63,7 +63,9 @@ export const rolePermissionApi: ApiConfig<RolePermissionDto, RolePermissionUpdDt
   insertMore: (objs) => request({
     url: '/main/sys-manage/role-permission/s',
     method: 'POST',
-    data: objs
+    data: {
+      items: objs,
+    }
   }),
   /**
    * 修改多个
@@ -72,7 +74,9 @@ export const rolePermissionApi: ApiConfig<RolePermissionDto, RolePermissionUpdDt
   updateMore: (objs) => request({
     url: '/main/sys-manage/role-permission/s',
     method: 'PUT',
-    data: objs
+    data: {
+      items: objs,
+    }
   }),
   /**
    * 删除

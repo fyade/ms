@@ -1009,6 +1009,7 @@ const userGroupPermissionDCon2 = () => {
 <style scoped>
 .el {
   height: 100%;
+  overflow: hidden;
 
   > * {
     &:nth-child(1) {

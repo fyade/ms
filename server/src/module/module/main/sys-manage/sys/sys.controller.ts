@@ -1,15 +1,14 @@
-import { Body, Controller, Delete, Get, Param, ParseArrayPipe, Post, Put, Query, UsePipes } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { SysService } from './sys.service';
 import { Authorize } from '../../../../../decorator/authorize.decorator';
 import { R } from '../../../../../common/R';
-import { ValidationPipe } from '../../../../../pipe/validation/validation.pipe';
-import { SysSelListDto, SysSelAllDto, SysInsOneDto, SysUpdOneDto } from './dto';
+import { SysSelListDto, SysSelAllDto, SysInsOneDto, SysUpdOneDto, SysInsMoreDto, SysUpdMoreDto } from './dto';
 
 @Controller('/main/sys-manage/sys')
 @ApiTags('主系统/系统管理/系统')
 @ApiBearerAuth()
-@UsePipes(new ValidationPipe())
+@UsePipes(new ValidationPipe({ transform: true }))
 export class SysController {
   constructor(private readonly sysService: SysService) {
   }
@@ -92,12 +91,8 @@ export class SysController {
     permission: 'main:sysManage:sys:inss',
     label: '批量新增系统',
   })
-  async insSyss(@Body(
-    new ParseArrayPipe({
-      items: SysInsOneDto,
-    }),
-  ) dtos: SysInsOneDto[]): Promise<R> {
-    return this.sysService.insSyss(dtos);
+  async insSyss(@Body() dto: SysInsMoreDto): Promise<R> {
+    return this.sysService.insSyss(dto.items);
   }
 
   @Put()
@@ -124,12 +119,8 @@ export class SysController {
     permission: 'main:sysManage:sys:upds',
     label: '批量修改系统',
   })
-  async updSyss(@Body(
-    new ParseArrayPipe({
-      items: SysUpdOneDto,
-    }),
-  ) dtos: SysUpdOneDto[]): Promise<R> {
-    return this.sysService.updSyss(dtos);
+  async updSyss(@Body() dto: SysUpdMoreDto): Promise<R> {
+    return this.sysService.updSyss(dto.items);
   }
 
   @Delete()

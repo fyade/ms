@@ -1,15 +1,14 @@
-import { Body, Controller, Delete, Get, Param, ParseArrayPipe, Post, Put, Query, UsePipes } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { CodeGenTableService } from './code-gen-table.service';
 import { Authorize } from '../../../../../decorator/authorize.decorator';
 import { R } from '../../../../../common/R';
-import { ValidationPipe } from '../../../../../pipe/validation/validation.pipe';
-import { CodeGenTableSelListDto, CodeGenTableSelAllDto, CodeGenTableInsOneDto, CodeGenTableUpdOneDto } from './dto';
+import { CodeGenTableSelListDto, CodeGenTableSelAllDto, CodeGenTableInsOneDto, CodeGenTableUpdOneDto, CodeGenTableInsMoreDto, CodeGenTableUpdMoreDto } from './dto';
 
 @Controller('/main/sys-util/code-gen-table')
 @ApiTags('主系统/系统工具/代码生成-表信息')
 @ApiBearerAuth()
-@UsePipes(new ValidationPipe())
+@UsePipes(new ValidationPipe({ transform: true }))
 export class CodeGenTableController {
   constructor(private readonly codeGenTableService: CodeGenTableService) {
   }
@@ -92,12 +91,8 @@ export class CodeGenTableController {
     permission: 'main:sysUtil:codeGenTable:inss',
     label: '批量新增代码生成-表信息',
   })
-  async insCodeGenTables(@Body(
-    new ParseArrayPipe({
-      items: CodeGenTableInsOneDto,
-    }),
-  ) dtos: CodeGenTableInsOneDto[]): Promise<R> {
-    return this.codeGenTableService.insCodeGenTables(dtos);
+  async insCodeGenTables(@Body() dto: CodeGenTableInsMoreDto): Promise<R> {
+    return this.codeGenTableService.insCodeGenTables(dto.items);
   }
 
   @Put()
@@ -124,12 +119,8 @@ export class CodeGenTableController {
     permission: 'main:sysUtil:codeGenTable:upds',
     label: '批量修改代码生成-表信息',
   })
-  async updCodeGenTables(@Body(
-    new ParseArrayPipe({
-      items: CodeGenTableUpdOneDto,
-    }),
-  ) dtos: CodeGenTableUpdOneDto[]): Promise<R> {
-    return this.codeGenTableService.updCodeGenTables(dtos);
+  async updCodeGenTables(@Body() dto: CodeGenTableUpdMoreDto): Promise<R> {
+    return this.codeGenTableService.updCodeGenTables(dto.items);
   }
 
   @Delete()

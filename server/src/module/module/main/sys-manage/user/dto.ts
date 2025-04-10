@@ -52,11 +52,14 @@ export class LoginDto2 {
   @IsNotEmpty({ message: '密码不能为空' })
   password: string;
 
+  @ApiProperty({ description: '密码私钥uuid', required: false })
+  passwordKeyUuid: string;
+
   @ApiProperty({ description: '登录身份', required: true })
   @IsNotEmpty({ message: '登录身份不能为空' })
   loginRole: string;
 
-  @ApiProperty({ description: '密码类型，a:未加密/b:AES对称加密', required: true })
+  @ApiProperty({ description: '密码类型，a:未加密/b:AES加密/c:RSA加密', required: true })
   @IsNotEmpty({ message: '密码类型不能为空' })
   psdType: string;
 }
@@ -85,15 +88,15 @@ export class UpdPsdDto {
   @IsNotEmpty({ message: '确认新密码不能为空' })
   newp2: string;
 
-  @ApiProperty({ description: '密码类型，a:未加密/b:AES对称加密', required: true })
+  @ApiProperty({ description: '密码类型，a:未加密/b:AES加密/c:RSA加密', required: true })
   @IsNotEmpty({ message: '密码类型不能为空' })
   oldpType: string;
 
-  @ApiProperty({ description: '密码类型，a:未加密/b:AES对称加密', required: true })
+  @ApiProperty({ description: '密码类型，a:未加密/b:AES加密/c:RSA加密', required: true })
   @IsNotEmpty({ message: '密码类型不能为空' })
   newp1Type: string;
 
-  @ApiProperty({ description: '密码类型，a:未加密/b:AES对称加密', required: true })
+  @ApiProperty({ description: '密码类型，a:未加密/b:AES加密/c:RSA加密', required: true })
   @IsNotEmpty({ message: '密码类型不能为空' })
   newp2Type: string;
 }
@@ -107,7 +110,7 @@ export class AdminNewUserDto {
   @IsNotEmpty({ message: '密码不能为空' })
   password: string;
 
-  @ApiProperty({ description: '密码类型，a:未加密/b:AES对称加密', required: true })
+  @ApiProperty({ description: '密码类型，a:未加密/b:AES加密/c:RSA加密', required: true })
   @IsNotEmpty({ message: '密码类型不能为空' })
   psdType: string;
 }
@@ -121,7 +124,7 @@ export class ResetUserPsdDto {
   @IsNotEmpty({ message: '密码不能为空' })
   password: string;
 
-  @ApiProperty({ description: '密码类型，a:未加密/b:AES对称加密', required: true })
+  @ApiProperty({ description: '密码类型，a:未加密/b:AES加密/c:RSA加密', required: true })
   @IsNotEmpty({ message: '密码类型不能为空' })
   psdType: string;
 }

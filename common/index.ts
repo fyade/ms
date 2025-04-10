@@ -1,4 +1,5 @@
 import * as baseUtils from './util/base-utils.js'
+import * as cryptUtils from './util/crypt-utils.js'
 import * as encryptUtils from './util/encrypt-utils.js'
 import * as funcUtils from './util/func-utils.js'
 import * as idUtils from './util/id-utils.js'
@@ -8,6 +9,7 @@ import * as timeUtils from './util/time-utils.js'
 
 export {
   baseUtils,
+  cryptUtils,
   encryptUtils,
   funcUtils,
   idUtils,

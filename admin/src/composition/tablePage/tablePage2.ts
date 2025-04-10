@@ -240,7 +240,7 @@ export const funcTablePage = <T extends { id: number | string }, T2 = T>({
       for (let i = 0; i < state.dialogForms!.length; i++) {
         keys.forEach(key => {
           const rule = (dFormRules[key] as FormItemRule[])[0]
-          if (rule.required && (state.dialogForms![i] as any)[key] === '') {
+          if (['', void 0].includes(rule.required && (state.dialogForms![i] as any)[key])) {
             state.dialogForms_error![`${i}-${key}`] = 'error'
           }
         })
@@ -317,14 +317,14 @@ export const funcTablePage = <T extends { id: number | string }, T2 = T>({
       return ElMessage.warning('请至少选择 1 条数据。')
     }
     ElMessageBox.confirm(
-      `此操作将删除选中的 ${multipleSelection.value.length} 条数据，且无法撤销，请确认是否继续？`,
-      '警告',
-      {
-        confirmButtonText: '确认',
-        cancelButtonText: '取消',
-        type: 'warning',
-        draggable: true
-      }
+        `此操作将删除选中的 ${multipleSelection.value.length} 条数据，且无法撤销，请确认是否继续？`,
+        '警告',
+        {
+          confirmButtonText: '确认',
+          cancelButtonText: '取消',
+          type: 'warning',
+          draggable: true
+        }
     ).then(() => {
       const arr: (number | string)[] = multipleSelection.value.map(item => item.id)
       delData(...arr)
@@ -339,13 +339,13 @@ export const funcTablePage = <T extends { id: number | string }, T2 = T>({
                          } = {}
   ) => {
     await ElMessageBox.confirm(
-      '目前只支持单表导出，不支持子主表、树表等所有涉及父子关系的导出，请确认是否知晓？',
-      '警告',
-      {
-        confirmButtonText: '确认',
-        cancelButtonText: '取消',
-        type: 'warning',
-      }
+        '目前只支持单表导出，不支持子主表、树表等所有涉及父子关系的导出，请确认是否知晓？',
+        '警告',
+        {
+          confirmButtonText: '确认',
+          cancelButtonText: '取消',
+          type: 'warning',
+        }
     )
     const rows = deepClone<T[]>(toRaw(multipleSelection.value).map((item) => toRaw(item))).map(obj => {
       exportIgnoreKeys.forEach(key => {
@@ -371,13 +371,13 @@ export const funcTablePage = <T extends { id: number | string }, T2 = T>({
   // 导入
   const gImport = async () => {
     await ElMessageBox.confirm(
-      '目前只支持单表导入，不支持子主表、树表等所有涉及父子关系的导入，请确认是否知晓？',
-      '警告',
-      {
-        confirmButtonText: '确认',
-        cancelButtonText: '取消',
-        type: 'warning',
-      }
+        '目前只支持单表导入，不支持子主表、树表等所有涉及父子关系的导入，请确认是否知晓？',
+        '警告',
+        {
+          confirmButtonText: '确认',
+          cancelButtonText: '取消',
+          type: 'warning',
+        }
     )
     const sFiles = await selectFiles()
     if (sFiles.length === 0) {
@@ -432,7 +432,7 @@ export const funcTablePage = <T extends { id: number | string }, T2 = T>({
     api.selectById(id).then(res => {
       const keys = Object.keys(state.dialogForm as object) as (keyof T)[];
       ElMessageBox.alert(
-        `
+          `
 <div class="zs-view-data-message-box">
   <el-row>
     <el-col :span="12">
@@ -452,13 +452,13 @@ export const funcTablePage = <T extends { id: number | string }, T2 = T>({
 `).join('')}
 </div>
           `,
-        '查看',
-        {
-          dangerouslyUseHTMLString: true,
-          draggable: true,
-          closeOnClickModal: true,
-          closeOnPressEscape: true,
-        }
+          '查看',
+          {
+            dangerouslyUseHTMLString: true,
+            draggable: true,
+            closeOnClickModal: true,
+            closeOnPressEscape: true,
+          }
       )
     })
   }
@@ -522,14 +522,14 @@ export const funcTablePage = <T extends { id: number | string }, T2 = T>({
   // 删除
   const tDel = (id: number | string) => {
     ElMessageBox.confirm(
-      `此操作将删除选中的 1 条数据，且无法撤销，请确认是否继续？`,
-      '警告',
-      {
-        confirmButtonText: '确认',
-        cancelButtonText: '取消',
-        type: 'warning',
-        draggable: true
-      }
+        `此操作将删除选中的 1 条数据，且无法撤销，请确认是否继续？`,
+        '警告',
+        {
+          confirmButtonText: '确认',
+          cancelButtonText: '取消',
+          type: 'warning',
+          draggable: true
+        }
     ).then(() => {
       delData(id)
     }).catch(() => {

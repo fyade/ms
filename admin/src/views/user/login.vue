@@ -3,7 +3,7 @@ import { reactive, ref } from 'vue'
 import { useUserStore } from "@/store/module/user.ts";
 import { useSysStore } from "@/store/module/sys.ts";
 import { allLoginRoles } from "@/utils/base.ts";
-import { getVerificationCode } from "@/api/module/main/sysManage/user.ts";
+import { getVerificationCode } from "@/api/module/main/sysManage/userLogin.ts";
 import { adminConfig } from "@ms/config";
 
 const userStore = useUserStore();
@@ -39,7 +39,7 @@ refreshVerificationCode()
 </script>
 
 <template>
-  <div class="main">
+  <div class="el">
     <p class="title">{{ adminConfig.APP_NAME }}</p>
     <el-form
         :model="form"
@@ -67,7 +67,9 @@ refreshVerificationCode()
           </template>
         </el-input>
       </el-form-item>
-      <el-button style="width: 100%" type="primary" :disabled="logining" :loading="logining" @click="onSubmit">登录</el-button>
+      <div class="button-row">
+        <el-button type="primary" :disabled="logining" :loading="logining" @click="onSubmit">登录</el-button>
+      </div>
     </el-form>
   </div>
 
@@ -80,7 +82,7 @@ refreshVerificationCode()
 </template>
 
 <style scoped>
-.main {
+.el {
   > .title {
     text-align: center;
     font-size: 24px;
@@ -96,6 +98,18 @@ refreshVerificationCode()
   max-width: 500px;
   height: 500px;
   transform: translate(-50%, -50%);
+}
+
+.button-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  gap: 8px;
+
+  > * {
+    flex: 1;
+  }
 }
 
 .bottom-text {

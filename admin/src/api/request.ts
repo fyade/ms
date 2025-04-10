@@ -55,9 +55,7 @@ request.interceptors.response.use(
       status401 = true;
     } else {
       let msg = error.response.data.msg
-      if (error.response.data.code === 403) msg = msg
-      else if (error.response.data.code === 500) msg = '系统繁忙，请稍后再试。'
-      else if (!msg) msg = '系统繁忙，请稍后再试。'
+      if (!msg) msg = '系统繁忙，请稍后再试。'
       ElMessage.error(msg)
     }
     return Promise.reject(error.response)

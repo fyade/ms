@@ -76,7 +76,9 @@ export const fileUploadApi: ApiConfig<FileUploadDto, FileUploadUpdDto> = {
   insertMore: (objs) => request({
     url: '/main/common/file-upload/s',
     method: 'POST',
-    data: objs
+    data: {
+      items: objs,
+    }
   }),
   /**
    * 修改多个
@@ -85,7 +87,9 @@ export const fileUploadApi: ApiConfig<FileUploadDto, FileUploadUpdDto> = {
   updateMore: (objs) => request({
     url: '/main/common/file-upload/s',
     method: 'PUT',
-    data: objs
+    data: {
+      items: objs,
+    }
   }),
   /**
    * 删除

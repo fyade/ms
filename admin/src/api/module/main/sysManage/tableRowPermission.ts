@@ -63,7 +63,9 @@ export const tableRowPermissionApi: ApiConfig<TableRowPermissionDto, TableRowPer
   insertMore: (objs) => request({
     url: '/main/sys-manage/table-row-permission/s',
     method: 'POST',
-    data: objs
+    data: {
+      items: objs,
+    }
   }),
   /**
    * 修改多个
@@ -72,7 +74,9 @@ export const tableRowPermissionApi: ApiConfig<TableRowPermissionDto, TableRowPer
   updateMore: (objs) => request({
     url: '/main/sys-manage/table-row-permission/s',
     method: 'PUT',
-    data: objs
+    data: {
+      items: objs,
+    }
   }),
   /**
    * 删除

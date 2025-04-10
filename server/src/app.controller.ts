@@ -1,14 +1,13 @@
-import { Controller, Get, Param, UsePipes } from '@nestjs/common';
+import { Controller, Get, Param, UsePipes, ValidationPipe } from '@nestjs/common';
 import { AppService } from './app.service';
 import { R } from './common/R';
 import { Authorize } from './decorator/authorize.decorator';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { ValidationPipe } from './pipe/validation/validation.pipe';
 
 @Controller('/sys/base')
-@ApiTags('系统')
+@ApiTags('系统/基本')
 @ApiBearerAuth()
-@UsePipes(new ValidationPipe())
+@UsePipes(new ValidationPipe({ transform: true }))
 export class AppController {
   constructor(
     private readonly appService: AppService,

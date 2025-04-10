@@ -63,7 +63,9 @@ export const menuApi: ApiConfig<MenuDto, MenuUpdDto> = {
   insertMore: (objs) => request({
     url: '/main/sys-manage/menu/s',
     method: 'POST',
-    data: objs
+    data: {
+      items: objs,
+    }
   }),
   /**
    * 修改多个
@@ -72,7 +74,9 @@ export const menuApi: ApiConfig<MenuDto, MenuUpdDto> = {
   updateMore: (objs) => request({
     url: '/main/sys-manage/menu/s',
     method: 'PUT',
-    data: objs
+    data: {
+      items: objs,
+    }
   }),
   /**
    * 删除

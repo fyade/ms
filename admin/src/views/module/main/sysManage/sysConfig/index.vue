@@ -11,9 +11,11 @@ import { sysConfigApi } from "@/api/module/main/sysManage/sysConfig.ts";
 import { sysConfigDict } from "@/dict/module/main/sysManage/sysConfig.ts";
 import { final } from "@/utils/base.ts";
 import { objectUtils } from "@ms/common";
+import { ElMessage } from "element-plus";
 
 const form = ref<SysConfigDto>(new SysConfigDto())
 const loading = ref(false)
+const loading2 = ref(false)
 const ifHasConfig = ref(false)
 const getData = () => {
   if (loading.value) {
@@ -27,18 +29,24 @@ const getData = () => {
     }
   }).finally(() => {
     loading.value = false
+    loading2.value = false
   })
 }
 getData()
 
 const saveForm = () => {
-  if (loading.value) {
+  if (loading2.value) {
     return;
   }
+  loading2.value = true
   if (ifHasConfig.value) {
-    sysConfigApi.updateOne(form.value).finally(getData)
+    sysConfigApi.updateOne(form.value).then(() => {
+      ElMessage.success('操作成功')
+    }).finally(getData)
   } else {
-    sysConfigApi.insertOne(form.value).finally(getData)
+    sysConfigApi.insertOne(form.value).then(() => {
+      ElMessage.success('操作成功')
+    }).finally(getData)
   }
 }
 </script>
@@ -48,7 +56,7 @@ const saveForm = () => {
     <el-form
         label-width="auto"
         :form="form"
-        :loading="loading"
+        v-loading="loading || loading2"
     >
       <el-form-item :label="sysConfigDict.ifAllowUserRegist">
         <el-radio-group v-model="form.ifAllowUserRegist">

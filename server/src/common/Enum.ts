@@ -12,6 +12,6 @@ export class HTTP {
   }
 
   static SERVER_ERROR() {
-    return new HTTP(501, 'server_error');
+    return new HTTP(500, 'server_error');
   }
 }

@@ -1,15 +1,14 @@
-import { Body, Controller, Delete, Get, Param, ParseArrayPipe, Post, Put, Query, UsePipes } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { Authorize } from '../../../../../decorator/authorize.decorator';
 import { R } from '../../../../../common/R';
-import { ValidationPipe } from '../../../../../pipe/validation/validation.pipe';
 import { ViewRealTimeService } from './view-real-time.service';
 import { ViewRealTimeSelDirsDto, ViewRealTimeSelFileDto } from './dto';
 
 @Controller('/main/sys-log/view-real-time')
 @ApiTags('主系统/系统日志/日志文件')
 @ApiBearerAuth()
-@UsePipes(new ValidationPipe())
+@UsePipes(new ValidationPipe({ transform: true }))
 export class ViewRealTimeController {
   constructor(private readonly viewRealTimeService: ViewRealTimeService) {}
 

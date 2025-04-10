@@ -68,7 +68,9 @@ export const userUserGroupApi: ApiConfig<UserUserGroupDto, UserUserGroupUpdDto> 
   insertMore: (objs) => request({
     url: '/algorithm/user-user-group/s',
     method: 'POST',
-    data: objs
+    data: {
+      items: objs,
+    }
   }),
   /**
    * 修改多个
@@ -77,7 +79,9 @@ export const userUserGroupApi: ApiConfig<UserUserGroupDto, UserUserGroupUpdDto> 
   updateMore: (objs) => request({
     url: '/algorithm/user-user-group/s',
     method: 'PUT',
-    data: objs
+    data: {
+      items: objs,
+    }
   }),
   /**
    * 删除

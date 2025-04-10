@@ -3,8 +3,8 @@ import { UserGroupPermissionDto } from "@/type/module/algorithm/userGroupPermiss
 
 export const userGroupPermissionDict: { [P in keyof UserGroupPermissionDto]: string } = {
   ...publicDict,
-  userGroupId: '用户组',
-  permissionId: '接口组',
+  userGroupId: '用户组id',
+  permissionId: '接口组id',
   ifLongTerm: '是否长期权限',
   ifLimitRequestTimes: '是否限制次数',
   ifRejectRequestUseUp: '次数用尽后是否拒绝请求',

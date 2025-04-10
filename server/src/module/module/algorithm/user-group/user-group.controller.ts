@@ -1,15 +1,14 @@
-import { Body, Controller, Delete, Get, Param, ParseArrayPipe, Post, Put, Query, UsePipes } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { UserGroupService } from './user-group.service';
 import { Authorize } from '../../../../decorator/authorize.decorator';
 import { R } from '../../../../common/R';
-import { ValidationPipe } from '../../../../pipe/validation/validation.pipe';
-import { UserGroupSelListDto, UserGroupSelAllDto, UserGroupInsOneDto, UserGroupUpdOneDto } from './dto';
+import { UserGroupSelListDto, UserGroupSelAllDto, UserGroupInsOneDto, UserGroupUpdOneDto, UserGroupInsMoreDto, UserGroupUpdMoreDto } from './dto';
 
 @Controller('/algorithm/user-group')
 @ApiTags('算法系统/用户组')
 @ApiBearerAuth()
-@UsePipes(new ValidationPipe())
+@UsePipes(new ValidationPipe({ transform: true }))
 export class UserGroupController {
   constructor(private readonly userGroupService: UserGroupService) {
   }
@@ -92,12 +91,8 @@ export class UserGroupController {
     permission: 'algorithm:userGroup:inss',
     label: '批量新增用户组',
   })
-  async insUserGroups(@Body(
-    new ParseArrayPipe({
-      items: UserGroupInsOneDto,
-    }),
-  ) dtos: UserGroupInsOneDto[]): Promise<R> {
-    return this.userGroupService.insUserGroups(dtos);
+  async insUserGroups(@Body() dto: UserGroupInsMoreDto): Promise<R> {
+    return this.userGroupService.insUserGroups(dto.items);
   }
 
   @Put()
@@ -124,12 +119,8 @@ export class UserGroupController {
     permission: 'algorithm:userGroup:upds',
     label: '批量修改用户组',
   })
-  async updUserGroups(@Body(
-    new ParseArrayPipe({
-      items: UserGroupUpdOneDto,
-    }),
-  ) dtos: UserGroupUpdOneDto[]): Promise<R> {
-    return this.userGroupService.updUserGroups(dtos);
+  async updUserGroups(@Body() dto: UserGroupUpdMoreDto): Promise<R> {
+    return this.userGroupService.updUserGroups(dto.items);
   }
 
   @Delete()

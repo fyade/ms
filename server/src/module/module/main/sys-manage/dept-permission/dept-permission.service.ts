@@ -59,7 +59,7 @@ export class DeptPermissionService {
     }));
     await this.prisma.createMany('sys_dept_permission', addDPS);
     await this.cachePermissionService.clearPermissionsInCache();
-    return R.ok();
+    return R.ok(true);
   }
 
   async delDeptPermission(ids: number[]): Promise<R> {

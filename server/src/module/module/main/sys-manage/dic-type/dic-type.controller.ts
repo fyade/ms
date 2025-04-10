@@ -1,15 +1,14 @@
-import { Body, Controller, Delete, Get, Param, ParseArrayPipe, Post, Put, Query, UsePipes } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { DicTypeService } from './dic-type.service';
 import { Authorize } from '../../../../../decorator/authorize.decorator';
 import { R } from '../../../../../common/R';
-import { ValidationPipe } from '../../../../../pipe/validation/validation.pipe';
-import { DicTypeSelListDto, DicTypeSelAllDto, DicTypeInsOneDto, DicTypeUpdOneDto } from './dto';
+import { DicTypeSelListDto, DicTypeSelAllDto, DicTypeInsOneDto, DicTypeUpdOneDto, DicTypeInsMoreDto, DicTypeUpdMoreDto } from './dto';
 
 @Controller('/main/sys-manage/dic-type')
 @ApiTags('主系统/系统管理/字典类型')
 @ApiBearerAuth()
-@UsePipes(new ValidationPipe())
+@UsePipes(new ValidationPipe({ transform: true }))
 export class DicTypeController {
   constructor(private readonly dicTypeService: DicTypeService) {
   }
@@ -92,12 +91,8 @@ export class DicTypeController {
     permission: 'main:sysManage:dicType:inss',
     label: '批量新增字典类型',
   })
-  async insDicTypes(@Body(
-    new ParseArrayPipe({
-      items: DicTypeInsOneDto,
-    }),
-  ) dtos: DicTypeInsOneDto[]): Promise<R> {
-    return this.dicTypeService.insDicTypes(dtos);
+  async insDicTypes(@Body() dto: DicTypeInsMoreDto): Promise<R> {
+    return this.dicTypeService.insDicTypes(dto.items);
   }
 
   @Put()
@@ -124,12 +119,8 @@ export class DicTypeController {
     permission: 'main:sysManage:dicType:upds',
     label: '批量修改字典类型',
   })
-  async updDicTypes(@Body(
-    new ParseArrayPipe({
-      items: DicTypeUpdOneDto,
-    }),
-  ) dtos: DicTypeUpdOneDto[]): Promise<R> {
-    return this.dicTypeService.updDicTypes(dtos);
+  async updDicTypes(@Body() dto: DicTypeUpdMoreDto): Promise<R> {
+    return this.dicTypeService.updDicTypes(dto.items);
   }
 
   @Delete()

@@ -45,7 +45,7 @@ export class AdminNewUserVisitorDto {
   @IsNotEmpty({ message: '密码不能为空' })
   password: string;
 
-  @ApiProperty({ description: '密码类型，a:未加密/b:AES对称加密', required: true })
+  @ApiProperty({ description: '密码类型，a:未加密/b:AES加密/c:RSA加密', required: true })
   @IsNotEmpty({ message: '密码类型不能为空' })
   psdType: string;
 }
@@ -59,7 +59,7 @@ export class ResetUserVisitorPsdDto {
   @IsNotEmpty({ message: '密码不能为空' })
   password: string;
 
-  @ApiProperty({ description: '密码类型，a:未加密/b:AES对称加密', required: true })
+  @ApiProperty({ description: '密码类型，a:未加密/b:AES加密/c:RSA加密', required: true })
   @IsNotEmpty({ message: '密码类型不能为空' })
   psdType: string;
 }

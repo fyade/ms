@@ -1,6 +1,6 @@
 import { BaseDto } from '../../../../../common/dto/BaseDto';
 import { PageDto } from '../../../../../common/dto/PageDto';
-import { IsArray, IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, MaxLength, IsArray, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -15,10 +15,10 @@ export class UserDeptDto extends BaseDto {
 }
 
 export class UserDeptSelListDto extends PageDto {
-  @ApiProperty({ description: '用户', required: false })
+  @ApiProperty({ description: '用户id', required: false })
   userId: string;
 
-  @ApiProperty({ description: '部门', required: false })
+  @ApiProperty({ description: '部门id', required: false })
   deptId: number;
 
   @ApiProperty({ description: '登录身份', required: false })
@@ -26,10 +26,10 @@ export class UserDeptSelListDto extends PageDto {
 }
 
 export class UserDeptSelAllDto {
-  @ApiProperty({ description: '用户', required: false })
+  @ApiProperty({ description: '用户id', required: false })
   userId: string;
 
-  @ApiProperty({ description: '部门', required: false })
+  @ApiProperty({ description: '部门id', required: false })
   deptId: number;
 
   @ApiProperty({ description: '登录身份', required: false })
@@ -37,17 +37,19 @@ export class UserDeptSelAllDto {
 }
 
 export class UserDeptInsOneDto {
-  @ApiProperty({ description: '用户', required: true })
-  @IsNotEmpty({ message: '用户不能为空' })
+  @ApiProperty({ description: '用户id', required: true })
+  @IsNotEmpty({ message: '用户id不能为空' })
+  @MaxLength(10, { message: '用户id不能超过10个字符' })
   userId: string;
 
-  @ApiProperty({ description: '部门', required: true })
+  @ApiProperty({ description: '部门id', required: true })
   @Type(() => Number)
-  @IsNotEmpty({ message: '部门不能为空' })
+  @IsNotEmpty({ message: '部门id不能为空' })
   deptId: number;
 
   @ApiProperty({ description: '登录身份', required: true })
   @IsNotEmpty({ message: '登录身份不能为空' })
+  @MaxLength(30, { message: '登录身份不能超过30个字符' })
   loginRole: string;
 }
 
@@ -57,30 +59,47 @@ export class UserDeptUpdOneDto extends UserDeptInsOneDto {
   id: number;
 }
 
+export class UserDeptInsMoreDto {
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => UserDeptInsOneDto)
+  items: UserDeptInsOneDto[];
+}
+
+export class UserDeptUpdMoreDto {
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => UserDeptUpdOneDto)
+  items: UserDeptUpdOneDto[];
+}
+
 export class UserDeptUpdUDDto {
-  @ApiProperty({ description: '用户', required: true })
-  @IsNotEmpty({ message: '用户不能为空' })
+  @ApiProperty({ description: '用户id', required: true })
+  @IsNotEmpty({ message: '用户id不能为空' })
+  @MaxLength(30, { message: '登录身份不能超过30个字符' })
   userId: string;
 
-  @ApiProperty({ description: '部门', required: true })
-  @IsArray({ message: '部门应为数组' })
+  @ApiProperty({ description: '部门id', required: true })
+  @IsArray({ message: '部门id应为数组' })
   deptId: number[];
 
   @ApiProperty({ description: '登录身份', required: true })
   @IsNotEmpty({ message: '登录身份不能为空' })
+  @MaxLength(30, { message: '登录身份不能超过30个字符' })
   loginRole: string;
 }
 
 export class UserDeptUpdDUDto {
-  @ApiProperty({ description: '用户', required: true })
-  @IsArray({ message: '用户应为数组' })
+  @ApiProperty({ description: '用户id', required: true })
+  @IsArray({ message: '用户id应为数组' })
   userId: string[];
 
-  @ApiProperty({ description: '部门', required: true })
-  @IsNotEmpty({ message: '部门不能为空' })
+  @ApiProperty({ description: '部门id', required: true })
+  @IsNotEmpty({ message: '部门id不能为空' })
   deptId: number;
 
   @ApiProperty({ description: '登录身份', required: true })
   @IsNotEmpty({ message: '登录身份不能为空' })
+  @MaxLength(30, { message: '登录身份不能超过30个字符' })
   loginRole: string;
 }

@@ -31,7 +31,8 @@ const state = reactive<State2<InterfaceGroupDto, InterfaceGroupUpdDto>>({
   dialogForms: [],
   dialogForms_error: {},
   filterForm: {
-    label: ''
+    label: '',
+    perms: '',
   },
 })
 const dFormRules: FormRules = {
@@ -317,6 +318,9 @@ const manageInterface = (row: InterfaceGroupDto) => {
       <!--在此下方添加表单项-->
       <el-form-item :label="interfaceGroupDict.label" prop="label">
         <el-input v-model="state.filterForm.label" :placeholder="interfaceGroupDict.label"/>
+      </el-form-item>
+      <el-form-item :label="interfaceGroupDict.perms" prop="perms">
+        <el-input v-model="state.filterForm.perms" :placeholder="interfaceGroupDict.perms"/>
       </el-form-item>
       <!--在此上方添加表单项-->
       <el-form-item>

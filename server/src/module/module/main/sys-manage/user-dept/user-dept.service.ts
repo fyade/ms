@@ -60,7 +60,7 @@ export class UserDeptService {
     await this.prisma.deleteById('sys_user_dept', delDepts);
     await this.prisma.createMany('sys_user_dept', addDepts.map(item => ({ userId: dto.userId, deptId: item, loginRole: dto.loginRole })));
     await this.cachePermissionService.clearPermissionsInCache();
-    return R.ok();
+    return R.ok(true);
   }
 
   async updUserDeptDU(dto: UserDeptUpdDUDto): Promise<R> {
@@ -83,7 +83,7 @@ export class UserDeptService {
     }
     await this.prisma.createMany('sys_user_dept', data);
     await this.cachePermissionService.clearPermissionsInCache();
-    return R.ok();
+    return R.ok(true);
   }
 
   async delUserDept(ids: number[]): Promise<R> {

@@ -11,9 +11,9 @@ export class CodeGenColumnService {
     private readonly bcs: BaseContextService,
   ) {
     this.bcs.setFieldSelectParam('sys_code_gen_column', {
-      notNullKeys: ['tableId', 'colName', 'colDescr', 'mysqlType', 'tsType', 'tsName', 'ifIns', 'ifUpd', 'ifSelOne', 'ifSelMore', 'ifRequired', 'selType', 'formType', 'orderNum'],
-      numberKeys: ['tableId', 'orderNum'],
-    })
+      notNullKeys: ['tableId', 'colName', 'colDescr', 'mysqlType', 'mysqlLength', 'tsType', 'tsName', 'ifIns', 'ifUpd', 'ifSelOne', 'ifSelMore', 'ifRequired', 'selType', 'formType', 'orderNum'],
+      numberKeys: ['tableId', 'mysqlLength', 'orderNum'],
+    });
   }
 
   async selCodeGenColumn(dto: CodeGenColumnSelListDto): Promise<R> {

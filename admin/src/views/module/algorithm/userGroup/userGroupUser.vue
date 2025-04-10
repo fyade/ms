@@ -14,6 +14,7 @@ import { UserGroupDto } from "@/type/module/algorithm/userGroup.ts";
 import { userDict } from "@/dict/module/main/sysManage/user.ts";
 import { userGroupDict } from "@/dict/module/algorithm/userGroup.ts";
 import { useSysStore } from "@/store/module/sys.ts";
+import { userUserGroupDict } from "@/dict/module/algorithm/userUserGroup.ts";
 
 const sysStore = useSysStore()
 
@@ -32,6 +33,7 @@ const state = reactive({
   },
   total1: -1,
   pageParam1: {
+    userId: '',
     pageNum: PAGINATION.pageNum,
     pageSize: PAGINATION.pageSize
   },
@@ -45,6 +47,7 @@ const state = reactive({
 const allUsers = ref<UserDto[]>([])
 // 筛选表单
 const filterFormRef = useTemplateRef<FormInstance>('filterFormRef')
+const filterForm2Ref = useTemplateRef<FormInstance>('filterForm2Ref')
 const table1LoadingRef = ref(false)
 // 此用户组的用户
 const usersOfThisUserGroup = ref<UserDto[]>([])
@@ -63,6 +66,10 @@ const getInfo = () => {
       table1LoadingRef.value = false
     })
   })
+}
+const clearFFormGetInfo = () => {
+  filterForm2Ref.value?.resetFields()
+  getInfo()
 }
 getInfo()
 // 分页查询
@@ -284,6 +291,22 @@ const deleteUserUserGroup = (userId: string) => {
       </span>
     </template>
   </el-dialog>
+
+  <el-form
+      class="demo-form-inline"
+      ref="filterForm2Ref"
+      :model="state.pageParam1"
+      :inline="true"
+      @keyup.enter="getInfo"
+  >
+    <el-form-item :label="userUserGroupDict.userId" prop="userId">
+      <el-input v-model="state.pageParam1.userId" :placeholder="userUserGroupDict.userId"/>
+    </el-form-item>
+    <el-form-item>
+      <el-button type="primary" @click="getInfo">筛选</el-button>
+      <el-button @click="clearFFormGetInfo">重置</el-button>
+    </el-form-item>
+  </el-form>
 
   <el-button type="primary" plain :icon="Refresh" @click="getInfo">刷新</el-button>
   <el-button type="primary" plain :icon="Plus" @click="addUser">添加用户</el-button>

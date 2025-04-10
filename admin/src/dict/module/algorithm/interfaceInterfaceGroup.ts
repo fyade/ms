@@ -3,6 +3,6 @@ import { InterfaceInterfaceGroupDto } from "@/type/module/algorithm/interfaceInt
 
 export const interfaceInterfaceGroupDict: { [P in keyof InterfaceInterfaceGroupDto]: string } = {
   ...publicDict,
-  interfaceId: '接口',
-  interfaceGroupId: '接口组',
+  interfaceId: '接口id',
+  interfaceGroupId: '接口组id',
 }

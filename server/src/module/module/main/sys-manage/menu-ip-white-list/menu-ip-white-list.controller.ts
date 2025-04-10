@@ -1,15 +1,14 @@
-import { Body, Controller, Delete, Get, Param, ParseArrayPipe, Post, Put, Query, UsePipes } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { MenuIpWhiteListService } from './menu-ip-white-list.service';
 import { Authorize } from '../../../../../decorator/authorize.decorator';
 import { R } from '../../../../../common/R';
-import { ValidationPipe } from '../../../../../pipe/validation/validation.pipe';
-import { MenuIpWhiteListSelListDto, MenuIpWhiteListSelAllDto, MenuIpWhiteListInsOneDto, MenuIpWhiteListUpdOneDto } from './dto';
+import { MenuIpWhiteListSelListDto, MenuIpWhiteListSelAllDto, MenuIpWhiteListInsOneDto, MenuIpWhiteListUpdOneDto, MenuIpWhiteListInsMoreDto, MenuIpWhiteListUpdMoreDto } from './dto';
 
 @Controller('/main/sys-manage/menu-ip-white-list')
 @ApiTags('主系统/系统管理/菜单ip白名单')
 @ApiBearerAuth()
-@UsePipes(new ValidationPipe())
+@UsePipes(new ValidationPipe({ transform: true }))
 export class MenuIpWhiteListController {
   constructor(private readonly menuIpWhiteListService: MenuIpWhiteListService) {
   }
@@ -92,12 +91,8 @@ export class MenuIpWhiteListController {
     permission: 'main:sysManage:menuIpWhiteList:inss',
     label: '批量新增菜单ip白名单',
   })
-  async insMenuIpWhiteLists(@Body(
-    new ParseArrayPipe({
-      items: MenuIpWhiteListInsOneDto,
-    }),
-  ) dtos: MenuIpWhiteListInsOneDto[]): Promise<R> {
-    return this.menuIpWhiteListService.insMenuIpWhiteLists(dtos);
+  async insMenuIpWhiteLists(@Body() dto: MenuIpWhiteListInsMoreDto): Promise<R> {
+    return this.menuIpWhiteListService.insMenuIpWhiteLists(dto.items);
   }
 
   @Put()
@@ -124,12 +119,8 @@ export class MenuIpWhiteListController {
     permission: 'main:sysManage:menuIpWhiteList:upds',
     label: '批量修改菜单ip白名单',
   })
-  async updMenuIpWhiteLists(@Body(
-    new ParseArrayPipe({
-      items: MenuIpWhiteListUpdOneDto,
-    }),
-  ) dtos: MenuIpWhiteListUpdOneDto[]): Promise<R> {
-    return this.menuIpWhiteListService.updMenuIpWhiteLists(dtos);
+  async updMenuIpWhiteLists(@Body() dto: MenuIpWhiteListUpdMoreDto): Promise<R> {
+    return this.menuIpWhiteListService.updMenuIpWhiteLists(dto.items);
   }
 
   @Delete()

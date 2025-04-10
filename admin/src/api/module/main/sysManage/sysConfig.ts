@@ -63,7 +63,9 @@ export const sysConfigApi: ApiConfig<SysConfigDto, SysConfigUpdDto> = {
   insertMore: (objs) => request({
     url: '/main/sys-manage/sys-config/s',
     method: 'POST',
-    data: objs
+    data: {
+      items: objs,
+    }
   }),
   /**
    * 修改多个
@@ -72,7 +74,9 @@ export const sysConfigApi: ApiConfig<SysConfigDto, SysConfigUpdDto> = {
   updateMore: (objs) => request({
     url: '/main/sys-manage/sys-config/s',
     method: 'PUT',
-    data: objs
+    data: {
+      items: objs,
+    }
   }),
   /**
    * 删除

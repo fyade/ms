@@ -1,15 +1,14 @@
-import { Body, Controller, Delete, Get, Param, ParseArrayPipe, Post, Put, Query, UsePipes } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { UserTableDefaultPermissionService } from './user-table-default-permission.service';
 import { Authorize } from '../../../../../decorator/authorize.decorator';
 import { R } from '../../../../../common/R';
-import { ValidationPipe } from '../../../../../pipe/validation/validation.pipe';
-import { UserTableDefaultPermissionSelListDto, UserTableDefaultPermissionSelAllDto, UserTableDefaultPermissionInsOneDto, UserTableDefaultPermissionUpdOneDto } from './dto';
+import { UserTableDefaultPermissionSelListDto, UserTableDefaultPermissionSelAllDto, UserTableDefaultPermissionInsOneDto, UserTableDefaultPermissionUpdOneDto, UserTableDefaultPermissionInsMoreDto, UserTableDefaultPermissionUpdMoreDto } from './dto';
 
 @Controller('/main/other-user/user-table-default-permission')
 @ApiTags('主系统/非系统用户管理/用户表默认权限')
 @ApiBearerAuth()
-@UsePipes(new ValidationPipe())
+@UsePipes(new ValidationPipe({ transform: true }))
 export class UserTableDefaultPermissionController {
   constructor(private readonly userTableDefaultPermissionService: UserTableDefaultPermissionService) {
   }
@@ -92,12 +91,8 @@ export class UserTableDefaultPermissionController {
     permission: 'main:otherUser:userTableDefaultPermission:inss',
     label: '批量新增用户表默认权限',
   })
-  async insUserTableDefaultPermissions(@Body(
-    new ParseArrayPipe({
-      items: UserTableDefaultPermissionInsOneDto,
-    }),
-  ) dtos: UserTableDefaultPermissionInsOneDto[]): Promise<R> {
-    return this.userTableDefaultPermissionService.insUserTableDefaultPermissions(dtos);
+  async insUserTableDefaultPermissions(@Body() dto: UserTableDefaultPermissionInsMoreDto): Promise<R> {
+    return this.userTableDefaultPermissionService.insUserTableDefaultPermissions(dto.items);
   }
 
   @Put()
@@ -124,12 +119,8 @@ export class UserTableDefaultPermissionController {
     permission: 'main:otherUser:userTableDefaultPermission:upds',
     label: '批量修改用户表默认权限',
   })
-  async updUserTableDefaultPermissions(@Body(
-    new ParseArrayPipe({
-      items: UserTableDefaultPermissionUpdOneDto,
-    }),
-  ) dtos: UserTableDefaultPermissionUpdOneDto[]): Promise<R> {
-    return this.userTableDefaultPermissionService.updUserTableDefaultPermissions(dtos);
+  async updUserTableDefaultPermissions(@Body() dto: UserTableDefaultPermissionUpdMoreDto): Promise<R> {
+    return this.userTableDefaultPermissionService.updUserTableDefaultPermissions(dto.items);
   }
 
   @Delete()

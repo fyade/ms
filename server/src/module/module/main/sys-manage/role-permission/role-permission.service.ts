@@ -51,12 +51,12 @@ export class RolePermissionService {
     }));
     await this.prisma.createMany('sys_role_permission', addRPS);
     await this.cachePermissionService.clearPermissionsInCache();
-    return R.ok();
+    return R.ok(true);
   }
 
   async delRolePermission(ids: number[]): Promise<R> {
     await this.prisma.delete<RolePermissionDto>('sys_role_permission', 'permission_id', ids);
     await this.cachePermissionService.clearPermissionsInCache();
-    return R.ok();
+    return R.ok(true);
   }
 }

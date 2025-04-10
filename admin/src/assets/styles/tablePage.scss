@@ -46,6 +46,8 @@
   padding: 8px;
   background-color: #fff;
   border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1),
+  0 4px 8px rgba(0, 0, 0, 0.1);
 
   > * {
     margin-bottom: -18px;
@@ -59,12 +61,16 @@
   border-radius: 8px;
   display: flex;
   justify-content: space-between;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1),
+  0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .zs-table-data {
   padding: 8px;
   background-color: #fff;
   border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1),
+  0 4px 8px rgba(0, 0, 0, 0.1);
 
   > * {
     &:nth-child(2) {
@@ -123,6 +129,9 @@
 
   > .right {
     flex: auto;
-    overflow: auto;
+  }
+
+  > * {
+    overflow: hidden;
   }
 }

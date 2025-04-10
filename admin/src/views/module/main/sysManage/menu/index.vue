@@ -380,7 +380,12 @@ const stateI2 = reactive<State2<MenuDto, MenuUpdDto>>({
   },
   dialogForms: [],
   dialogForms_error: {},
-  filterForm: {},
+  filterForm: {
+    label: '',
+    ifDisabled: '',
+    ifPublic: '',
+    perms: '',
+  },
 })
 const dFormRulesI2: FormRules = {
   label: [{required: true, trigger: 'change'}],
@@ -784,9 +789,24 @@ const setThrottle = (row: MenuDto) => {
           @keyup.enter="fEnterI2"
       >
         <!--在此下方添加表单项-->
-        <!--<el-form-item :label="menuDictI2." prop="">-->
-        <!--  <el-input v-model="state.filterForm." :placeholder="menuDictI2."/>-->
-        <!--</el-form-item>-->
+        <el-form-item :label="menuDictI2.label" prop="label">
+          <el-input v-model="stateI2.filterForm.label" :placeholder="menuDictI2.label"/>
+        </el-form-item>
+        <el-form-item :label="menuDictI2.ifDisabled" prop="ifDisabled">
+          <el-select v-model="stateI2.filterForm.ifDisabled" :placeholder="menuDictI2.ifDisabled" clearable filterable>
+            <el-option label="是" :value="final.Y"/>
+            <el-option label="否" :value="final.N"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item :label="menuDictI2.ifPublic" prop="ifPublic">
+          <el-select v-model="stateI2.filterForm.ifPublic" :placeholder="menuDictI2.ifPublic" clearable filterable>
+            <el-option label="是" :value="final.Y"/>
+            <el-option label="否" :value="final.N"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item :label="menuDictI2.perms" prop="perms">
+          <el-input v-model="stateI2.filterForm.perms" :placeholder="menuDictI2.perms"/>
+        </el-form-item>
         <!--在此上方添加表单项-->
         <el-form-item>
           <el-button type="primary" @click="fConI2">筛选</el-button>
@@ -1454,7 +1474,7 @@ const setThrottle = (row: MenuDto) => {
 
   <!--<el-divider/>-->
 
-  <el-tabs v-model="activeTab2Name" type="border-card">
+  <el-tabs class="zs-table-data" style="padding: 0;overflow: hidden;" v-model="activeTab2Name" type="border-card">
     <el-tab-pane label="菜单及组件" name="a">
       <!--顶部筛选表单-->
       <div class="zs-filter-form" v-show="filterFormVisible1 && filterFormVisible">
@@ -1494,88 +1514,88 @@ const setThrottle = (row: MenuDto) => {
       </div>
 
       <div class="zs-table-data">
-        <!--数据表格-->
-        <el-table
-            v-loading="tableLoadingRef"
-            :data="tableData2"
-            :expand-row-keys="expandRowKeys"
-            row-key="id"
-            :default-expand-all="false"
-            @selection-change="handleSelectionChange"
-        >
-          <el-table-column fixed type="selection" width="55"/>
-          <!--<el-table-column fixed prop="id" :label="menuDict.id" width="180"/>-->
-          <!--上面id列的宽度改一下-->
-          <!--在此下方添加表格列-->
-          <el-table-column fixed prop="label" :label="menuDict.label" width="240"/>
-          <el-table-column prop="icon" :label="menuDict.icon" width="120">
-            <template #default="{row}">
-              <SvgIcon :name="row.icon" :color="CONFIG.icon_black"/>
-            </template>
-          </el-table-column>
-          <el-table-column prop="path" :label="menuDict.path" width="200"/>
-          <el-table-column prop="perms" :label="menuDict.perms" width="280"/>
-          <el-table-column prop="orderNum" :label="menuDict.orderNum" width="120"/>
-          <el-table-column prop="ifLink" :label="menuDict.ifLink" width="120">
-            <template #default="{row}">
-              <el-tag v-if="row.ifLink===final.Y" type="primary">是</el-tag>
-              <el-tag v-else type="info">否</el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column prop="ifVisible" :label="menuDict.ifVisible" width="120">
-            <template #default="{row}">
-              <el-tag v-if="row.ifVisible===final.Y" type="primary">是</el-tag>
-              <el-tag v-else type="info">否</el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column prop="ifDisabled" :label="menuDict.ifDisabled" width="120">
-            <template #default="{row}">
-              <el-tag v-if="row.ifDisabled===final.Y" type="primary">是</el-tag>
-              <el-tag v-else type="info">否</el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column prop="ifFixed" :label="menuDict.ifFixed" width="120">
-            <template #default="{row}">
-              <template v-if="row.type === T_COMP">
-                <el-tag v-if="row.ifFixed===final.Y" type="primary">是</el-tag>
+          <!--数据表格-->
+          <el-table
+              v-loading="tableLoadingRef"
+              :data="tableData2"
+              :expand-row-keys="expandRowKeys"
+              row-key="id"
+              :default-expand-all="false"
+              @selection-change="handleSelectionChange"
+          >
+            <el-table-column fixed type="selection" width="55"/>
+            <!--<el-table-column fixed prop="id" :label="menuDict.id" width="180"/>-->
+            <!--上面id列的宽度改一下-->
+            <!--在此下方添加表格列-->
+            <el-table-column fixed prop="label" :label="menuDict.label" width="240"/>
+            <el-table-column prop="icon" :label="menuDict.icon" width="120">
+              <template #default="{row}">
+                <SvgIcon :name="row.icon" :color="CONFIG.icon_black"/>
+              </template>
+            </el-table-column>
+            <el-table-column prop="path" :label="menuDict.path" width="200"/>
+            <el-table-column prop="perms" :label="menuDict.perms" width="280"/>
+            <el-table-column prop="orderNum" :label="menuDict.orderNum" width="120"/>
+            <el-table-column prop="ifLink" :label="menuDict.ifLink" width="120">
+              <template #default="{row}">
+                <el-tag v-if="row.ifLink===final.Y" type="primary">是</el-tag>
                 <el-tag v-else type="info">否</el-tag>
               </template>
-              <template v-else></template>
-            </template>
-          </el-table-column>
-          <el-table-column prop="component" :label="menuDict.component" width="280"/>
-          <el-table-column prop="remark" :label="menuDict.remark" width="200"/>
-          <!--在此上方添加表格列-->
-          <!--<el-table-column prop="createBy" :label="menuDict.createBy" width="120"/>-->
-          <!--<el-table-column prop="updateBy" :label="menuDict.updateBy" width="120"/>-->
-          <!--<el-table-column prop="createTime" :label="menuDict.createTime" width="220"/>-->
-          <!--<el-table-column prop="updateTime" :label="menuDict.updateTime" width="220"/>-->
-          <!--<el-table-column prop="deleted" :label="menuDict.deleted" width="60"/>-->
-          <!--上方几个酌情使用-->
-          <el-table-column fixed="right" label="操作" min-width="140">
-            <template #default="{row}">
-              <div class="zs-table-data-operate-button-row">
-                <el-button v-if="row.type!==T_Inter" link type="primary" size="small" :icon="Plus" @click="tIns(row.id)">新增</el-button>
-                <el-button link type="primary" size="small" :icon="Edit" @click="tUpd(row.id)">修改</el-button>
-                <el-button link type="danger" size="small" :icon="Delete" @click="tDel(row.id)">删除</el-button>
+            </el-table-column>
+            <el-table-column prop="ifVisible" :label="menuDict.ifVisible" width="120">
+              <template #default="{row}">
+                <el-tag v-if="row.ifVisible===final.Y" type="primary">是</el-tag>
+                <el-tag v-else type="info">否</el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column prop="ifDisabled" :label="menuDict.ifDisabled" width="120">
+              <template #default="{row}">
+                <el-tag v-if="row.ifDisabled===final.Y" type="primary">是</el-tag>
+                <el-tag v-else type="info">否</el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column prop="ifFixed" :label="menuDict.ifFixed" width="120">
+              <template #default="{row}">
+                <template v-if="row.type === T_COMP">
+                  <el-tag v-if="row.ifFixed===final.Y" type="primary">是</el-tag>
+                  <el-tag v-else type="info">否</el-tag>
+                </template>
+                <template v-else></template>
+              </template>
+            </el-table-column>
+            <el-table-column prop="component" :label="menuDict.component" width="280"/>
+            <el-table-column prop="remark" :label="menuDict.remark" width="200"/>
+            <!--在此上方添加表格列-->
+            <!--<el-table-column prop="createBy" :label="menuDict.createBy" width="120"/>-->
+            <!--<el-table-column prop="updateBy" :label="menuDict.updateBy" width="120"/>-->
+            <!--<el-table-column prop="createTime" :label="menuDict.createTime" width="220"/>-->
+            <!--<el-table-column prop="updateTime" :label="menuDict.updateTime" width="220"/>-->
+            <!--<el-table-column prop="deleted" :label="menuDict.deleted" width="60"/>-->
+            <!--上方几个酌情使用-->
+            <el-table-column fixed="right" label="操作" min-width="140">
+              <template #default="{row}">
+                <div class="zs-table-data-operate-button-row">
+                  <el-button v-if="row.type!==T_Inter" link type="primary" size="small" :icon="Plus" @click="tIns(row.id)">新增</el-button>
+                  <el-button link type="primary" size="small" :icon="Edit" @click="tUpd(row.id)">修改</el-button>
+                  <el-button link type="danger" size="small" :icon="Delete" @click="tDel(row.id)">删除</el-button>
+                </div>
+              </template>
+            </el-table-column>
+            <template #append>
+              <div class="el-table-append-box">
+                <span>此表格的多选<span class="underline">不支持</span>{{ `跨分页保存，当前已选 ${multipleSelection.length} 条数据。` }}</span>
               </div>
             </template>
-          </el-table-column>
-          <template #append>
-            <div class="el-table-append-box">
-              <span>此表格的多选<span class="underline">不支持</span>{{ `跨分页保存，当前已选 ${multipleSelection.length} 条数据。` }}</span>
-            </div>
-          </template>
-        </el-table>
+          </el-table>
 
-        <!--分页-->
-        <Pagination
-            v-if="config.pageQuery"
-            :total="total"
-            :page-num="pageParam.pageNum"
-            :page-size="pageParam.pageSize"
-            @page-change="pageChange"
-        />
+          <!--分页-->
+          <Pagination
+              v-if="config.pageQuery"
+              :total="total"
+              :page-num="pageParam.pageNum"
+              :page-size="pageParam.pageSize"
+              @page-change="pageChange"
+          />
       </div>
     </el-tab-pane>
 

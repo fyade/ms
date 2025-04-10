@@ -1,20 +1,37 @@
-import { Body, Controller, Get, Post, Req, UsePipes } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, UsePipes, ValidationPipe } from '@nestjs/common';
 import { UserService } from './user.service';
 import { LoginDto, RegistDto } from './dto';
 import { R } from '../../../../../common/R';
 import { Authorize } from '../../../../../decorator/authorize.decorator';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { ValidationPipe } from '../../../../../pipe/validation/validation.pipe';
 import { getIpInfoFromRequest } from '../../../../../util/RequestUtils';
 import { Request } from 'express';
-import { encryptUtils } from '@ms/common'
+import { cryptUtils, encryptUtils } from '@ms/common'
+import { CacheTokenService } from "../../../../cache/cache.token.service";
 
 @Controller('/sys/user')
-@ApiTags('主系统/系统管理/用户登录')
+@ApiTags('系统/用户登录')
 @ApiBearerAuth()
-@UsePipes(new ValidationPipe())
+@UsePipes(new ValidationPipe({ transform: true }))
 export class UserLoginController {
-  constructor(private readonly userService: UserService) {
+  constructor(
+    private readonly userService: UserService,
+    private readonly cacheTokenService: CacheTokenService,
+  ) {
+  }
+
+  @Post('/generate-key')
+  @ApiOperation({
+    summary: '生成公钥',
+  })
+  @Authorize({
+    permission: '-',
+    label: '生成公钥',
+    ifIgnore: true,
+    ifIgnoreParamInLog: true,
+  })
+  async generateKey(): Promise<R> {
+    return this.userService.generateKey();
   }
 
   @Post('/regist')
@@ -67,6 +84,10 @@ export class UserLoginController {
   async adminLogin(@Body() dto: LoginDto, @Req() request: Request): Promise<R> {
     if (dto.psdType === 'b') {
       dto.password = encryptUtils.decrypt(dto.password);
+    }
+    if (dto.psdType === 'c') {
+      const key = await this.cacheTokenService.getPasswordKey(dto.passwordKeyUuid);
+      dto.password = await cryptUtils.rsa.decrypt(key.privateKey, dto.password);
     }
     delete dto.psdType;
     const { ip: loginIp, browser: loginBrowser, os: loginOs } = getIpInfoFromRequest(request);

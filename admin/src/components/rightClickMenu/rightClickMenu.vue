@@ -21,8 +21,12 @@ const rightClick = (payload: MouseEvent) => {
   if (props.menus.length > 0) {
     payload.preventDefault()
     eventBus.emit('right-click-close')
+    const innerWidth = payload.view?.innerWidth;
     nextTick(() => {
       stateRea.left = payload.clientX
+      if (innerWidth && innerWidth - stateRea.left < 120) {
+        stateRea.left = innerWidth - 120
+      }
       stateRea.top = payload.clientY
       stateRea.show = true
     })

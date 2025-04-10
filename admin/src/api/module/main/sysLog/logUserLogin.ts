@@ -63,7 +63,9 @@ export const logUserLoginApi: ApiConfig<LogUserLoginDto, LogUserLoginUpdDto> = {
   insertMore: (objs) => request({
     url: '/main/sys-log/log-user-login/s',
     method: 'POST',
-    data: objs
+    data: {
+      items: objs,
+    }
   }),
   /**
    * 修改多个
@@ -72,7 +74,9 @@ export const logUserLoginApi: ApiConfig<LogUserLoginDto, LogUserLoginUpdDto> = {
   updateMore: (objs) => request({
     url: '/main/sys-log/log-user-login/s',
     method: 'PUT',
-    data: objs
+    data: {
+      items: objs,
+    }
   }),
   /**
    * 删除

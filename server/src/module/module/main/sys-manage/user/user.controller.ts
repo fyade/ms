@@ -1,17 +1,16 @@
-import { Body, Controller, Get, Post, Query, UsePipes } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, UsePipes, ValidationPipe } from '@nestjs/common';
 import { UserService } from './user.service';
 import { AdminNewUserDto, ResetUserPsdDto, UpdPsdDto, UserDto, UserSelListDto } from './dto';
 import { R } from '../../../../../common/R';
 import { Authorize } from '../../../../../decorator/authorize.decorator';
 import { ApiBearerAuth, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
-import { ValidationPipe } from '../../../../../pipe/validation/validation.pipe';
 import { Exception } from "../../../../../exception/exception";
 import { encryptUtils } from '@ms/common'
 
 @Controller('/main/sys-manage/user')
 @ApiTags('主系统/系统管理/用户')
 @ApiBearerAuth()
-@UsePipes(new ValidationPipe())
+@UsePipes(new ValidationPipe({ transform: true }))
 export class UserController {
   constructor(private readonly userService: UserService) {
   }

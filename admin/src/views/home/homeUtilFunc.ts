@@ -111,6 +111,7 @@ export const goToSystem = async (
         await router.push(`/${dto.path}`)
         return;
       } catch (e) {
+        console.error(e)
         await router.push(`/${dto.path}`)
         return;
       }
@@ -118,10 +119,10 @@ export const goToSystem = async (
     await router.push(`/${dto.path}`)
     return;
   } catch (e) {
+    console.error(e);
     if (errorCallback) {
       errorCallback()
     }
-    console.error(e);
     ElMessage.error({
       message: '系统发生故障，请检查菜单是否有错误，若无法解决，请查看开发文档或联系开发者。',
       duration: 0,

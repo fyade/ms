@@ -3,11 +3,12 @@ import { reactive, ref } from "vue";
 import { ElNotification, NotificationHandle, ElMessage } from "element-plus";
 import { useRoute, useRouter } from "vue-router";
 import { LoginDto, UserDto } from "@/type/module/main/sysManage/user.ts";
-import { getSelfInfo, loginApi, logOutApi } from "@/api/module/main/sysManage/user.ts";
+import { getSelfInfo } from "@/api/module/main/sysManage/user.ts";
 import { ifWebsiteLink } from "@/utils/LinkUtils.ts";
 import { UserVisitorDto } from "@/type/module/main/otherUser/userVisitor.ts";
 import { objectUtils } from "@ms/common";
 import { BCService } from "@/services/broadcastChannel.ts";
+import { loginApi, logOutApi } from "@/api/module/main/sysManage/userLogin.ts";
 
 export const useUserStore = defineStore('userStore', () => {
   const router = useRouter()

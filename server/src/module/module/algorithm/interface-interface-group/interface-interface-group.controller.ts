@@ -1,15 +1,14 @@
-import { Body, Controller, Delete, Get, Param, ParseArrayPipe, Post, Put, Query, UsePipes } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { InterfaceInterfaceGroupService } from './interface-interface-group.service';
 import { Authorize } from '../../../../decorator/authorize.decorator';
 import { R } from '../../../../common/R';
-import { ValidationPipe } from '../../../../pipe/validation/validation.pipe';
-import { InterfaceInterfaceGroupDto, InterfaceInterfaceGroupSelListDto, InterfaceInterfaceGroupSelAllDto, InterfaceInterfaceGroupInsOneDto, InterfaceInterfaceGroupUpdOneDto, InterfaceInterfaceGroupUpdIIGDto, InterfaceInterfaceGroupUpdIGIDto } from './dto';
+import { InterfaceInterfaceGroupSelListDto, InterfaceInterfaceGroupSelAllDto, InterfaceInterfaceGroupUpdIIGDto, InterfaceInterfaceGroupUpdIGIDto } from './dto';
 
 @Controller('/algorithm/interface-interface-group')
 @ApiTags('算法系统/接口接口组')
 @ApiBearerAuth()
-@UsePipes(new ValidationPipe())
+@UsePipes(new ValidationPipe({ transform: true }))
 export class InterfaceInterfaceGroupController {
   constructor(private readonly interfaceInterfaceGroupService: InterfaceInterfaceGroupService) {
   }

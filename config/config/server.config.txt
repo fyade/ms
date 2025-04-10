@@ -17,8 +17,8 @@ const config = {
       host: 'localhost',
       port: 6379,
       password: '123456',
-      database: 12,
-      databaseForQueue: 22,
+      database: 12, // 给缓存使用的 redis 库
+      databaseForQueue: 22, // 给队列使用的 redis 库
     },
     database: {
       host: 'localhost',

@@ -8,9 +8,9 @@ export const logOperationDict: { [P in keyof LogOperationDto]: string } = {
   hostName: '请求源地址',
   perms: '权限标识',
   userId: '用户id',
+  loginRole: '登录身份',
   reqParam: '请求参数',
   oldValue: '旧值',
   operateType: '操作类型',
   ifSuccess: '是否成功',
-  loginRole: '登录身份',
 }

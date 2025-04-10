@@ -18,7 +18,7 @@ export class R<T = any> {
     this.reqId = reqId;
   }
 
-  static ok(data: any = true) {
+  static ok(data: any) {
     return new R(HTTP.SUCCESS().code, data, HTTP.SUCCESS().msg);
   }
 }

@@ -9,6 +9,13 @@ export function getSysVersion() {
   })
 }
 
+export function getSysTime() {
+  return request({
+    url: '/sys/base/time',
+    method: 'GET'
+  })
+}
+
 export function getSysInfo() {
   return request({
     url: '/sys/base/system-base-info',

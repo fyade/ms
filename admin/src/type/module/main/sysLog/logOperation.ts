@@ -7,11 +7,11 @@ export class LogOperationDto extends BaseClass {
   hostName!: string;
   perms!: string;
   userId!: string;
+  loginRole!: string;
   reqParam!: string;
   oldValue!: string;
   operateType!: string;
   ifSuccess!: string;
-  loginRole!: string;
   remark!: string;
 }
 
@@ -27,11 +27,11 @@ export class LogOperationInsDto {
   hostName!: string;
   perms!: string;
   userId!: string;
+  loginRole!: string;
   reqParam!: string;
   oldValue!: string;
   operateType!: string;
   ifSuccess!: string;
-  loginRole!: string;
   remark!: string;
 }
 

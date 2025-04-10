@@ -20,6 +20,7 @@ const tableData = ref<ViewRealTimeDirs[]>([])
 const viewType = ref('directory')
 const getData = () => {
   loading.value = true
+  tableData.value = []
   viewRealTimeApi.selDirs(param).then((res) => {
     tableData.value = res
   }).finally(() => {
@@ -31,6 +32,7 @@ const selectFileName = ref('')
 const fileContent = ref('')
 const getFile = () => {
   loading.value = true
+  fileContent.value = ''
   viewRealTimeApi.selFile({ ...param, filename: selectFileName.value }).then((res) => {
     fileContent.value = res
     nextTick(() => {
@@ -73,6 +75,10 @@ const gotoDirectory2 = (index: number) => {
       <template v-for="(path, index) in allDirs" :key="index">
         <SvgIcon name="right" color="#000"/>
         <div class="dir" @click="gotoDirectory2(index+1)">{{ path }}</div>
+      </template>
+      <template v-if="viewType === 'file'">
+        <SvgIcon name="right" color="#000"/>
+        <div class="dir" @click="refresh">{{ selectFileName }}</div>
       </template>
     </div>
     <div>

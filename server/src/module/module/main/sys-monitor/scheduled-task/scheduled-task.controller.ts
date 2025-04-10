@@ -1,15 +1,14 @@
-import { Body, Controller, Delete, Get, Param, ParseArrayPipe, Post, Put, Query, UsePipes } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { ScheduledTaskService } from './scheduled-task.service';
 import { Authorize } from '../../../../../decorator/authorize.decorator';
 import { R } from '../../../../../common/R';
-import { ValidationPipe } from '../../../../../pipe/validation/validation.pipe';
-import { ScheduledTaskSelListDto, ScheduledTaskSelAllDto, ScheduledTaskInsOneDto, ScheduledTaskUpdOneDto } from './dto';
+import { ScheduledTaskSelListDto, ScheduledTaskSelAllDto, ScheduledTaskInsOneDto, ScheduledTaskUpdOneDto, ScheduledTaskInsMoreDto, ScheduledTaskUpdMoreDto } from './dto';
 
 @Controller('/main/sys-monitor/scheduled-task')
 @ApiTags('主系统/系统监控/定时任务')
 @ApiBearerAuth()
-@UsePipes(new ValidationPipe())
+@UsePipes(new ValidationPipe({ transform: true }))
 export class ScheduledTaskController {
   constructor(private readonly scheduledTaskService: ScheduledTaskService) {
   }
@@ -92,12 +91,8 @@ export class ScheduledTaskController {
     permission: 'main:sysMonitor:scheduledTask:inss',
     label: '批量新增定时任务',
   })
-  async insScheduledTasks(@Body(
-    new ParseArrayPipe({
-      items: ScheduledTaskInsOneDto,
-    }),
-  ) dtos: ScheduledTaskInsOneDto[]): Promise<R> {
-    return this.scheduledTaskService.insScheduledTasks(dtos);
+  async insScheduledTasks(@Body() dto: ScheduledTaskInsMoreDto): Promise<R> {
+    return this.scheduledTaskService.insScheduledTasks(dto.items);
   }
 
   @Put()
@@ -124,12 +119,8 @@ export class ScheduledTaskController {
     permission: 'main:sysMonitor:scheduledTask:upds',
     label: '批量修改定时任务',
   })
-  async updScheduledTasks(@Body(
-    new ParseArrayPipe({
-      items: ScheduledTaskUpdOneDto,
-    }),
-  ) dtos: ScheduledTaskUpdOneDto[]): Promise<R> {
-    return this.scheduledTaskService.updScheduledTasks(dtos);
+  async updScheduledTasks(@Body() dto: ScheduledTaskUpdMoreDto): Promise<R> {
+    return this.scheduledTaskService.updScheduledTasks(dto.items);
   }
 
   @Delete()

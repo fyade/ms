@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Query, UploadedFile, UseInterceptors, UsePipes } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query, UploadedFile, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
 import { FileUploadService } from './file-upload.service';
 import { R } from '../../../../../common/R';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -11,14 +11,13 @@ import {
 } from './dto';
 import { Authorize } from '../../../../../decorator/authorize.decorator';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { ValidationPipe } from '../../../../../pipe/validation/validation.pipe';
 import { Exception } from "../../../../../exception/exception";
 import { serverConfig } from "@ms/config";
 
 @Controller('/main/sys/file-upload')
 @ApiTags('通用/文件上传')
 @ApiBearerAuth()
-@UsePipes(new ValidationPipe())
+@UsePipes(new ValidationPipe({ transform: true }))
 export class FileUploadController {
   private env: ReturnType<typeof serverConfig.currentConfig>;
 

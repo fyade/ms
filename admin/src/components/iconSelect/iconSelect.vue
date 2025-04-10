@@ -32,9 +32,6 @@ icons.value = Object.keys(files).map((path) => {
     value: filenameWithoutSuffix,
   };
 })
-
-// const encn = icons.value.reduce((obj, item) => ({...obj, [item.value]: item.value2}), {})
-// console.info(encn)
 </script>
 
 <template>

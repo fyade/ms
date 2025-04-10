@@ -1,15 +1,14 @@
-import { Body, Controller, Delete, Get, Param, ParseArrayPipe, Post, Put, Query, UsePipes } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { InterfaceService } from './interface.service';
 import { Authorize } from '../../../../decorator/authorize.decorator';
 import { R } from '../../../../common/R';
-import { ValidationPipe } from '../../../../pipe/validation/validation.pipe';
-import { InterfaceSelListDto, InterfaceSelAllDto, InterfaceInsOneDto, InterfaceUpdOneDto } from './dto';
+import { InterfaceSelListDto, InterfaceSelAllDto, InterfaceInsOneDto, InterfaceUpdOneDto, InterfaceInsMoreDto, InterfaceUpdMoreDto } from './dto';
 
 @Controller('/algorithm/interface')
 @ApiTags('算法系统/接口')
 @ApiBearerAuth()
-@UsePipes(new ValidationPipe())
+@UsePipes(new ValidationPipe({ transform: true }))
 export class InterfaceController {
   constructor(private readonly interfaceService: InterfaceService) {
   }
@@ -92,12 +91,8 @@ export class InterfaceController {
     permission: 'algorithm:interface:inss',
     label: '批量新增接口',
   })
-  async insInterfaces(@Body(
-    new ParseArrayPipe({
-      items: InterfaceInsOneDto,
-    }),
-  ) dtos: InterfaceInsOneDto[]): Promise<R> {
-    return this.interfaceService.insInterfaces(dtos);
+  async insInterfaces(@Body() dto: InterfaceInsMoreDto): Promise<R> {
+    return this.interfaceService.insInterfaces(dto.items);
   }
 
   @Put()
@@ -124,12 +119,8 @@ export class InterfaceController {
     permission: 'algorithm:interface:upds',
     label: '批量修改接口',
   })
-  async updInterfaces(@Body(
-    new ParseArrayPipe({
-      items: InterfaceUpdOneDto,
-    }),
-  ) dtos: InterfaceUpdOneDto[]): Promise<R> {
-    return this.interfaceService.updInterfaces(dtos);
+  async updInterfaces(@Body() dto: InterfaceUpdMoreDto): Promise<R> {
+    return this.interfaceService.updInterfaces(dto.items);
   }
 
   @Delete()

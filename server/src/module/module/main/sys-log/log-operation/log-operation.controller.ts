@@ -1,15 +1,14 @@
-import { Body, Controller, Delete, Get, Param, ParseArrayPipe, Post, Put, Query, UsePipes } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { LogOperationService } from './log-operation.service';
 import { Authorize } from '../../../../../decorator/authorize.decorator';
 import { R } from '../../../../../common/R';
-import { ValidationPipe } from '../../../../../pipe/validation/validation.pipe';
-import { LogOperationSelListDto, LogOperationSelAllDto, LogOperationInsOneDto, LogOperationUpdOneDto } from './dto';
+import { LogOperationSelListDto, LogOperationSelAllDto, LogOperationInsOneDto, LogOperationUpdOneDto, LogOperationInsMoreDto, LogOperationUpdMoreDto } from './dto';
 
 @Controller('/main/sys-log/log-operation')
 @ApiTags('主系统/系统日志/系统操作日志')
 @ApiBearerAuth()
-@UsePipes(new ValidationPipe())
+@UsePipes(new ValidationPipe({ transform: true }))
 export class LogOperationController {
   constructor(private readonly logOperationService: LogOperationService) {
   }
@@ -92,12 +91,8 @@ export class LogOperationController {
     permission: 'main:sysLog:logOperation:inss',
     label: '批量新增系统操作日志',
   })
-  async insLogOperations(@Body(
-    new ParseArrayPipe({
-      items: LogOperationInsOneDto,
-    }),
-  ) dtos: LogOperationInsOneDto[]): Promise<R> {
-    return this.logOperationService.insLogOperations(dtos);
+  async insLogOperations(@Body() dto: LogOperationInsMoreDto): Promise<R> {
+    return this.logOperationService.insLogOperations(dto.items);
   }
 
   @Put()
@@ -124,12 +119,8 @@ export class LogOperationController {
     permission: 'main:sysLog:logOperation:upds',
     label: '批量修改系统操作日志',
   })
-  async updLogOperations(@Body(
-    new ParseArrayPipe({
-      items: LogOperationUpdOneDto,
-    }),
-  ) dtos: LogOperationUpdOneDto[]): Promise<R> {
-    return this.logOperationService.updLogOperations(dtos);
+  async updLogOperations(@Body() dto: LogOperationUpdMoreDto): Promise<R> {
+    return this.logOperationService.updLogOperations(dto.items);
   }
 
   @Delete()

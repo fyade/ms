@@ -1,6 +1,6 @@
 import { BaseDto } from '../../../../common/dto/BaseDto';
 import { PageDto } from '../../../../common/dto/PageDto';
-import { IsArray, IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, MaxLength, IsArray, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -13,30 +13,30 @@ export class InterfaceInterfaceGroupDto extends BaseDto {
 }
 
 export class InterfaceInterfaceGroupSelListDto extends PageDto {
-  @ApiProperty({ description: '接口', required: false })
+  @ApiProperty({ description: '接口id', required: false })
   interfaceId: number;
 
-  @ApiProperty({ description: '接口组', required: false })
+  @ApiProperty({ description: '接口组id', required: false })
   interfaceGroupId: number;
 }
 
 export class InterfaceInterfaceGroupSelAllDto {
-  @ApiProperty({ description: '接口', required: false })
+  @ApiProperty({ description: '接口id', required: false })
   interfaceId: number;
 
-  @ApiProperty({ description: '接口组', required: false })
+  @ApiProperty({ description: '接口组id', required: false })
   interfaceGroupId: number;
 }
 
 export class InterfaceInterfaceGroupInsOneDto {
-  @ApiProperty({ description: '接口', required: true })
+  @ApiProperty({ description: '接口id', required: true })
   @Type(() => Number)
-  @IsNotEmpty({ message: '接口不能为空' })
+  @IsNotEmpty({ message: '接口id不能为空' })
   interfaceId: number;
 
-  @ApiProperty({ description: '接口组', required: true })
+  @ApiProperty({ description: '接口组id', required: true })
   @Type(() => Number)
-  @IsNotEmpty({ message: '接口组不能为空' })
+  @IsNotEmpty({ message: '接口组id不能为空' })
   interfaceGroupId: number;
 }
 
@@ -46,26 +46,38 @@ export class InterfaceInterfaceGroupUpdOneDto extends InterfaceInterfaceGroupIns
   id: number;
 }
 
+export class InterfaceInterfaceGroupInsMoreDto {
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => InterfaceInterfaceGroupInsOneDto)
+  items: InterfaceInterfaceGroupInsOneDto[];
+}
+
+export class InterfaceInterfaceGroupUpdMoreDto {
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => InterfaceInterfaceGroupUpdOneDto)
+  items: InterfaceInterfaceGroupUpdOneDto[];
+}
+
 export class InterfaceInterfaceGroupUpdIIGDto {
-  @ApiProperty({ description: '接口', required: true })
+  @ApiProperty({ description: '接口id', required: true })
   @Type(() => Number)
-  @IsNotEmpty({ message: '接口不能为空' })
+  @IsNotEmpty({ message: '接口id不能为空' })
   interfaceId: number;
 
-  @ApiProperty({ description: '接口组', required: true })
-  @Type(() => Number)
-  @IsArray({ message: '接口组应为数组' })
+  @ApiProperty({ description: '接口组id', required: true })
+  @IsArray({ message: '接口组id应为数组' })
   interfaceGroupId: number[];
 }
 
 export class InterfaceInterfaceGroupUpdIGIDto {
-  @ApiProperty({ description: '接口', required: true })
-  @Type(() => Number)
-  @IsArray({ message: '接口应为数组' })
+  @ApiProperty({ description: '接口id', required: true })
+  @IsArray({ message: '接口id应为数组' })
   interfaceId: number[];
 
-  @ApiProperty({ description: '接口组', required: true })
+  @ApiProperty({ description: '接口组id', required: true })
   @Type(() => Number)
-  @IsNotEmpty({ message: '接口组不能为空' })
+  @IsNotEmpty({ message: '接口组id不能为空' })
   interfaceGroupId: number;
 }

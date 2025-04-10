@@ -63,7 +63,9 @@ export const interfaceGroupApi: ApiConfig<InterfaceGroupDto, InterfaceGroupUpdDt
   insertMore: (objs) => request({
     url: '/algorithm/interface-group/s',
     method: 'POST',
-    data: objs
+    data: {
+      items: objs,
+    }
   }),
   /**
    * 修改多个
@@ -72,7 +74,9 @@ export const interfaceGroupApi: ApiConfig<InterfaceGroupDto, InterfaceGroupUpdDt
   updateMore: (objs) => request({
     url: '/algorithm/interface-group/s',
     method: 'PUT',
-    data: objs
+    data: {
+      items: objs,
+    }
   }),
   /**
    * 删除

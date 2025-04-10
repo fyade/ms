@@ -63,7 +63,9 @@ export const codeGenColumnApi: ApiConfig<CodeGenColumnDto, CodeGenColumnUpdDto> 
   insertMore: (objs) => request({
     url: '/main/sys-util/code-gen-column/s',
     method: 'POST',
-    data: objs
+    data: {
+      items: objs,
+    }
   }),
   /**
    * 修改多个
@@ -72,7 +74,9 @@ export const codeGenColumnApi: ApiConfig<CodeGenColumnDto, CodeGenColumnUpdDto> 
   updateMore: (objs) => request({
     url: '/main/sys-util/code-gen-column/s',
     method: 'PUT',
-    data: objs
+    data: {
+      items: objs,
+    }
   }),
   /**
    * 删除

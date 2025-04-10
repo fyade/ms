@@ -1,15 +1,14 @@
-import { Body, Controller, Delete, Get, Param, ParseArrayPipe, Post, Put, Query, UsePipes } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { RoleService } from './role.service';
 import { Authorize } from '../../../../../decorator/authorize.decorator';
 import { R } from '../../../../../common/R';
-import { ValidationPipe } from '../../../../../pipe/validation/validation.pipe';
-import { RoleSelListDto, RoleSelAllDto, RoleInsOneDto, RoleUpdOneDto } from './dto';
+import { RoleSelListDto, RoleSelAllDto, RoleInsOneDto, RoleUpdOneDto, RoleInsMoreDto, RoleUpdMoreDto } from './dto';
 
 @Controller('/main/sys-manage/role')
 @ApiTags('主系统/系统管理/角色')
 @ApiBearerAuth()
-@UsePipes(new ValidationPipe())
+@UsePipes(new ValidationPipe({ transform: true }))
 export class RoleController {
   constructor(private readonly roleService: RoleService) {
   }
@@ -92,12 +91,8 @@ export class RoleController {
     permission: 'main:sysManage:role:inss',
     label: '批量新增角色',
   })
-  async insRoles(@Body(
-    new ParseArrayPipe({
-      items: RoleInsOneDto,
-    }),
-  ) dtos: RoleInsOneDto[]): Promise<R> {
-    return this.roleService.insRoles(dtos);
+  async insRoles(@Body() dto: RoleInsMoreDto): Promise<R> {
+    return this.roleService.insRoles(dto.items);
   }
 
   @Put()
@@ -124,12 +119,8 @@ export class RoleController {
     permission: 'main:sysManage:role:upds',
     label: '批量修改角色',
   })
-  async updRoles(@Body(
-    new ParseArrayPipe({
-      items: RoleUpdOneDto,
-    }),
-  ) dtos: RoleUpdOneDto[]): Promise<R> {
-    return this.roleService.updRoles(dtos);
+  async updRoles(@Body() dto: RoleUpdMoreDto): Promise<R> {
+    return this.roleService.updRoles(dto.items);
   }
 
   @Delete()

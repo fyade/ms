@@ -4,18 +4,18 @@ import 'winston-daily-rotate-file';
 import { serverConfig } from '@ms/config';
 import { timeUtils } from '@ms/common';
 
+const env = serverConfig.currentConfig();
+
 @Injectable()
 export class WinstonService implements LoggerService {
   private logger: winston.Logger;
 
   constructor() {
-    const env = serverConfig.currentConfig();
     const errorTransport = new winston.transports.DailyRotateFile({
       level: 'error',
-      dirname: env.log.logSavePath + '/errors/',
+      dirname: env.log.logSavePath,
       filename: '%DATE%.error.log',
       datePattern: 'YYYY-MM-DD',
-      zippedArchive: true,
       maxSize: env.log.maxSizeOfKogFile,
       format: winston.format.combine(
         winston.format.printf((info) => {
@@ -25,10 +25,9 @@ export class WinstonService implements LoggerService {
     });
     const infoTransport = new winston.transports.DailyRotateFile({
       level: 'info',
-      dirname: env.log.logSavePath + '/infos/',
+      dirname: env.log.logSavePath,
       filename: '%DATE%.info.log',
       datePattern: 'YYYY-MM-DD',
-      zippedArchive: true,
       maxSize: env.log.maxSizeOfKogFile,
       format: winston.format.combine(
         winston.format.printf((info) => {

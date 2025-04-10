@@ -33,6 +33,7 @@ const state = reactive<State2<CodeGenColumnDto, CodeGenColumnUpdDto>>({
     colName: '',
     colDescr: '',
     mysqlType: '',
+    mysqlLength: 0,
     tsType: '',
     tsName: '',
     ifIns: final.N,
@@ -61,6 +62,7 @@ const dFormRules: FormRules = {
   colName: [{required: true, trigger: 'change'}],
   colDescr: [{required: true, trigger: 'change'}],
   mysqlType: [{required: true, trigger: 'change'}],
+  mysqlLength: [{required: true, trigger: 'change'}],
   tsType: [{required: true, trigger: 'change'}],
   tsName: [{required: true, trigger: 'change'}],
   ifIns: [{required: true, trigger: 'change'}],
@@ -195,6 +197,8 @@ const d1Con = () => {
       obj.colName = row.colName
       obj.colDescr = adict[baseUtils.toCamelCase<keyof AdictInterface>(row.colName)] || ''
       obj.mysqlType = row.colType
+      const match = row.colRemark.match(/\(\d+\)/);
+      obj.mysqlLength = match ? Number(match[0].substring(1, match[0].length - 1)) : 0
       obj.tsType = (['Int'].indexOf(row.colType) > -1 ? tsTypeDicts.find(item => item.value === 'number')?.value : tsTypeDicts.find(item => item.value !== 'number')?.value) || ''
       obj.tsName = baseUtils.toCamelCase(row.colName)
       obj.ifIns = ifInsIgnoreKeys.includes(row.colName) ? final.N : final.Y
@@ -215,6 +219,8 @@ const d1Con = () => {
     state.dialogForm.colName = row.colName
     state.dialogForm.colDescr = adict[baseUtils.toCamelCase<keyof AdictInterface>(row.colName)] || ''
     state.dialogForm.mysqlType = row.colType
+    const match = row.colRemark.match(/\(\d+\)/);
+    state.dialogForm.mysqlLength = match ? Number(match[0].substring(1, match[0].length - 1)) : 0
     state.dialogForm.tsType = (['Int'].indexOf(row.colType) > -1 ? tsTypeDicts.find(item => item.value === 'number')?.value : tsTypeDicts.find(item => item.value !== 'number')?.value) as string
     state.dialogForm.tsName = baseUtils.toCamelCase(row.colName)
     state.dialogForm.ifIns = final.Y
@@ -353,19 +359,26 @@ const gUpd2 = () => {
             </el-form-item>
           </el-col>
           <el-col :span="12">
+            <el-form-item :label="codeGenColumnDict.mysqlLength" prop="mysqlLength">
+              <el-input-number v-model="state.dialogForm.mysqlLength" controls-position="right"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
             <el-form-item :label="codeGenColumnDict.tsType" prop="tsType">
               <el-select v-model="state.dialogForm.tsType" :placeholder="codeGenColumnDict.tsType" clearable filterable>
                 <el-option v-for="item in tsTypeDicts" :key="item.value" :label="item.label" :value="item.value"/>
               </el-select>
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
           <el-col :span="12">
             <el-form-item :label="codeGenColumnDict.tsName" prop="tsName">
               <el-input v-model="state.dialogForm.tsName" :placeholder="codeGenColumnDict.tsName"/>
             </el-form-item>
           </el-col>
+        </el-row>
+        <el-row>
           <el-col :span="12">
             <el-form-item :label="codeGenColumnDict.ifIns" prop="ifIns">
               <template #label>
@@ -379,8 +392,6 @@ const gUpd2 = () => {
               </el-radio-group>
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
           <el-col :span="12">
             <el-form-item :label="codeGenColumnDict.ifUpd" prop="ifUpd">
               <template #label>
@@ -394,6 +405,8 @@ const gUpd2 = () => {
               </el-radio-group>
             </el-form-item>
           </el-col>
+        </el-row>
+        <el-row>
           <el-col :span="12">
             <el-form-item :label="codeGenColumnDict.ifSelOne" prop="ifSelOne">
               <template #label>
@@ -407,8 +420,6 @@ const gUpd2 = () => {
               </el-radio-group>
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
           <el-col :span="12">
             <el-form-item :label="codeGenColumnDict.ifSelMore" prop="ifSelMore">
               <template #label>
@@ -422,6 +433,8 @@ const gUpd2 = () => {
               </el-radio-group>
             </el-form-item>
           </el-col>
+        </el-row>
+        <el-row>
           <el-col :span="12">
             <el-form-item :label="codeGenColumnDict.ifRequired" prop="ifRequired">
               <template #label>
@@ -435,8 +448,6 @@ const gUpd2 = () => {
               </el-radio-group>
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
           <el-col :span="12">
             <el-form-item :label="codeGenColumnDict.formType" prop="formType">
               <el-select v-model="state.dialogForm.formType" :placeholder="codeGenColumnDict.formType" clearable filterable>
@@ -444,6 +455,8 @@ const gUpd2 = () => {
               </el-select>
             </el-form-item>
           </el-col>
+        </el-row>
+        <el-row>
           <el-col :span="12">
             <el-form-item :label="codeGenColumnDict.selType" prop="selType">
               <el-select v-model="state.dialogForm.selType" :placeholder="codeGenColumnDict.selType" clearable filterable>
@@ -451,9 +464,7 @@ const gUpd2 = () => {
               </el-select>
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="24">
+          <el-col :span="12">
             <el-form-item :label="codeGenColumnDict.orderNum" prop="orderNum">
               <el-input-number v-model="state.dialogForm.orderNum" :placeholder="codeGenColumnDict.orderNum" controls-position="right"/>
             </el-form-item>
@@ -528,6 +539,16 @@ const gUpd2 = () => {
                 <template v-else-if="dialogFormTableNameTypes[$index]===B">
                   <el-input v-model="state.dialogForms[$index].mysqlType" :placeholder="codeGenColumnDict.mysqlType"/>
                 </template>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="mysqlLength" :label="codeGenColumnDict.mysqlLength" width="200">
+            <template #header>
+              <span :class="ifRequired('mysqlLength')?'tp-table-header-required':''">{{ codeGenColumnDict.mysqlLength }}</span>
+            </template>
+            <template #default="{$index}">
+              <div :class="state.dialogForms_error?.[`${$index}-mysqlLength`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-input-number v-model="state.dialogForms[$index].mysqlLength" controls-position="right"/>
               </div>
             </template>
           </el-table-column>
@@ -732,62 +753,63 @@ const gUpd2 = () => {
   </div>
 
   <div class="zs-table-data">
-    <!--数据表格-->
-    <el-table
-        v-loading="tableLoadingRef"
-        :data="tableData"
-        @selection-change="handleSelectionChange"
-    >
-      <el-table-column fixed type="selection" width="55"/>
-      <!--<el-table-column fixed prop="id" :label="state.dict.id" width="180"/>-->
-      <!--上面id列的宽度改一下-->
-      <!--在此下方添加表格列-->
-      <el-table-column prop="colName" :label="codeGenColumnDict.colName" width="120"/>
-      <el-table-column prop="colDescr" :label="codeGenColumnDict.colDescr" width="120"/>
-      <el-table-column prop="mysqlType" :label="codeGenColumnDict.mysqlType" width="120"/>
-      <el-table-column prop="tsType" :label="codeGenColumnDict.tsType" width="120">
-        <template #default="{row}">
-          {{ tsTypeDicts.find(item => item.value === row.tsType)?.label }}
-        </template>
-      </el-table-column>
-      <el-table-column prop="tsName" :label="codeGenColumnDict.tsName" width="120"/>
-      <el-table-column prop="ifIns" :label="codeGenColumnDict.ifIns" width="60"/>
-      <el-table-column prop="ifUpd" :label="codeGenColumnDict.ifUpd" width="60"/>
-      <el-table-column prop="ifSelOne" :label="codeGenColumnDict.ifSelOne" width="60"/>
-      <el-table-column prop="ifSelMore" :label="codeGenColumnDict.ifSelMore" width="60"/>
-      <el-table-column prop="ifRequired" :label="codeGenColumnDict.ifRequired" width="60"/>
-      <el-table-column prop="formType" :label="codeGenColumnDict.formType" width="120">
-        <template #default="{row}">
-          {{ formTypeDicts.find(item => item.value === row.formType)?.label }}
-        </template>
-      </el-table-column>
-      <el-table-column prop="selType" :label="codeGenColumnDict.selType" width="120">
-        <template #default="{row}">
-          {{ selTypeDicts.find(item => item.value === row.selType)?.label }}
-        </template>
-      </el-table-column>
-      <el-table-column prop="orderNum" :label="codeGenColumnDict.orderNum" width="120"/>
-      <!--在此上方添加表格列-->
-      <!--<el-table-column prop="createBy" :label="codeGenColumnDict.createBy" width="120"/>-->
-      <!--<el-table-column prop="updateBy" :label="codeGenColumnDict.updateBy" width="120"/>-->
-      <!--<el-table-column prop="createTime" :label="codeGenColumnDict.createTime" width="220"/>-->
-      <!--<el-table-column prop="updateTime" :label="codeGenColumnDict.updateTime" width="220"/>-->
-      <!--<el-table-column prop="deleted" :label="codeGenColumnDict.deleted" width="60"/>-->
-      <!--上方几个酌情使用-->
-      <el-table-column fixed="right" label="操作" min-width="140">
-        <template #default="{row}">
-          <div class="zs-table-data-operate-button-row">
-            <el-button link type="primary" size="small" :icon="Edit" @click="tUpd(row.id)">修改</el-button>
-            <el-button link type="danger" size="small" :icon="Delete" @click="tDel(row.id)">删除</el-button>
-          </div>
-        </template>
-      </el-table-column>
-      <template #append>
-        <div class="el-table-append-box">
-          <span>此表格的多选<span class="underline">不支持</span>{{ `跨分页保存，当前已选 ${multipleSelection.length} 条数据。` }}</span>
+  <!--数据表格-->
+  <el-table
+      v-loading="tableLoadingRef"
+      :data="tableData"
+      @selection-change="handleSelectionChange"
+  >
+    <el-table-column fixed type="selection" width="55"/>
+    <!--<el-table-column fixed prop="id" :label="state.dict.id" width="180"/>-->
+    <!--上面id列的宽度改一下-->
+    <!--在此下方添加表格列-->
+    <el-table-column prop="colName" :label="codeGenColumnDict.colName" width="120"/>
+    <el-table-column prop="colDescr" :label="codeGenColumnDict.colDescr" width="120"/>
+    <el-table-column prop="mysqlType" :label="codeGenColumnDict.mysqlType" width="120"/>
+    <el-table-column prop="mysqlLength" :label="codeGenColumnDict.mysqlLength" width="120"/>
+    <el-table-column prop="tsType" :label="codeGenColumnDict.tsType" width="120">
+      <template #default="{row}">
+        {{ tsTypeDicts.find(item => item.value === row.tsType)?.label }}
+      </template>
+    </el-table-column>
+    <el-table-column prop="tsName" :label="codeGenColumnDict.tsName" width="120"/>
+    <el-table-column prop="ifIns" :label="codeGenColumnDict.ifIns" width="60"/>
+    <el-table-column prop="ifUpd" :label="codeGenColumnDict.ifUpd" width="60"/>
+    <el-table-column prop="ifSelOne" :label="codeGenColumnDict.ifSelOne" width="60"/>
+    <el-table-column prop="ifSelMore" :label="codeGenColumnDict.ifSelMore" width="60"/>
+    <el-table-column prop="ifRequired" :label="codeGenColumnDict.ifRequired" width="60"/>
+    <el-table-column prop="formType" :label="codeGenColumnDict.formType" width="120">
+      <template #default="{row}">
+        {{ formTypeDicts.find(item => item.value === row.formType)?.label }}
+      </template>
+    </el-table-column>
+    <el-table-column prop="selType" :label="codeGenColumnDict.selType" width="120">
+      <template #default="{row}">
+        {{ selTypeDicts.find(item => item.value === row.selType)?.label }}
+      </template>
+    </el-table-column>
+    <el-table-column prop="orderNum" :label="codeGenColumnDict.orderNum" width="120"/>
+    <!--在此上方添加表格列-->
+    <!--<el-table-column prop="createBy" :label="codeGenColumnDict.createBy" width="120"/>-->
+    <!--<el-table-column prop="updateBy" :label="codeGenColumnDict.updateBy" width="120"/>-->
+    <!--<el-table-column prop="createTime" :label="codeGenColumnDict.createTime" width="220"/>-->
+    <!--<el-table-column prop="updateTime" :label="codeGenColumnDict.updateTime" width="220"/>-->
+    <!--<el-table-column prop="deleted" :label="codeGenColumnDict.deleted" width="60"/>-->
+    <!--上方几个酌情使用-->
+    <el-table-column fixed="right" label="操作" min-width="140">
+      <template #default="{row}">
+        <div class="zs-table-data-operate-button-row">
+          <el-button link type="primary" size="small" :icon="Edit" @click="tUpd(row.id)">修改</el-button>
+          <el-button link type="danger" size="small" :icon="Delete" @click="tDel(row.id)">删除</el-button>
         </div>
       </template>
-    </el-table>
+    </el-table-column>
+    <template #append>
+      <div class="el-table-append-box">
+        <span>此表格的多选<span class="underline">不支持</span>{{ `跨分页保存，当前已选 ${multipleSelection.length} 条数据。` }}</span>
+      </div>
+    </template>
+  </el-table>
 
     <!--分页-->
     <Pagination

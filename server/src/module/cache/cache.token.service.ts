@@ -4,11 +4,14 @@ import { TokenDto } from '../../common/token';
 import { serverConfig } from '@ms/config';
 import { idUtils } from '@ms/common';
 
+const currentConfig = serverConfig.currentConfig();
+
 @Injectable()
 export class CacheTokenService {
   readonly UUID_TOKEN = 'zzz:uuid:token';
   readonly UUID1_UUID = 'zzz:uuid1:uuid';
   readonly VERIFICATION_CODE = 'zzz:verification:code';
+  readonly PASSWORD_KEY = 'zzz:password:key';
 
   constructor(private readonly redis: RedisService) {}
 
@@ -38,7 +41,7 @@ export class CacheTokenService {
       loginBrowser: loginBrowser,
       loginOs: loginOs,
     };
-    const jwtConstants = serverConfig.currentConfig().jwtConstants;
+    const jwtConstants = currentConfig.jwtConstants;
     const uuid = idUtils.randomUUID();
     await this.redis.setex(`${this.UUID_TOKEN}:${uuid}`, jwtConstants.expireTime, JSON.stringify(payload));
     return uuid;
@@ -68,7 +71,6 @@ export class CacheTokenService {
    * @param code
    */
   async saveVerificationCode(uuid: string, code: string) {
-    const currentConfig = serverConfig.currentConfig();
     await this.redis.setex(`${this.VERIFICATION_CODE}:${uuid}`, currentConfig.VERIFICATION_CODE_EXPIRE_TIME, code);
   }
 
@@ -86,5 +88,35 @@ export class CacheTokenService {
    */
   async deleteVerificationCode(uuid: string) {
     await this.redis.del(`${this.VERIFICATION_CODE}:${uuid}`);
+  }
+
+  /**
+   * 保存密码公钥私钥
+   * @param uuid
+   * @param key
+   */
+  async savePasswordKey(uuid: string, key: { publicKey: string; privateKey: string }) {
+    await this.redis.setex(
+      `${this.PASSWORD_KEY}:${uuid}`,
+      currentConfig.VERIFICATION_CODE_EXPIRE_TIME,
+      JSON.stringify(key),
+    );
+  }
+
+  /**
+   * 获取密码公钥私钥
+   * @param uuid
+   */
+  async getPasswordKey(uuid: string) {
+    const s = await this.redis.get(`${this.PASSWORD_KEY}:${uuid}`);
+    return JSON.parse(s) as { publicKey: string; privateKey: string };
+  }
+
+  /**
+   * 删除密码公钥私钥
+   * @param uuid
+   */
+  async deletePasswordKey(uuid: string) {
+    await this.redis.del(`${this.PASSWORD_KEY}:${uuid}`);
   }
 }

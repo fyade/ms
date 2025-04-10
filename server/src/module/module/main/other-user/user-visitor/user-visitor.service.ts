@@ -129,11 +129,11 @@ export class UserVisitorService {
       password: await encryptUtils.hashPassword(dto.password),
       id: idUtils.genId(10, false),
     }, { ifCustomizeId: true });
-    return R.ok();
+    return R.ok(true);
   }
 
   async adminResetUserVisitorPsd(dto: ResetUserVisitorPsdDto): Promise<R> {
     await this.prisma.updateById('sys_user_visitor', { ...dto, password: await encryptUtils.hashPassword(dto.password) });
-    return R.ok();
+    return R.ok(true);
   }
 }

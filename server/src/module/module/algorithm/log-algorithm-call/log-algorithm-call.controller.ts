@@ -1,15 +1,14 @@
-import { Body, Controller, Delete, Get, Param, ParseArrayPipe, Post, Put, Query, UsePipes } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { LogAlgorithmCallService } from './log-algorithm-call.service';
 import { Authorize } from '../../../../decorator/authorize.decorator';
 import { R } from '../../../../common/R';
-import { ValidationPipe } from '../../../../pipe/validation/validation.pipe';
-import { LogAlgorithmCallSelListDto, LogAlgorithmCallSelAllDto, LogAlgorithmCallInsOneDto, LogAlgorithmCallUpdOneDto } from './dto';
+import { LogAlgorithmCallSelListDto, LogAlgorithmCallSelAllDto, LogAlgorithmCallInsOneDto, LogAlgorithmCallUpdOneDto, LogAlgorithmCallInsMoreDto, LogAlgorithmCallUpdMoreDto } from './dto';
 
 @Controller('/algorithm/log-algorithm-call')
 @ApiTags('算法系统/算法调用日志')
 @ApiBearerAuth()
-@UsePipes(new ValidationPipe())
+@UsePipes(new ValidationPipe({ transform: true }))
 export class LogAlgorithmCallController {
   constructor(private readonly logAlgorithmCallService: LogAlgorithmCallService) {
   }
@@ -92,12 +91,8 @@ export class LogAlgorithmCallController {
     permission: 'algorithm:logAlgorithmCall:inss',
     label: '批量新增算法调用日志',
   })
-  async insLogAlgorithmCalls(@Body(
-    new ParseArrayPipe({
-      items: LogAlgorithmCallInsOneDto,
-    }),
-  ) dtos: LogAlgorithmCallInsOneDto[]): Promise<R> {
-    return this.logAlgorithmCallService.insLogAlgorithmCalls(dtos);
+  async insLogAlgorithmCalls(@Body() dto: LogAlgorithmCallInsMoreDto): Promise<R> {
+    return this.logAlgorithmCallService.insLogAlgorithmCalls(dto.items);
   }
 
   @Put()
@@ -124,12 +119,8 @@ export class LogAlgorithmCallController {
     permission: 'algorithm:logAlgorithmCall:upds',
     label: '批量修改算法调用日志',
   })
-  async updLogAlgorithmCalls(@Body(
-    new ParseArrayPipe({
-      items: LogAlgorithmCallUpdOneDto,
-    }),
-  ) dtos: LogAlgorithmCallUpdOneDto[]): Promise<R> {
-    return this.logAlgorithmCallService.updLogAlgorithmCalls(dtos);
+  async updLogAlgorithmCalls(@Body() dto: LogAlgorithmCallUpdMoreDto): Promise<R> {
+    return this.logAlgorithmCallService.updLogAlgorithmCalls(dto.items);
   }
 
   @Delete()

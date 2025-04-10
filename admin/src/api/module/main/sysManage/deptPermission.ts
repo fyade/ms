@@ -1,6 +1,6 @@
 import request from "@/api/request.ts";
 import { ApiConfig } from "@/type/tablePage.ts";
-import { DeptPermissionDto, DeptPermissionUpdDPDto, DeptPermissionUpdDto } from "@/type/module/main/sysManage/deptPermission.ts";
+import { DeptPermissionDto, DeptPermissionUpdDto, DeptPermissionUpdDPDto } from "@/type/module/main/sysManage/deptPermission.ts";
 
 export const deptPermissionApi: ApiConfig<DeptPermissionDto, DeptPermissionUpdDto> = {
   /**
@@ -63,7 +63,9 @@ export const deptPermissionApi: ApiConfig<DeptPermissionDto, DeptPermissionUpdDt
   insertMore: (objs) => request({
     url: '/main/sys-manage/dept-permission/s',
     method: 'POST',
-    data: objs
+    data: {
+      items: objs,
+    }
   }),
   /**
    * 修改多个
@@ -72,7 +74,9 @@ export const deptPermissionApi: ApiConfig<DeptPermissionDto, DeptPermissionUpdDt
   updateMore: (objs) => request({
     url: '/main/sys-manage/dept-permission/s',
     method: 'PUT',
-    data: objs
+    data: {
+      items: objs,
+    }
   }),
   /**
    * 删除

@@ -55,7 +55,7 @@ export class UserRoleService {
     await this.prisma.deleteById('sys_user_role', delIds);
     await this.prisma.createMany('sys_user_role', addRoles.map(item => ({ userId: dto.userId, roleId: item, loginRole: dto.loginRole })));
     await this.cachePermissionService.clearPermissionsInCache();
-    return R.ok();
+    return R.ok(true);
   }
 
   async updUserRoleRU(dto: UserRoleUpdManyRUDto): Promise<R> {
@@ -78,12 +78,12 @@ export class UserRoleService {
     }
     await this.prisma.createMany('sys_user_role', data);
     await this.cachePermissionService.clearPermissionsInCache();
-    return R.ok();
+    return R.ok(true);
   }
 
   async delUserRole(ids: number[]): Promise<R> {
-    await this.prisma.deleteById<UserRoleDto>('sys_user_role', ids);
+    const res = await this.prisma.deleteById<UserRoleDto>('sys_user_role', ids);
     await this.cachePermissionService.clearPermissionsInCache();
-    return R.ok();
+    return R.ok(res);
   }
 }

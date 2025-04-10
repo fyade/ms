@@ -4,6 +4,8 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { serverConfig } from "@ms/config";
 import { timeUtils } from "@ms/common";
 
+declare const module: any;
+
 const banner = 'This is a banner.';
 
 async function bootstrap() {
@@ -24,6 +26,10 @@ async function bootstrap() {
     SwaggerModule.setup('/api', app, swaggerDocuemnt);
   }
   await app.listen(node_env.port);
+  if (module.hot) {
+    module.hot.accept();
+    module.hot.dispose(() => app.close());
+  }
   console.info(banner);
   console.info(`${timeUtils.time()} ${node_env.mode} ${node_env.port}`);
 }

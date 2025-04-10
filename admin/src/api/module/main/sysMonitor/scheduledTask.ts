@@ -63,7 +63,9 @@ export const scheduledTaskApi: ApiConfig<ScheduledTaskDto, ScheduledTaskUpdDto> 
   insertMore: (objs) => request({
     url: '/main/sys-monitor/scheduled-task/s',
     method: 'POST',
-    data: objs
+    data: {
+      items: objs,
+    }
   }),
   /**
    * 修改多个
@@ -72,7 +74,9 @@ export const scheduledTaskApi: ApiConfig<ScheduledTaskDto, ScheduledTaskUpdDto> 
   updateMore: (objs) => request({
     url: '/main/sys-monitor/scheduled-task/s',
     method: 'PUT',
-    data: objs
+    data: {
+      items: objs,
+    }
   }),
   /**
    * 删除

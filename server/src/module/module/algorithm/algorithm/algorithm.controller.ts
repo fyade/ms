@@ -1,6 +1,5 @@
-import { Body, Controller, Post, UsePipes } from '@nestjs/common';
+import { Body, Controller, Post, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { ValidationPipe } from '../../../../pipe/validation/validation.pipe';
 import { AlgorithmService } from './algorithm.service';
 import { Authorize } from '../../../../decorator/authorize.decorator';
 import { R } from '../../../../common/R';
@@ -9,7 +8,7 @@ import { AlgorithmDto } from './dto';
 @Controller('/algorithm/algorithm')
 @ApiTags('算法系统/算法接口')
 @ApiBearerAuth()
-@UsePipes(new ValidationPipe())
+@UsePipes(new ValidationPipe({ transform: true }))
 export class AlgorithmController {
   constructor(private readonly algorithmService: AlgorithmService) {
   }

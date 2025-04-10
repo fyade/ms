@@ -14,6 +14,7 @@ import { SysDto } from '../module/main/sys-manage/sys/dto';
 import { PrismaoService } from '../../prisma/prismao.service';
 import { baseUtils, timeUtils } from "@ms/common";
 import { MenuThrottleDto } from "../module/main/sys-manage/menu-throttle/dto";
+import { WinstonService } from "../winston/winston.service";
 
 @Injectable()
 export class AuthService {
@@ -21,6 +22,7 @@ export class AuthService {
     private readonly prismao: PrismaoService,
     private readonly cachePermissionService: CachePermissionService,
     private readonly bcs: BaseContextService,
+    private readonly winston: WinstonService,
   ) {
   }
 
@@ -465,6 +467,7 @@ export class AuthService {
         algorithmCallDto.callIp = `${ipInfoFromRequest.ip}`;
       } catch (e) {
         console.error(e);
+        this.winston.error(e);
       }
     }
     const interfg = await this.prismao.getOrigin().sys_interface_group.findMany({
@@ -753,6 +756,7 @@ export class AuthService {
       ifIgnoreParamInLog,
       reqBody: request.body,
       reqQuery: request.query,
+      reqParam: request.params,
       reqMethod: request.method,
       reqId: reqId,
       userId: userId,
@@ -769,39 +773,47 @@ export class AuthService {
    * @param ifIgnoreParamInLog
    * @param reqBody
    * @param reqQuery
+   * @param reqParam
    * @param reqMethod
    * @param reqId
    * @param userId
    * @param loginRole
    */
-  async insLogOperation2(permission: string, request: ReturnType<typeof getIpInfoFromRequest>, ifSuccess: boolean | string, {
-                           remark,
-                           ifIgnoreParamInLog,
-                           reqBody,
-                           reqQuery,
-                           reqMethod,
-                           reqId,
-                           userId,
-                           loginRole,
-                         }: {
-                           remark?: string
-                           ifIgnoreParamInLog?: boolean
-                           reqBody: object
-                           reqQuery: object
-                           reqMethod: string
-                           reqId: string
-                           userId: string
-                           loginRole: string
-                         } = {
-                           remark: '',
-                           ifIgnoreParamInLog: false,
-                           reqBody: {},
-                           reqQuery: {},
-                           reqMethod: '',
-                           reqId: '',
-                           userId: '',
-                           loginRole: '',
-                         },
+  async insLogOperation2(
+    permission: string,
+    request: ReturnType<typeof getIpInfoFromRequest>,
+    ifSuccess: boolean | string,
+    {
+      remark,
+      ifIgnoreParamInLog,
+      reqBody,
+      reqQuery,
+      reqParam,
+      reqMethod,
+      reqId,
+      userId,
+      loginRole,
+    }: {
+      remark?: string;
+      ifIgnoreParamInLog?: boolean;
+      reqBody: object;
+      reqQuery: object;
+      reqParam: object;
+      reqMethod: string;
+      reqId: string;
+      userId: string;
+      loginRole: string;
+    } = {
+      remark: '',
+      ifIgnoreParamInLog: false,
+      reqBody: {},
+      reqQuery: {},
+      reqParam: {},
+      reqMethod: '',
+      reqId: '',
+      userId: '',
+      loginRole: '',
+    },
   ) {
     await this.prismao.getOrigin().log_operation.create({
       data: {
@@ -811,12 +823,12 @@ export class AuthService {
         perms: permission,
         user_id: userId || '???',
         login_role: loginRole || '???',
-        req_param: ifIgnoreParamInLog ?
-          JSON.stringify({ body: 'hidden', query: 'hidden' }) :
-          JSON.stringify({ body: reqBody, query: reqQuery }),
+        req_param: ifIgnoreParamInLog
+          ? JSON.stringify({ body: 'hidden', query: 'hidden', param: 'hidden' })
+          : JSON.stringify({ body: reqBody, query: reqQuery, param: reqParam }),
         old_value: '',
         operate_type: reqMethod,
-        if_success: typeof ifSuccess === 'boolean' ? ifSuccess ? base.Y : base.N : ifSuccess,
+        if_success: typeof ifSuccess === 'boolean' ? (ifSuccess ? base.Y : base.N) : ifSuccess,
         remark: remark,
       },
     });

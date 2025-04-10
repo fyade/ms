@@ -7,6 +7,7 @@ export class LogOperationQueueJobDataDto {
   ifIgnoreParamInLog: boolean
   reqBody: object
   reqQuery: object
+  reqParam: object
   reqMethod: string
   reqId: string
   userId: string

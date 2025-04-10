@@ -1,15 +1,14 @@
-import { Body, Controller, Delete, Get, Param, ParseArrayPipe, Post, Put, Query, UsePipes } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { LogScheduledTaskService } from './log-scheduled-task.service';
 import { Authorize } from '../../../../../decorator/authorize.decorator';
 import { R } from '../../../../../common/R';
-import { ValidationPipe } from '../../../../../pipe/validation/validation.pipe';
-import { LogScheduledTaskSelListDto, LogScheduledTaskSelAllDto, LogScheduledTaskInsOneDto, LogScheduledTaskUpdOneDto } from './dto';
+import { LogScheduledTaskSelListDto, LogScheduledTaskSelAllDto, LogScheduledTaskInsOneDto, LogScheduledTaskUpdOneDto, LogScheduledTaskInsMoreDto, LogScheduledTaskUpdMoreDto } from './dto';
 
 @Controller('/main/sys-log/log-scheduled-task')
 @ApiTags('主系统/系统日志/定时任务运行日志')
 @ApiBearerAuth()
-@UsePipes(new ValidationPipe())
+@UsePipes(new ValidationPipe({ transform: true }))
 export class LogScheduledTaskController {
   constructor(private readonly logScheduledTaskService: LogScheduledTaskService) {
   }
@@ -92,12 +91,8 @@ export class LogScheduledTaskController {
     permission: 'main:sysLog:logScheduledTask:inss',
     label: '批量新增定时任务运行日志',
   })
-  async insLogScheduledTasks(@Body(
-    new ParseArrayPipe({
-      items: LogScheduledTaskInsOneDto,
-    }),
-  ) dtos: LogScheduledTaskInsOneDto[]): Promise<R> {
-    return this.logScheduledTaskService.insLogScheduledTasks(dtos);
+  async insLogScheduledTasks(@Body() dto: LogScheduledTaskInsMoreDto): Promise<R> {
+    return this.logScheduledTaskService.insLogScheduledTasks(dto.items);
   }
 
   @Put()
@@ -124,12 +119,8 @@ export class LogScheduledTaskController {
     permission: 'main:sysLog:logScheduledTask:upds',
     label: '批量修改定时任务运行日志',
   })
-  async updLogScheduledTasks(@Body(
-    new ParseArrayPipe({
-      items: LogScheduledTaskUpdOneDto,
-    }),
-  ) dtos: LogScheduledTaskUpdOneDto[]): Promise<R> {
-    return this.logScheduledTaskService.updLogScheduledTasks(dtos);
+  async updLogScheduledTasks(@Body() dto: LogScheduledTaskUpdMoreDto): Promise<R> {
+    return this.logScheduledTaskService.updLogScheduledTasks(dto.items);
   }
 
   @Delete()

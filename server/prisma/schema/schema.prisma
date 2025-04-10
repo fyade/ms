@@ -149,30 +149,31 @@ model sys_code_gen_table {
 
 // 1.5 代码生成-列信息表
 model sys_code_gen_column {
-  id          Int                @id @default(autoincrement()) @db.Int
-  table_id    Int                @db.Int
-  col_name    String             @db.VarChar(60)
-  col_descr   String             @db.VarChar(60)
-  mysql_type  String             @db.VarChar(60)
-  ts_type     String             @db.VarChar(10)
-  ts_name     String             @db.VarChar(60)
-  if_ins      String             @db.Char(1)
-  if_upd      String             @db.Char(1)
-  if_sel_one  String             @db.Char(1)
-  if_sel_more String             @db.Char(1)
-  if_required String             @db.Char(1)
-  sel_type    String             @db.VarChar(10)
-  form_type   String             @db.VarChar(20)
-  order_num   Int                @db.Int
-  remark      String?            @db.VarChar(300)
-  create_role String             @db.VarChar(30)
-  update_role String             @db.VarChar(30)
-  create_by   String             @db.VarChar(10)
-  update_by   String             @db.VarChar(10)
-  create_time DateTime           @default(now())
-  update_time DateTime           @updatedAt
-  deleted     String             @default("N") @db.Char(1)
-  table_id_   sys_code_gen_table @relation(fields: [table_id], references: [id])
+  id           Int                @id @default(autoincrement()) @db.Int
+  table_id     Int                @db.Int
+  col_name     String             @db.VarChar(60)
+  col_descr    String             @db.VarChar(60)
+  mysql_type   String             @db.VarChar(60)
+  mysql_length Int                @db.Int
+  ts_type      String             @db.VarChar(10)
+  ts_name      String             @db.VarChar(60)
+  if_ins       String             @db.Char(1)
+  if_upd       String             @db.Char(1)
+  if_sel_one   String             @db.Char(1)
+  if_sel_more  String             @db.Char(1)
+  if_required  String             @db.Char(1)
+  sel_type     String             @db.VarChar(10)
+  form_type    String             @db.VarChar(20)
+  order_num    Int                @db.Int
+  remark       String?            @db.VarChar(300)
+  create_role  String             @db.VarChar(30)
+  update_role  String             @db.VarChar(30)
+  create_by    String             @db.VarChar(10)
+  update_by    String             @db.VarChar(10)
+  create_time  DateTime           @default(now())
+  update_time  DateTime           @updatedAt
+  deleted      String             @default("N") @db.Char(1)
+  table_id_    sys_code_gen_table @relation(fields: [table_id], references: [id])
 }
 
 // 2.0 顶级管理员表

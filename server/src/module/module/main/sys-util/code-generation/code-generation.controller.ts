@@ -1,14 +1,13 @@
-import { Controller, Get, Param, UsePipes } from '@nestjs/common';
+import { Controller, Get, Param, UsePipes, ValidationPipe } from '@nestjs/common';
 import { CodeGenerationService } from './code-generation.service';
 import { Authorize } from '../../../../../decorator/authorize.decorator';
 import { R } from '../../../../../common/R';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { ValidationPipe } from '../../../../../pipe/validation/validation.pipe';
 
 @Controller('/main/sys-util/code-generation')
 @ApiTags('主系统/系统工具/代码生成')
 @ApiBearerAuth()
-@UsePipes(new ValidationPipe())
+@UsePipes(new ValidationPipe({ transform: true }))
 export class CodeGenerationController {
   constructor(private readonly codeGenerationService: CodeGenerationService) {
   }

@@ -1,15 +1,14 @@
-import { Body, Controller, Delete, Get, Param, ParseArrayPipe, Post, Put, Query, UsePipes } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { InterfaceGroupService } from './interface-group.service';
 import { Authorize } from '../../../../decorator/authorize.decorator';
 import { R } from '../../../../common/R';
-import { ValidationPipe } from '../../../../pipe/validation/validation.pipe';
-import { InterfaceGroupSelListDto, InterfaceGroupSelAllDto, InterfaceGroupInsOneDto, InterfaceGroupUpdOneDto } from './dto';
+import { InterfaceGroupSelListDto, InterfaceGroupSelAllDto, InterfaceGroupInsOneDto, InterfaceGroupUpdOneDto, InterfaceGroupInsMoreDto, InterfaceGroupUpdMoreDto } from './dto';
 
 @Controller('/algorithm/interface-group')
 @ApiTags('算法系统/接口组')
 @ApiBearerAuth()
-@UsePipes(new ValidationPipe())
+@UsePipes(new ValidationPipe({ transform: true }))
 export class InterfaceGroupController {
   constructor(private readonly interfaceGroupService: InterfaceGroupService) {
   }
@@ -92,12 +91,8 @@ export class InterfaceGroupController {
     permission: 'algorithm:interfaceGroup:inss',
     label: '批量新增接口组',
   })
-  async insInterfaceGroups(@Body(
-    new ParseArrayPipe({
-      items: InterfaceGroupInsOneDto,
-    }),
-  ) dtos: InterfaceGroupInsOneDto[]): Promise<R> {
-    return this.interfaceGroupService.insInterfaceGroups(dtos);
+  async insInterfaceGroups(@Body() dto: InterfaceGroupInsMoreDto): Promise<R> {
+    return this.interfaceGroupService.insInterfaceGroups(dto.items);
   }
 
   @Put()
@@ -124,12 +119,8 @@ export class InterfaceGroupController {
     permission: 'algorithm:interfaceGroup:upds',
     label: '批量修改接口组',
   })
-  async updInterfaceGroups(@Body(
-    new ParseArrayPipe({
-      items: InterfaceGroupUpdOneDto,
-    }),
-  ) dtos: InterfaceGroupUpdOneDto[]): Promise<R> {
-    return this.interfaceGroupService.updInterfaceGroups(dtos);
+  async updInterfaceGroups(@Body() dto: InterfaceGroupUpdMoreDto): Promise<R> {
+    return this.interfaceGroupService.updInterfaceGroups(dto.items);
   }
 
   @Delete()

@@ -1,6 +1,6 @@
 import { BaseDto } from '../../../../../common/dto/BaseDto';
 import { PageDto } from '../../../../../common/dto/PageDto';
-import { IsArray, IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, MaxLength, IsArray, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -13,30 +13,30 @@ export class DeptPermissionDto extends BaseDto {
 }
 
 export class DeptPermissionSelListDto extends PageDto {
-  @ApiProperty({ description: '部门', required: false })
+  @ApiProperty({ description: '部门id', required: false })
   deptId: number;
 
-  @ApiProperty({ description: '权限', required: false })
+  @ApiProperty({ description: '权限id', required: false })
   permissionId: number;
 }
 
 export class DeptPermissionSelAllDto {
-  @ApiProperty({ description: '部门', required: false })
+  @ApiProperty({ description: '部门id', required: false })
   deptId: number;
 
-  @ApiProperty({ description: '权限', required: false })
+  @ApiProperty({ description: '权限id', required: false })
   permissionId: number;
 }
 
 export class DeptPermissionInsOneDto {
-  @ApiProperty({ description: '部门', required: true })
+  @ApiProperty({ description: '部门id', required: true })
   @Type(() => Number)
-  @IsNotEmpty({ message: '部门不能为空' })
+  @IsNotEmpty({ message: '部门id不能为空' })
   deptId: number;
 
-  @ApiProperty({ description: '权限', required: true })
+  @ApiProperty({ description: '权限id', required: true })
   @Type(() => Number)
-  @IsNotEmpty({ message: '权限不能为空' })
+  @IsNotEmpty({ message: '权限id不能为空' })
   permissionId: number;
 }
 
@@ -46,12 +46,26 @@ export class DeptPermissionUpdOneDto extends DeptPermissionInsOneDto {
   id: number;
 }
 
+export class DeptPermissionInsMoreDto {
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => DeptPermissionInsOneDto)
+  items: DeptPermissionInsOneDto[];
+}
+
+export class DeptPermissionUpdMoreDto {
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => DeptPermissionUpdOneDto)
+  items: DeptPermissionUpdOneDto[];
+}
+
 export class DeptPermissionUpdManyDPDto {
-  @ApiProperty({ description: '部门', required: true })
-  @IsNotEmpty({ message: '部门不能为空' })
+  @ApiProperty({ description: '部门id', required: true })
+  @IsNotEmpty({ message: '部门id不能为空' })
   deptId: number;
 
-  @ApiProperty({ description: '权限', required: true })
-  @IsArray({ message: '权限应为数组' })
+  @ApiProperty({ description: '权限id', required: true })
+  @IsArray({ message: '权限id应为数组' })
   permissionId: number[];
 }

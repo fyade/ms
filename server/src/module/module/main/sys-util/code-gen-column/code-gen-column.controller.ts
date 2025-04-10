@@ -1,15 +1,14 @@
-import { Body, Controller, Delete, Get, Param, ParseArrayPipe, Post, Put, Query, UsePipes } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { CodeGenColumnService } from './code-gen-column.service';
 import { Authorize } from '../../../../../decorator/authorize.decorator';
 import { R } from '../../../../../common/R';
-import { ValidationPipe } from '../../../../../pipe/validation/validation.pipe';
-import { CodeGenColumnSelListDto, CodeGenColumnSelAllDto, CodeGenColumnInsOneDto, CodeGenColumnUpdOneDto } from './dto';
+import { CodeGenColumnSelListDto, CodeGenColumnSelAllDto, CodeGenColumnInsOneDto, CodeGenColumnUpdOneDto, CodeGenColumnInsMoreDto, CodeGenColumnUpdMoreDto } from './dto';
 
 @Controller('/main/sys-util/code-gen-column')
 @ApiTags('主系统/系统工具/代码生成-列信息')
 @ApiBearerAuth()
-@UsePipes(new ValidationPipe())
+@UsePipes(new ValidationPipe({ transform: true }))
 export class CodeGenColumnController {
   constructor(private readonly codeGenColumnService: CodeGenColumnService) {
   }
@@ -92,12 +91,8 @@ export class CodeGenColumnController {
     permission: 'main:sysUtil:codeGenColumn:inss',
     label: '批量新增代码生成-列信息',
   })
-  async insCodeGenColumns(@Body(
-    new ParseArrayPipe({
-      items: CodeGenColumnInsOneDto,
-    }),
-  ) dtos: CodeGenColumnInsOneDto[]): Promise<R> {
-    return this.codeGenColumnService.insCodeGenColumns(dtos);
+  async insCodeGenColumns(@Body() dto: CodeGenColumnInsMoreDto): Promise<R> {
+    return this.codeGenColumnService.insCodeGenColumns(dto.items);
   }
 
   @Put()
@@ -124,12 +119,8 @@ export class CodeGenColumnController {
     permission: 'main:sysUtil:codeGenColumn:upds',
     label: '批量修改代码生成-列信息',
   })
-  async updCodeGenColumns(@Body(
-    new ParseArrayPipe({
-      items: CodeGenColumnUpdOneDto,
-    }),
-  ) dtos: CodeGenColumnUpdOneDto[]): Promise<R> {
-    return this.codeGenColumnService.updCodeGenColumns(dtos);
+  async updCodeGenColumns(@Body() dto: CodeGenColumnUpdMoreDto): Promise<R> {
+    return this.codeGenColumnService.updCodeGenColumns(dto.items);
   }
 
   @Delete()

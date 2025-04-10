@@ -20,7 +20,7 @@ import { NOT_ADMIN, PASSWORD_ERROR } from '../../sys-log/log-user-login/dto';
 import { UserVisitorDto } from '../../other-user/user-visitor/dto';
 import * as svgCaptcha from 'svg-captcha';
 import { Exception } from "../../../../../exception/exception";
-import { encryptUtils, idUtils, timeUtils } from '@ms/common'
+import { cryptUtils, encryptUtils, idUtils, timeUtils } from '@ms/common'
 import { serverConfig } from "@ms/config";
 import { PrismaoService } from "../../../../../prisma/prismao.service";
 
@@ -181,7 +181,7 @@ export class UserService {
       password: await encryptUtils.hashPassword(dto.password),
       id: idUtils.genId(5, false),
     }, { ifCustomizeId: true });
-    return R.ok();
+    return R.ok(true);
   }
 
   async updUser(dto: UserDto): Promise<R> {
@@ -189,11 +189,11 @@ export class UserService {
     const userId = this.bcs.getUserData().userId;
     if (loginRole === 'admin') {
       await this.prisma.updateById('sys_user', dto);
-      return R.ok();
+      return R.ok(true);
     }
     if (loginRole === 'visitor') {
       await this.prisma.updateById('sys_user_visitor', dto);
-      return R.ok();
+      return R.ok(true);
     }
     throw new Exception('');
   }
@@ -211,7 +211,7 @@ export class UserService {
         id: user_.id,
         password: await encryptUtils.hashPassword(dto.newp1),
       });
-      return R.ok();
+      return R.ok(true);
     }
     if (loginRole === 'visitor') {
       const user_ = await this.prisma.findById<UserVisitorDto>('sys_user_visitor', userId);
@@ -223,7 +223,7 @@ export class UserService {
         id: user_.id,
         password: await encryptUtils.hashPassword(dto.newp1),
       });
-      return R.ok();
+      return R.ok(true);
     }
     throw new Exception('');
   }
@@ -233,7 +233,17 @@ export class UserService {
       throw new UserPermissionDeniedException();
     }
     await this.prisma.updateById('sys_user', { ...dto, password: await encryptUtils.hashPassword(dto.password) });
-    return R.ok();
+    return R.ok(true);
+  }
+
+  async generateKey(): Promise<R> {
+    const key = await cryptUtils.rsa.generateKey()
+    const uuid = idUtils.randomUUID();
+    await this.cacheTokenService.savePasswordKey(uuid, key);
+    return R.ok({
+      uuid,
+      publicKey: key.publicKey,
+    });
   }
 
   async regist(dto: RegistDto): Promise<R> {
@@ -303,6 +313,7 @@ export class UserService {
         throw new Exception('验证码错误。');
       }
     }
+    await this.cacheTokenService.deletePasswordKey(dto.passwordKeyUuid);
     if (dto.loginRole === 'admin') {
       const user = await this.prisma.findFirst<UserDto>('sys_user', {
         username: dto.username,
@@ -380,7 +391,7 @@ export class UserService {
 
   async logOut(): Promise<R> {
     await this.cacheTokenService.deleteToken(this.bcs.getUserData().token);
-    return R.ok();
+    return R.ok(true);
   }
 
   async getVerificationCode(): Promise<R> {

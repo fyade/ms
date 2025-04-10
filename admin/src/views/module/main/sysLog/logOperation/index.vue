@@ -25,11 +25,11 @@ const state = reactive<State2<LogOperationDto, LogOperationUpdDto>>({
     hostName: '',
     perms: '',
     userId: '',
+    loginRole: '',
     reqParam: '',
     oldValue: '',
     operateType: '',
     ifSuccess: '',
-    loginRole: '',
     remark: '',
   },
   dialogForms: [],
@@ -40,8 +40,9 @@ const state = reactive<State2<LogOperationDto, LogOperationUpdDto>>({
     hostName: '',
     perms: '',
     userId: '',
-    ifSuccess: '',
     loginRole: '',
+    reqParam: '',
+    ifSuccess: '',
   },
 })
 const dFormRules: FormRules = {
@@ -50,11 +51,11 @@ const dFormRules: FormRules = {
   hostName: [{required: true, trigger: 'change'}],
   perms: [{required: true, trigger: 'change'}],
   userId: [{required: true, trigger: 'change'}],
+  loginRole: [{required: true, trigger: 'change'}],
   reqParam: [{required: true, trigger: 'change'}],
   oldValue: [{required: true, trigger: 'change'}],
   operateType: [{required: true, trigger: 'change'}],
   ifSuccess: [{required: true, trigger: 'change'}],
-  loginRole: [{required: true, trigger: 'change'}],
 }
 const config = new TablePageConfig({
   bulkOperation: true,
@@ -203,232 +204,6 @@ const fCan2 = () => {
       <el-tab-pane :disabled="dialogType.value===final.upd" label="操作单个" :name="final.one"></el-tab-pane>
       <el-tab-pane :disabled="dialogType.value===final.upd" label="操作多个" :name="final.more"></el-tab-pane>
     </el-tabs>
-    <template v-if="activeTabName===final.one">
-      <el-form
-          ref="dialogFormRef"
-          v-loading="dialogLoadingRef"
-          :model="state.dialogForm"
-          :label-width="CONFIG.dialog_form_label_width"
-          :rules="dFormRules"
-      >
-        <!--<el-row>-->
-        <!--  <el-col :span="12"></el-col>-->
-        <!--  <el-col :span="12"></el-col>-->
-        <!--</el-row>-->
-        <el-form-item v-if="dialogType.value!==final.ins" :label="logOperationDict.id" prop="id">
-          <span>{{ state.dialogForm.id }}</span>
-        </el-form-item>
-        <!--在此下方添加表单项-->
-        <el-row>
-          <el-col :span="12">
-            <el-form-item :label="logOperationDict.reqId" prop="reqId">
-              <el-input v-model="state.dialogForm.reqId" :placeholder="logOperationDict.reqId"/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item :label="logOperationDict.callIp" prop="callIp">
-              <el-input v-model="state.dialogForm.callIp" :placeholder="logOperationDict.callIp"/>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item :label="logOperationDict.hostName" prop="hostName">
-              <el-input v-model="state.dialogForm.hostName" :placeholder="logOperationDict.hostName"/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item :label="logOperationDict.perms" prop="perms">
-              <el-input v-model="state.dialogForm.perms" :placeholder="logOperationDict.perms"/>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item :label="logOperationDict.userId" prop="userId">
-              <el-input v-model="state.dialogForm.userId" :placeholder="logOperationDict.userId"/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item :label="logOperationDict.reqParam" prop="reqParam">
-              <el-input v-model="state.dialogForm.reqParam" :placeholder="logOperationDict.reqParam"/>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item :label="logOperationDict.oldValue" prop="oldValue">
-              <el-input v-model="state.dialogForm.oldValue" :placeholder="logOperationDict.oldValue"/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item :label="logOperationDict.operateType" prop="operateType">
-              <el-input v-model="state.dialogForm.operateType" :placeholder="logOperationDict.operateType"/>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item :label="logOperationDict.ifSuccess" prop="ifSuccess">
-              <el-radio-group v-model="state.dialogForm.ifSuccess">
-                <el-radio :value="final.Y">是</el-radio>
-                <el-radio :value="final.N">否</el-radio>
-              </el-radio-group>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item :label="logOperationDict.loginRole" prop="loginRole">
-              <el-input v-model="state.dialogForm.loginRole" :placeholder="logOperationDict.loginRole"/>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="24">
-            <el-form-item :label="logOperationDict.remark" prop="remark">
-              <el-input type="textarea" v-model="state.dialogForm.remark" :placeholder="logOperationDict.remark"/>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <!--在此上方添加表单项-->
-      </el-form>
-    </template>
-    <template v-if="activeTabName===final.more">
-      <el-form
-          ref="dialogFormsRef"
-          v-loading="dialogLoadingRef"
-      >
-        <el-table
-            :data="state.dialogForms"
-            v-if="state.dialogForms"
-        >
-          <el-table-column type="index" width="50">
-            <template #header>
-              #
-            </template>
-          </el-table-column>
-          <!--在此下方添加表格列-->
-          <el-table-column prop="reqId" :label="logOperationDict.reqId" width="300">
-            <template #header>
-              <span :class="ifRequired('reqId')?'tp-table-header-required':''">{{ logOperationDict.reqId }}</span>
-            </template>
-            <template #default="{$index}">
-              <div :class="state.dialogForms_error?.[`${$index}-reqId`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input v-model="state.dialogForms[$index].reqId" :placeholder="logOperationDict.reqId"/>
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column prop="callIp" :label="logOperationDict.callIp" width="300">
-            <template #header>
-              <span :class="ifRequired('callIp')?'tp-table-header-required':''">{{ logOperationDict.callIp }}</span>
-            </template>
-            <template #default="{$index}">
-              <div :class="state.dialogForms_error?.[`${$index}-callIp`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input v-model="state.dialogForms[$index].callIp" :placeholder="logOperationDict.callIp"/>
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column prop="hostName" :label="logOperationDict.hostName" width="300">
-            <template #header>
-              <span :class="ifRequired('hostName')?'tp-table-header-required':''">{{ logOperationDict.hostName }}</span>
-            </template>
-            <template #default="{$index}">
-              <div :class="state.dialogForms_error?.[`${$index}-hostName`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input v-model="state.dialogForms[$index].hostName" :placeholder="logOperationDict.hostName"/>
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column prop="perms" :label="logOperationDict.perms" width="300">
-            <template #header>
-              <span :class="ifRequired('perms')?'tp-table-header-required':''">{{ logOperationDict.perms }}</span>
-            </template>
-            <template #default="{$index}">
-              <div :class="state.dialogForms_error?.[`${$index}-perms`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input v-model="state.dialogForms[$index].perms" :placeholder="logOperationDict.perms"/>
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column prop="userId" :label="logOperationDict.userId" width="300">
-            <template #header>
-              <span :class="ifRequired('userId')?'tp-table-header-required':''">{{ logOperationDict.userId }}</span>
-            </template>
-            <template #default="{$index}">
-              <div :class="state.dialogForms_error?.[`${$index}-userId`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input v-model="state.dialogForms[$index].userId" :placeholder="logOperationDict.userId"/>
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column prop="reqParam" :label="logOperationDict.reqParam" width="300">
-            <template #header>
-              <span :class="ifRequired('reqParam')?'tp-table-header-required':''">{{ logOperationDict.reqParam }}</span>
-            </template>
-            <template #default="{$index}">
-              <div :class="state.dialogForms_error?.[`${$index}-reqParam`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input v-model="state.dialogForms[$index].reqParam" :placeholder="logOperationDict.reqParam"/>
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column prop="oldValue" :label="logOperationDict.oldValue" width="300">
-            <template #header>
-              <span :class="ifRequired('oldValue')?'tp-table-header-required':''">{{ logOperationDict.oldValue }}</span>
-            </template>
-            <template #default="{$index}">
-              <div :class="state.dialogForms_error?.[`${$index}-oldValue`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input v-model="state.dialogForms[$index].oldValue" :placeholder="logOperationDict.oldValue"/>
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column prop="operateType" :label="logOperationDict.operateType" width="300">
-            <template #header>
-              <span :class="ifRequired('operateType')?'tp-table-header-required':''">{{ logOperationDict.operateType }}</span>
-            </template>
-            <template #default="{$index}">
-              <div :class="state.dialogForms_error?.[`${$index}-operateType`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input v-model="state.dialogForms[$index].operateType" :placeholder="logOperationDict.operateType"/>
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column prop="ifSuccess" :label="logOperationDict.ifSuccess" width="70">
-            <template #header>
-              <span :class="ifRequired('ifSuccess')?'tp-table-header-required':''">{{ logOperationDict.ifSuccess }}</span>
-            </template>
-            <template #default="{$index}">
-              <div :class="state.dialogForms_error?.[`${$index}-ifSuccess`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-checkbox v-model="state.dialogForms[$index].ifSuccess" :true-value="final.Y" :false-value="final.N"/>
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column prop="loginRole" :label="logOperationDict.loginRole" width="300">
-            <template #header>
-              <span :class="ifRequired('loginRole')?'tp-table-header-required':''">{{ logOperationDict.loginRole }}</span>
-            </template>
-            <template #default="{$index}">
-              <div :class="state.dialogForms_error?.[`${$index}-loginRole`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input v-model="state.dialogForms[$index].loginRole" :placeholder="logOperationDict.loginRole"/>
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column prop="remark" :label="logOperationDict.remark" width="300">
-            <template #header>
-              <span :class="ifRequired('remark')?'tp-table-header-required':''">{{ logOperationDict.remark }}</span>
-            </template>
-            <template #default="{$index}">
-              <div :class="state.dialogForms_error?.[`${$index}-remark`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input type="textarea" v-model="state.dialogForms[$index].remark" :placeholder="logOperationDict.remark"/>
-              </div>
-            </template>
-          </el-table-column>
-          <!--在此上方添加表格列-->
-          <el-table-column fixed="right" label="操作" min-width="120">
-            <template v-if="dialogType.value===final.ins" #default="{$index}">
-              <el-button link type="danger" size="small" :icon="Delete" @click="dfDel($index)">删除</el-button>
-            </template>
-          </el-table-column>
-          <template v-if="dialogType.value===final.ins" #append>
-            <el-button text type="primary" plain :icon="Plus" @click="dfIns">新增</el-button>
-          </template>
-        </el-table>
-      </el-form>
-    </template>
     <template #footer>
       <span class="dialog-footer">
         <el-button :disabled="dialogButtonLoadingRef" @click="dCan">取消</el-button>
@@ -462,6 +237,12 @@ const fCan2 = () => {
       <el-form-item :label="logOperationDict.userId" prop="userId">
         <el-input v-model="state.filterForm.userId" :placeholder="logOperationDict.userId"/>
       </el-form-item>
+      <el-form-item :label="logOperationDict.loginRole" prop="loginRole">
+        <el-input v-model="state.filterForm.loginRole" :placeholder="logOperationDict.loginRole"/>
+      </el-form-item>
+      <el-form-item :label="logOperationDict.reqParam" prop="reqParam">
+        <el-input v-model="state.filterForm.reqParam" :placeholder="logOperationDict.reqParam"/>
+      </el-form-item>
       <el-form-item :label="logOperationDict.ifSuccess" prop="ifSuccess">
         <!--<el-input v-model="state.filterForm.ifSuccess" :placeholder="logOperationDict.ifSuccess"/>-->
         <el-select v-model="state.filterForm.ifSuccess" :placeholder="logOperationDict.ifSuccess" clearable filterable>
@@ -469,9 +250,6 @@ const fCan2 = () => {
           <el-option label="否" :value="final.N"/>
           <el-option label="不确定" value="O"/>
         </el-select>
-      </el-form-item>
-      <el-form-item :label="logOperationDict.loginRole" prop="loginRole">
-        <el-input v-model="state.filterForm.loginRole" :placeholder="logOperationDict.loginRole"/>
       </el-form-item>
       <el-form-item :label="logOperationDict.createTime" prop="createTime">
         <el-date-picker
@@ -531,6 +309,7 @@ const fCan2 = () => {
           <div style="max-height: 100px;overflow: auto;">
             <div>query参数：{{ JSON.parse(row.reqParam).query }}</div>
             <div>body参数：{{ JSON.parse(row.reqParam).body }}</div>
+            <div>param参数：{{ JSON.parse(row.reqParam).param }}</div>
           </div>
         </template>
       </el-table-column>

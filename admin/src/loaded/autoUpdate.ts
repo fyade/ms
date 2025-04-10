@@ -2,14 +2,23 @@ import { getScriptTagFromHtmlText } from "@/utils/RegularUtils.ts";
 import { ifSameArray } from "@/utils/ObjectUtils.ts";
 import { baseUtils } from "@ms/common";
 
+const whiteList = [
+  {
+    type: 'start',
+    content: 'chrome-extension://'
+  }
+];
+
 async function main() {
   await baseUtils.sleep(1000)
   const oldHtml = document.documentElement.outerHTML
   const oldTag_ = getScriptTagFromHtmlText(oldHtml)
   // 去除一些干扰项
   const oldTag = oldTag_.filter(str => {
-    // Chrome 浏览器
-    if (str.startsWith('chrome-extension://')) {
+    if (
+      whiteList.filter(item => item.type === 'start').some(item => str.startsWith(item.content))
+      || whiteList.filter(item => item.type === 'full').some(item => item.content === str)
+    ) {
       return false
     }
     return true

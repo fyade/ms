@@ -69,7 +69,9 @@ export const userVisitorApi: ApiConfig<UserVisitorDto, UserVisitorUpdDto> = {
   insertMore: (objs) => request({
     url: '/main/other-user/user-visitor/s',
     method: 'POST',
-    data: objs
+    data: {
+      items: objs,
+    }
   }),
   /**
    * 修改多个
@@ -78,7 +80,9 @@ export const userVisitorApi: ApiConfig<UserVisitorDto, UserVisitorUpdDto> = {
   updateMore: (objs) => request({
     url: '/main/other-user/user-visitor/s',
     method: 'PUT',
-    data: objs
+    data: {
+      items: objs,
+    }
   }),
   /**
    * 删除

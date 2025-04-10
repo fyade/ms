@@ -5,5 +5,5 @@ export const userTableDefaultPermissionDict: { [P in keyof UserTableDefaultPermi
   ...publicDict,
   tableName: '表名',
   permType: '权限身份类型',
-  permId: '权限身份',
+  permId: '权限身份id',
 }

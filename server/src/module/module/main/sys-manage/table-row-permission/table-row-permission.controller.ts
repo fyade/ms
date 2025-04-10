@@ -1,15 +1,14 @@
-import { Body, Controller, Delete, Get, Param, ParseArrayPipe, Post, Put, Query, UsePipes } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { TableRowPermissionService } from './table-row-permission.service';
 import { Authorize } from '../../../../../decorator/authorize.decorator';
 import { R } from '../../../../../common/R';
-import { ValidationPipe } from '../../../../../pipe/validation/validation.pipe';
-import { TableRowPermissionSelListDto, TableRowPermissionSelAllDto, TableRowPermissionInsOneDto, TableRowPermissionUpdOneDto } from './dto';
+import { TableRowPermissionSelListDto, TableRowPermissionSelAllDto, TableRowPermissionInsOneDto, TableRowPermissionUpdOneDto, TableRowPermissionInsMoreDto, TableRowPermissionUpdMoreDto } from './dto';
 
 @Controller('/main/sys-manage/table-row-permission')
 @ApiTags('主系统/系统管理/数据表行权限')
 @ApiBearerAuth()
-@UsePipes(new ValidationPipe())
+@UsePipes(new ValidationPipe({ transform: true }))
 export class TableRowPermissionController {
   constructor(private readonly tableRowPermissionService: TableRowPermissionService) {
   }
@@ -92,12 +91,8 @@ export class TableRowPermissionController {
     permission: 'main:sysManage:tableRowPermission:inss',
     label: '批量新增数据表行权限',
   })
-  async insTableRowPermissions(@Body(
-    new ParseArrayPipe({
-      items: TableRowPermissionInsOneDto,
-    }),
-  ) dtos: TableRowPermissionInsOneDto[]): Promise<R> {
-    return this.tableRowPermissionService.insTableRowPermissions(dtos);
+  async insTableRowPermissions(@Body() dto: TableRowPermissionInsMoreDto): Promise<R> {
+    return this.tableRowPermissionService.insTableRowPermissions(dto.items);
   }
 
   @Put()
@@ -124,12 +119,8 @@ export class TableRowPermissionController {
     permission: 'main:sysManage:tableRowPermission:upds',
     label: '批量修改数据表行权限',
   })
-  async updTableRowPermissions(@Body(
-    new ParseArrayPipe({
-      items: TableRowPermissionUpdOneDto,
-    }),
-  ) dtos: TableRowPermissionUpdOneDto[]): Promise<R> {
-    return this.tableRowPermissionService.updTableRowPermissions(dtos);
+  async updTableRowPermissions(@Body() dto: TableRowPermissionUpdMoreDto): Promise<R> {
+    return this.tableRowPermissionService.updTableRowPermissions(dto.items);
   }
 
   @Delete()

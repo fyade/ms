@@ -1,15 +1,14 @@
-import { Body, Controller, Delete, Get, Param, ParseArrayPipe, Post, Put, Query, UsePipes } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { MenuService } from './menu.service';
 import { Authorize } from '../../../../../decorator/authorize.decorator';
 import { R } from '../../../../../common/R';
-import { ValidationPipe } from '../../../../../pipe/validation/validation.pipe';
-import { MenuSelListDto, MenuSelAllDto, MenuInsOneDto, MenuUpdOneDto } from './dto';
+import { MenuSelListDto, MenuSelAllDto, MenuInsOneDto, MenuUpdOneDto, MenuInsMoreDto, MenuUpdMoreDto } from './dto';
 
 @Controller('/main/sys-manage/menu')
 @ApiTags('主系统/系统管理/菜单')
 @ApiBearerAuth()
-@UsePipes(new ValidationPipe())
+@UsePipes(new ValidationPipe({ transform: true }))
 export class MenuController {
   constructor(private readonly menuService: MenuService) {
   }
@@ -92,12 +91,8 @@ export class MenuController {
     permission: 'main:sysManage:menu:inss',
     label: '批量新增菜单',
   })
-  async insMenus(@Body(
-    new ParseArrayPipe({
-      items: MenuInsOneDto,
-    }),
-  ) dtos: MenuInsOneDto[]): Promise<R> {
-    return this.menuService.insMenus(dtos);
+  async insMenus(@Body() dto: MenuInsMoreDto): Promise<R> {
+    return this.menuService.insMenus(dto.items);
   }
 
   @Put()
@@ -124,12 +119,8 @@ export class MenuController {
     permission: 'main:sysManage:menu:upds',
     label: '批量修改菜单',
   })
-  async updMenus(@Body(
-    new ParseArrayPipe({
-      items: MenuUpdOneDto,
-    }),
-  ) dtos: MenuUpdOneDto[]): Promise<R> {
-    return this.menuService.updMenus(dtos);
+  async updMenus(@Body() dto: MenuUpdMoreDto): Promise<R> {
+    return this.menuService.updMenus(dto.items);
   }
 
   @Delete()

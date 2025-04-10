@@ -21,35 +21,35 @@ const state = reactive<State2<LogUserLoginDto, LogUserLoginUpdDto>>({
   dialogForm: {
     id: -1,
     userId: '',
+    loginRole: '',
     loginIp: '',
     loginPosition: '',
     loginBrowser: '',
     loginOs: '',
     ifSuccess: '',
     failType: '',
-    loginRole: '',
     remark: '',
   },
   dialogForms: [],
   dialogForms_error: {},
   filterForm: {
     userId: '',
+    loginRole: '',
     loginIp: '',
     loginBrowser: '',
     loginOs: '',
     ifSuccess: '',
-    loginRole: '',
   },
 })
 const dFormRules: FormRules = {
   userId: [{required: true, trigger: 'change'}],
+  loginRole: [{required: true, trigger: 'change'}],
   loginIp: [{required: true, trigger: 'change'}],
   loginPosition: [{required: true, trigger: 'change'}],
   loginBrowser: [{required: true, trigger: 'change'}],
   loginOs: [{required: true, trigger: 'change'}],
   ifSuccess: [{required: true, trigger: 'change'}],
   failType: [{required: true, trigger: 'change'}],
-  loginRole: [{required: true, trigger: 'change'}],
 }
 const config = new TablePageConfig({
   bulkOperation: true,
@@ -198,200 +198,6 @@ const fCan2 = () => {
       <el-tab-pane :disabled="dialogType.value===final.upd" label="操作单个" :name="final.one"></el-tab-pane>
       <el-tab-pane :disabled="dialogType.value===final.upd" label="操作多个" :name="final.more"></el-tab-pane>
     </el-tabs>
-    <template v-if="activeTabName===final.one">
-      <el-form
-          ref="dialogFormRef"
-          v-loading="dialogLoadingRef"
-          :model="state.dialogForm"
-          :label-width="CONFIG.dialog_form_label_width"
-          :rules="dFormRules"
-      >
-        <!--<el-row>-->
-        <!--  <el-col :span="12"></el-col>-->
-        <!--  <el-col :span="12"></el-col>-->
-        <!--</el-row>-->
-        <el-form-item v-if="dialogType.value!==final.ins" :label="logUserLoginDict.id" prop="id">
-          <span>{{ state.dialogForm.id }}</span>
-        </el-form-item>
-        <!--在此下方添加表单项-->
-        <el-row>
-          <el-col :span="12">
-            <el-form-item :label="logUserLoginDict.userId" prop="userId">
-              <el-input v-model="state.dialogForm.userId" :placeholder="logUserLoginDict.userId"/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item :label="logUserLoginDict.loginIp" prop="loginIp">
-              <el-input v-model="state.dialogForm.loginIp" :placeholder="logUserLoginDict.loginIp"/>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item :label="logUserLoginDict.loginPosition" prop="loginPosition">
-              <el-input v-model="state.dialogForm.loginPosition" :placeholder="logUserLoginDict.loginPosition"/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item :label="logUserLoginDict.loginBrowser" prop="loginBrowser">
-              <el-input v-model="state.dialogForm.loginBrowser" :placeholder="logUserLoginDict.loginBrowser"/>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item :label="logUserLoginDict.loginOs" prop="loginOs">
-              <el-input v-model="state.dialogForm.loginOs" :placeholder="logUserLoginDict.loginOs"/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item :label="logUserLoginDict.ifSuccess" prop="ifSuccess">
-              <el-radio-group v-model="state.dialogForm.ifSuccess">
-                <el-radio :value="final.Y">是</el-radio>
-                <el-radio :value="final.N">否</el-radio>
-              </el-radio-group>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item :label="logUserLoginDict.failType" prop="failType">
-              <el-input v-model="state.dialogForm.failType" :placeholder="logUserLoginDict.failType"/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item :label="logUserLoginDict.loginRole" prop="loginRole">
-              <el-input v-model="state.dialogForm.loginRole" :placeholder="logUserLoginDict.loginRole"/>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="24">
-            <el-form-item :label="logUserLoginDict.remark" prop="remark">
-              <el-input type="textarea" v-model="state.dialogForm.remark" :placeholder="logUserLoginDict.remark"/>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <!--在此上方添加表单项-->
-      </el-form>
-    </template>
-    <template v-if="activeTabName===final.more">
-      <el-form
-          ref="dialogFormsRef"
-          v-loading="dialogLoadingRef"
-      >
-        <el-table
-            :data="state.dialogForms"
-            v-if="state.dialogForms"
-        >
-          <el-table-column type="index" width="50">
-            <template #header>
-              #
-            </template>
-          </el-table-column>
-          <!--在此下方添加表格列-->
-          <el-table-column prop="userId" :label="logUserLoginDict.userId" width="300">
-            <template #header>
-              <span :class="ifRequired('userId')?'tp-table-header-required':''">{{ logUserLoginDict.userId }}</span>
-            </template>
-            <template #default="{$index}">
-              <div :class="state.dialogForms_error?.[`${$index}-userId`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input v-model="state.dialogForms[$index].userId" :placeholder="logUserLoginDict.userId"/>
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column prop="loginIp" :label="logUserLoginDict.loginIp" width="300">
-            <template #header>
-              <span :class="ifRequired('loginIp')?'tp-table-header-required':''">{{ logUserLoginDict.loginIp }}</span>
-            </template>
-            <template #default="{$index}">
-              <div :class="state.dialogForms_error?.[`${$index}-loginIp`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input v-model="state.dialogForms[$index].loginIp" :placeholder="logUserLoginDict.loginIp"/>
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column prop="loginPosition" :label="logUserLoginDict.loginPosition" width="300">
-            <template #header>
-              <span :class="ifRequired('loginPosition')?'tp-table-header-required':''">{{ logUserLoginDict.loginPosition }}</span>
-            </template>
-            <template #default="{$index}">
-              <div :class="state.dialogForms_error?.[`${$index}-loginPosition`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input v-model="state.dialogForms[$index].loginPosition" :placeholder="logUserLoginDict.loginPosition"/>
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column prop="loginBrowser" :label="logUserLoginDict.loginBrowser" width="300">
-            <template #header>
-              <span :class="ifRequired('loginBrowser')?'tp-table-header-required':''">{{ logUserLoginDict.loginBrowser }}</span>
-            </template>
-            <template #default="{$index}">
-              <div :class="state.dialogForms_error?.[`${$index}-loginBrowser`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input v-model="state.dialogForms[$index].loginBrowser" :placeholder="logUserLoginDict.loginBrowser"/>
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column prop="loginOs" :label="logUserLoginDict.loginOs" width="300">
-            <template #header>
-              <span :class="ifRequired('loginOs')?'tp-table-header-required':''">{{ logUserLoginDict.loginOs }}</span>
-            </template>
-            <template #default="{$index}">
-              <div :class="state.dialogForms_error?.[`${$index}-loginOs`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input v-model="state.dialogForms[$index].loginOs" :placeholder="logUserLoginDict.loginOs"/>
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column prop="ifSuccess" :label="logUserLoginDict.ifSuccess" width="70">
-            <template #header>
-              <span :class="ifRequired('ifSuccess')?'tp-table-header-required':''">{{ logUserLoginDict.ifSuccess }}</span>
-            </template>
-            <template #default="{$index}">
-              <div :class="state.dialogForms_error?.[`${$index}-ifSuccess`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-checkbox v-model="state.dialogForms[$index].ifSuccess" :true-value="final.Y" :false-value="final.N"/>
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column prop="failType" :label="logUserLoginDict.failType" width="300">
-            <template #header>
-              <span :class="ifRequired('failType')?'tp-table-header-required':''">{{ logUserLoginDict.failType }}</span>
-            </template>
-            <template #default="{$index}">
-              <div :class="state.dialogForms_error?.[`${$index}-failType`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input v-model="state.dialogForms[$index].failType" :placeholder="logUserLoginDict.failType"/>
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column prop="loginRole" :label="logUserLoginDict.loginRole" width="300">
-            <template #header>
-              <span :class="ifRequired('loginRole')?'tp-table-header-required':''">{{ logUserLoginDict.loginRole }}</span>
-            </template>
-            <template #default="{$index}">
-              <div :class="state.dialogForms_error?.[`${$index}-loginRole`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input v-model="state.dialogForms[$index].loginRole" :placeholder="logUserLoginDict.loginRole"/>
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column prop="remark" :label="logUserLoginDict.remark" width="300">
-            <template #header>
-              <span :class="ifRequired('remark')?'tp-table-header-required':''">{{ logUserLoginDict.remark }}</span>
-            </template>
-            <template #default="{$index}">
-              <div :class="state.dialogForms_error?.[`${$index}-remark`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input type="textarea" v-model="state.dialogForms[$index].remark" :placeholder="logUserLoginDict.remark"/>
-              </div>
-            </template>
-          </el-table-column>
-          <!--在此上方添加表格列-->
-          <el-table-column fixed="right" label="操作" min-width="120">
-            <template v-if="dialogType.value===final.ins" #default="{$index}">
-              <el-button link type="danger" size="small" :icon="Delete" @click="dfDel($index)">删除</el-button>
-            </template>
-          </el-table-column>
-          <template v-if="dialogType.value===final.ins" #append>
-            <el-button text type="primary" plain :icon="Plus" @click="dfIns">新增</el-button>
-          </template>
-        </el-table>
-      </el-form>
-    </template>
     <template #footer>
       <span class="dialog-footer">
         <el-button :disabled="dialogButtonLoadingRef" @click="dCan">取消</el-button>
@@ -413,6 +219,9 @@ const fCan2 = () => {
       <el-form-item :label="logUserLoginDict.userId" prop="userId">
         <el-input v-model="state.filterForm.userId" :placeholder="logUserLoginDict.userId"/>
       </el-form-item>
+      <el-form-item :label="logUserLoginDict.loginRole" prop="loginRole">
+        <el-input v-model="state.filterForm.loginRole" :placeholder="logUserLoginDict.loginRole"/>
+      </el-form-item>
       <el-form-item :label="logUserLoginDict.loginIp" prop="loginIp">
         <el-input v-model="state.filterForm.loginIp" :placeholder="logUserLoginDict.loginIp"/>
       </el-form-item>
@@ -427,9 +236,6 @@ const fCan2 = () => {
           <el-option label="是" :value="final.Y"/>
           <el-option label="否" :value="final.N"/>
         </el-select>
-      </el-form-item>
-      <el-form-item :label="logUserLoginDict.loginRole" prop="loginRole">
-        <el-input v-model="state.filterForm.loginRole" :placeholder="logUserLoginDict.loginRole"/>
       </el-form-item>
       <el-form-item :label="logUserLoginDict.createTime" prop="createTime">
         <el-date-picker

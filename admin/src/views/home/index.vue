@@ -11,9 +11,7 @@ import Content from "@/views/home/content.vue";
 
 let loading: LoadingInstance | null
 onBeforeUnmount(() => {
-  if (loading) {
-    loading.close()
-  }
+  loading?.close()
 })
 
 // 我的资源
@@ -36,7 +34,11 @@ const goToSystem2 = (item: SysDto) => {
     text: '系统资源加载中，请稍候。。。',
     background: 'rgba(0, 0, 0, .7)',
   });
-  goToSystem(item)
+  goToSystem(item, {
+    errorCallback: () => {
+      loading?.close()
+    }
+  })
 }
 </script>
 

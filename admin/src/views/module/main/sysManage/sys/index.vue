@@ -31,6 +31,7 @@ const state = reactive<State2<SysDto, SysUpdDto>>({
   filterForm: {
     name: '',
     perms: '',
+    path: '',
     ifDisabled: '',
   },
 })
@@ -274,6 +275,9 @@ const {
       </el-form-item>
       <el-form-item :label="sysDict.perms" prop="perms">
         <el-input v-model="state.filterForm.perms" :placeholder="sysDict.perms"/>
+      </el-form-item>
+      <el-form-item :label="sysDict.path" prop="path">
+        <el-input v-model="state.filterForm.path" :placeholder="sysDict.path"/>
       </el-form-item>
       <el-form-item :label="sysDict.ifDisabled" prop="ifDisabled">
         <el-select v-model="state.filterForm.ifDisabled" :placeholder="sysDict.ifDisabled" clearable filterable>

@@ -63,7 +63,9 @@ export const logAlgorithmCallApi: ApiConfig<LogAlgorithmCallDto, LogAlgorithmCal
   insertMore: (objs) => request({
     url: '/algorithm/log-algorithm-call/s',
     method: 'POST',
-    data: objs
+    data: {
+      items: objs,
+    }
   }),
   /**
    * 修改多个
@@ -72,7 +74,9 @@ export const logAlgorithmCallApi: ApiConfig<LogAlgorithmCallDto, LogAlgorithmCal
   updateMore: (objs) => request({
     url: '/algorithm/log-algorithm-call/s',
     method: 'PUT',
-    data: objs
+    data: {
+      items: objs,
+    }
   }),
   /**
    * 删除

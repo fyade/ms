@@ -7,6 +7,7 @@ export const codeGenColumnDict: { [P in keyof CodeGenColumnDto]: string } = {
   colName: '列名',
   colDescr: '字段描述',
   mysqlType: 'mysql类型',
+  mysqlLength: 'mysql长度',
   tsType: 'ts类型',
   tsName: 'ts属性',
   ifIns: '增',

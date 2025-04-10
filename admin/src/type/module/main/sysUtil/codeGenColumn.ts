@@ -6,6 +6,7 @@ export class CodeGenColumnDto extends BaseClass {
   colName!: string;
   colDescr!: string;
   mysqlType!: string;
+  mysqlLength!: number;
   tsType!: string;
   tsName!: string;
   ifIns!: string;
@@ -30,6 +31,7 @@ export class CodeGenColumnInsDto {
   colName!: string;
   colDescr!: string;
   mysqlType!: string;
+  mysqlLength!: number;
   tsType!: string;
   tsName!: string;
   ifIns!: string;

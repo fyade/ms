@@ -1,15 +1,14 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, UsePipes } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UsePipes, ValidationPipe } from '@nestjs/common';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { RolePermissionService } from './role-permission.service';
 import { Authorize } from '../../../../../decorator/authorize.decorator';
 import { R } from '../../../../../common/R';
-import { RolePermissionService } from './role-permission.service';
-import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { ValidationPipe } from '../../../../../pipe/validation/validation.pipe';
-import { RolePermissionDto, RolePermissionSelListDto, RolePermissionSelAllDto, RolePermissionInsOneDto, RolePermissionUpdOneDto, RolePermissionUpdManyDto } from './dto';
+import { RolePermissionSelListDto, RolePermissionSelAllDto, RolePermissionUpdManyDto } from './dto';
 
 @Controller('/main/sys-manage/role-permission')
 @ApiTags('主系统/系统管理/角色权限')
 @ApiBearerAuth()
-@UsePipes(new ValidationPipe())
+@UsePipes(new ValidationPipe({ transform: true }))
 export class RolePermissionController {
   constructor(private readonly rolePermissionService: RolePermissionService) {
   }

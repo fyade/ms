@@ -19,6 +19,7 @@ export class LogOperationConsumer extends WorkerHost {
       ifIgnoreParamInLog: data.ifIgnoreParamInLog,
       reqBody: data.reqBody,
       reqQuery: data.reqQuery,
+      reqParam: data.reqParam,
       reqMethod: data.reqMethod,
       reqId: data.reqId,
       userId: data.userId,

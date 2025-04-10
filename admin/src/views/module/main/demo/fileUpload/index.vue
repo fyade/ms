@@ -39,7 +39,13 @@ const state = reactive<State2<FileUploadDto, FileUploadUpdDto>>({
   },
   dialogForms: [],
   dialogForms_error: {},
-  filterForm: {},
+  filterForm: {
+    fileName: '',
+    fileMd5: '',
+    ifChunk: '',
+    ifFirst: '',
+    ifFinished: '',
+  },
 })
 const dFormRules: FormRules = {
   fileName: [{required: true, trigger: 'change'}],
@@ -139,9 +145,30 @@ const download = async (row: FileUploadDto) => {
         @keyup.enter="fEnter"
     >
       <!--在此下方添加表单项-->
-      <!--<el-form-item :label="fileUploadDict." prop="">-->
-      <!--  <el-input v-model="state.filterForm." :placeholder="fileUploadDict."/>-->
-      <!--</el-form-item>-->
+      <el-form-item :label="fileUploadDict.fileName" prop="fileName">
+        <el-input v-model="state.filterForm.fileName" :placeholder="fileUploadDict.fileName"/>
+      </el-form-item>
+      <el-form-item :label="fileUploadDict.fileMd5" prop="fileMd5">
+        <el-input v-model="state.filterForm.fileMd5" :placeholder="fileUploadDict.fileMd5"/>
+      </el-form-item>
+      <el-form-item :label="fileUploadDict.ifChunk" prop="ifChunk">
+        <el-select v-model="state.filterForm.ifChunk" :placeholder="fileUploadDict.ifChunk" clearable filterable>
+          <el-option label="是" :value="final.Y"/>
+          <el-option label="否" :value="final.N"/>
+        </el-select>
+      </el-form-item>
+      <el-form-item :label="fileUploadDict.ifFirst" prop="ifFirst">
+        <el-select v-model="state.filterForm.ifFirst" :placeholder="fileUploadDict.ifFirst" clearable filterable>
+          <el-option label="是" :value="final.Y"/>
+          <el-option label="否" :value="final.N"/>
+        </el-select>
+      </el-form-item>
+      <el-form-item :label="fileUploadDict.ifFinished" prop="ifFinished">
+        <el-select v-model="state.filterForm.ifFinished" :placeholder="fileUploadDict.ifFinished" clearable filterable>
+          <el-option label="是" :value="final.Y"/>
+          <el-option label="否" :value="final.N"/>
+        </el-select>
+      </el-form-item>
       <!--在此上方添加表单项-->
       <el-form-item>
         <el-button type="primary" @click="fCon">筛选</el-button>
@@ -172,7 +199,7 @@ const download = async (row: FileUploadDto) => {
         :data="tableData"
         @selection-change="handleSelectionChange"
     >
-      <el-table-column fixed type="selection" width="55"/>
+      <!--<el-table-column fixed type="selection" width="55"/>-->
       <!--<el-table-column fixed prop="id" :label="fileUploadDict.id" width="180"/>-->
       <!--上面id列的宽度改一下-->
       <!--在此下方添加表格列-->

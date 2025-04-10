@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
-import path, { join } from "path";
+import path from "path";
 import AutoImport from 'unplugin-auto-import/vite';
 import Components from 'unplugin-vue-components/vite';
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
@@ -13,7 +13,6 @@ import { visualizer } from 'rollup-plugin-visualizer';
 import { adminConfig } from '@ms/config';
 
 const root = process.cwd()
-const pathSrc = path.resolve(__dirname, 'src')
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   const config = adminConfig.currentConfig();
@@ -56,8 +55,8 @@ export default defineConfig(({ mode }) => {
     ],
     resolve: {
       alias: {
-        '@': join(__dirname, 'src'),
-        '~': join(__dirname),
+        '@': path.join(__dirname, 'src'),
+        '~': path.join(__dirname),
       }
     },
     server: {
@@ -74,19 +73,9 @@ export default defineConfig(({ mode }) => {
           changeOrigin: true,
           rewrite: path => path.substring(config.VITE_API_FILE_PREFIX.length)
         },
-      }
+      },
     },
     build: {
-      rollupOptions: {
-        output: {
-          manualChunks(id: string) {
-            if (id.includes('node_modules')) {
-              const packageName = id.split('node_modules/')[1].split('/')[0];
-              return packageName + (packageName === 'lodash' ? '' : '-vendor');
-            }
-          }
-        }
-      },
       assetsDir: `./${adminConfig.currentVersion}`
     }
   }

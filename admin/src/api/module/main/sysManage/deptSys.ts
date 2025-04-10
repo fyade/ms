@@ -63,7 +63,9 @@ export const deptSysApi: ApiConfig<DeptSysDto, DeptSysUpdDto> = {
   insertMore: (objs) => request({
     url: '/main/sys-manage/dept-sys/s',
     method: 'POST',
-    data: objs
+    data: {
+      items: objs,
+    }
   }),
   /**
    * 修改多个
@@ -72,7 +74,9 @@ export const deptSysApi: ApiConfig<DeptSysDto, DeptSysUpdDto> = {
   updateMore: (objs) => request({
     url: '/main/sys-manage/dept-sys/s',
     method: 'PUT',
-    data: objs
+    data: {
+      items: objs,
+    }
   }),
   /**
    * 删除

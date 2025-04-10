@@ -1,15 +1,14 @@
-import { Body, Controller, Delete, Get, Param, ParseArrayPipe, Post, Put, Query, UsePipes } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { SysConfigService } from './sys-config.service';
 import { Authorize } from '../../../../../decorator/authorize.decorator';
 import { R } from '../../../../../common/R';
-import { ValidationPipe } from '../../../../../pipe/validation/validation.pipe';
-import { SysConfigSelListDto, SysConfigSelAllDto, SysConfigInsOneDto, SysConfigUpdOneDto } from './dto';
+import { SysConfigSelListDto, SysConfigSelAllDto, SysConfigInsOneDto, SysConfigUpdOneDto, SysConfigInsMoreDto, SysConfigUpdMoreDto } from './dto';
 
 @Controller('/main/sys-manage/sys-config')
 @ApiTags('主系统/系统管理/系统配置')
 @ApiBearerAuth()
-@UsePipes(new ValidationPipe())
+@UsePipes(new ValidationPipe({ transform: true }))
 export class SysConfigController {
   constructor(private readonly sysConfigService: SysConfigService) {
   }
@@ -92,12 +91,8 @@ export class SysConfigController {
     permission: 'main:sysManage:sysConfig:inss',
     label: '批量新增系统配置',
   })
-  async insSysConfigs(@Body(
-    new ParseArrayPipe({
-      items: SysConfigInsOneDto,
-    }),
-  ) dtos: SysConfigInsOneDto[]): Promise<R> {
-    return this.sysConfigService.insSysConfigs(dtos);
+  async insSysConfigs(@Body() dto: SysConfigInsMoreDto): Promise<R> {
+    return this.sysConfigService.insSysConfigs(dto.items);
   }
 
   @Put()
@@ -124,12 +119,8 @@ export class SysConfigController {
     permission: 'main:sysManage:sysConfig:upds',
     label: '批量修改系统配置',
   })
-  async updSysConfigs(@Body(
-    new ParseArrayPipe({
-      items: SysConfigUpdOneDto,
-    }),
-  ) dtos: SysConfigUpdOneDto[]): Promise<R> {
-    return this.sysConfigService.updSysConfigs(dtos);
+  async updSysConfigs(@Body() dto: SysConfigUpdMoreDto): Promise<R> {
+    return this.sysConfigService.updSysConfigs(dto.items);
   }
 
   @Delete()

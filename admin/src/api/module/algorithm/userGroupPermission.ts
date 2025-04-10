@@ -73,7 +73,9 @@ export const userGroupPermissionApi: ApiConfig<UserGroupPermissionDto, UserGroup
     return request({
       url: '/algorithm/user-group-permission/s',
       method: 'POST',
-      data: objs
+      data: {
+        items: objs,
+      }
     })
   },
   /**
@@ -87,7 +89,9 @@ export const userGroupPermissionApi: ApiConfig<UserGroupPermissionDto, UserGroup
     return request({
       url: '/algorithm/user-group-permission/s',
       method: 'PUT',
-      data: objs
+      data: {
+        items: objs,
+      }
     })
   },
   /**

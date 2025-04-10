@@ -1,13 +1,19 @@
 <script setup lang="ts">
 import { useSysStore } from "@/store/module/sys.ts";
-import { onBeforeUnmount, reactive } from "vue";
-import { getSysInfo } from "@/api/common/sys.ts";
-import { numberUtils } from "@ms/common";
+import { onBeforeUnmount, reactive, ref } from "vue";
+import { getSysInfo, getSysTime } from "@/api/common/sys.ts";
+import { numberUtils, timeUtils } from "@ms/common";
 
 const sysStore = useSysStore()
+let timer_systime: NodeJS.Timeout | null = null;
+let timer_systime2: NodeJS.Timeout | null = null;
+let timer_systime3: NodeJS.Timeout | null = null;
 const intervalTimers: NodeJS.Timeout[] = []
 onBeforeUnmount(() => {
   intervalTimers.forEach(timer => clearInterval(timer))
+  if (timer_systime) clearInterval(timer_systime);
+  if (timer_systime2) clearTimeout(timer_systime2);
+  if (timer_systime3) clearTimeout(timer_systime3);
 })
 
 // 服务器监控
@@ -45,19 +51,41 @@ const serverMonitor = () => {
     })
   }
   _()
-  const interval = setInterval(_, 2000);
+  const interval = setInterval(_, 3000);
   intervalTimers.push(interval)
 }
 serverMonitor()
 
 // const tips = [
 // ]
+
+const currentSysTime = ref('')
+const timeAdd = () => {
+  currentSysTime.value = timeUtils.formatDate(new Date(new Date(currentSysTime.value).getTime() + 1000))
+}
+const refreshSysTime = () => {
+  if (timer_systime) {
+    clearInterval(timer_systime);
+  }
+  getSysTime().then(res => {
+    currentSysTime.value = timeUtils.formatDate(new Date(res))
+    if (timer_systime2) clearTimeout(timer_systime2);
+    timer_systime2 = setTimeout(() => {
+      timeAdd()
+      timer_systime = setInterval(timeAdd, 1000)
+    }, 1000 - new Date(res).getMilliseconds())
+  }).finally(() => {
+    if (timer_systime3) clearTimeout(timer_systime3);
+    timer_systime3 = setTimeout(refreshSysTime, 10000)
+  })
+}
+refreshSysTime()
 </script>
 
 <template>
   <div class="box">
     <div>
-      <el-divider content-position="left">服务器监控（仅供参考）</el-divider>
+      <el-divider content-position="left">服务器监控（仅供参考）{{ currentSysTime }}</el-divider>
       <div style="display: flex; flex-direction: column; gap: 20px;">
         <el-row :gutter="20">
           <el-col :span="24">
@@ -104,7 +132,9 @@ serverMonitor()
           <el-col :span="12">
             <!--内存-->
             <el-card v-if="serverinfo.memory" shadow="never">
-              <span>内存已使用 {{ numberUtils.unitConversion_storage(serverinfo.memory.used, { showNuit: false }) }}</span>
+              <span>
+                内存已使用 {{ numberUtils.unitConversion_storage(serverinfo.memory.used, { showNuit: false }) }}
+              </span>
               <span> / {{ numberUtils.unitConversion_storage(serverinfo.memory.total, { unitSpace: ' ' }) }}</span>
               <span> ({{ ((serverinfo.memory.used / serverinfo.memory.total) * 100).toFixed(2) }}%)</span>
             </el-card>

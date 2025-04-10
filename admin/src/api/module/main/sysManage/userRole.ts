@@ -63,7 +63,9 @@ export const userRoleApi: ApiConfig<UserRoleDto, UserRoleUpdDto> = {
   insertMore: (objs) => request({
     url: '/main/sys-manage/user-role/s',
     method: 'POST',
-    data: objs
+    data: {
+      items: objs,
+    }
   }),
   /**
    * 修改多个
@@ -72,7 +74,9 @@ export const userRoleApi: ApiConfig<UserRoleDto, UserRoleUpdDto> = {
   updateMore: (objs) => request({
     url: '/main/sys-manage/user-role/s',
     method: 'PUT',
-    data: objs
+    data: {
+      items: objs,
+    }
   }),
   /**
    * 删除

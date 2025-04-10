@@ -547,30 +547,15 @@ export class PrismaService {
                       }: {
                         ifCustomizeId?: boolean,
                       } = {},
-  ): Promise<T> {
-    const fieldSelectParam = this.bcs.getFieldSelectParam(model);
-    const publicData = this.prismao.defaultInsArg({
-      ifCreateRole: fieldSelectParam.ifCreateRole,
-      ifUpdateRole: fieldSelectParam.ifUpdateRole,
-      ifCreateBy: fieldSelectParam.ifCreateBy,
-      ifUpdateBy: fieldSelectParam.ifUpdateBy,
-      ifCreateTime: fieldSelectParam.ifCreateTime,
-      ifUpdateTime: fieldSelectParam.ifUpdateTime,
-      ifDeleted: fieldSelectParam.ifDeleted,
-    }).data;
-    const arg = {
-      data: data.map(dat => {
-        if (!ifCustomizeId) {
-          delete dat.id;
-        }
-        return {
-          ...(baseUtils.objToSnakeCase(dat) || {}),
-          ...publicData,
-        };
-      }),
-    };
-    const retData = await this.getModel(model).createMany(arg);
-    return new Promise(resolve => resolve(retData));
+  ): Promise<T[]> {
+    const retArr: T[] = [];
+    for (let i = 0; i < data.length; i++) {
+      const ret = await this.create<T>(model, data[i], {
+        ifCustomizeId,
+      });
+      retArr.push(ret);
+    }
+    return new Promise(resolve => resolve(retArr));
   }
 
   /**
@@ -606,12 +591,8 @@ export class PrismaService {
         ...publicData.data,
       },
     };
-    try {
-      const retData = await this.getModel(model).update(arg);
-      return new Promise(resolve => resolve(baseUtils.objToCamelCase(retData)));
-    } catch (e) {
-      return new Promise(resolve => resolve(JSON.parse(JSON.stringify({}))));
-    }
+    const retData = await this.getModel(model).update(arg);
+    return new Promise(resolve => resolve(baseUtils.objToCamelCase(retData)));
   }
 
   /**
@@ -647,7 +628,7 @@ export class PrismaService {
                       }: {
                         ifUseSelfData?: boolean
                       } = {},
-  ): Promise<{ count: number }> {
+  ): Promise<boolean> {
     const publicData = this.prismao.defaultDelArg({ ifUseSelfData });
     const arg = {
       where: {
@@ -660,8 +641,8 @@ export class PrismaService {
         ...publicData.data,
       },
     };
-    const many: { count: number } = await this.getModel(model).updateMany(arg);
-    return new Promise(resolve => resolve(many));
+    await this.getModel(model).updateMany(arg);
+    return new Promise(resolve => resolve(true));
   }
 
   /**
@@ -676,7 +657,7 @@ export class PrismaService {
                   }: {
                     ifUseSelfData?: boolean
                   } = {},
-  ): Promise<{ count: number }> {
+  ): Promise<boolean> {
     const publicData = this.prismao.defaultDelArg({ ifUseSelfData });
     const arg = {
       where: {
@@ -689,7 +670,8 @@ export class PrismaService {
         ...publicData.data,
       },
     };
-    return this.getModel(model).updateMany(arg);
+    await this.getModel(model).updateMany(arg);
+    return new Promise(resolve => resolve(true));
   }
 
   private getSkipAndTakeFromPNS(pageNum: number, pageSize: number) {

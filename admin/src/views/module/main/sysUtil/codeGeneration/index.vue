@@ -255,7 +255,7 @@ const gUpd2 = () => {
               <el-button v-if="item.canCopy" text bg :icon="DocumentCopy" @click="copyCode(index)">复制代码</el-button>
             </el-space>
           </el-divider>
-          <pre>{{ item.code }}</pre>
+          <pre style="overflow: auto;">{{ item.code }}</pre>
         </div>
       </el-tab-pane>
     </el-tabs>

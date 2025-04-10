@@ -9,7 +9,7 @@ export default {
 </script>
 
 <template>
-  main/home
+main/home
 </template>
 
 <style scoped>

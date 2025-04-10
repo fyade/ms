@@ -63,7 +63,9 @@ export const userTableDefaultPermissionApi: ApiConfig<UserTableDefaultPermission
   insertMore: (objs) => request({
     url: '/main/other-user/user-table-default-permission/s',
     method: 'POST',
-    data: objs
+    data: {
+      items: objs,
+    }
   }),
   /**
    * 修改多个
@@ -72,7 +74,9 @@ export const userTableDefaultPermissionApi: ApiConfig<UserTableDefaultPermission
   updateMore: (objs) => request({
     url: '/main/other-user/user-table-default-permission/s',
     method: 'PUT',
-    data: objs
+    data: {
+      items: objs,
+    }
   }),
   /**
    * 删除

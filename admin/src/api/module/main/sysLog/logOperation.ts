@@ -63,7 +63,9 @@ export const logOperationApi: ApiConfig<LogOperationDto, LogOperationUpdDto> = {
   insertMore: (objs) => request({
     url: '/main/sys-log/log-operation/s',
     method: 'POST',
-    data: objs
+    data: {
+      items: objs,
+    }
   }),
   /**
    * 修改多个
@@ -72,7 +74,9 @@ export const logOperationApi: ApiConfig<LogOperationDto, LogOperationUpdDto> = {
   updateMore: (objs) => request({
     url: '/main/sys-log/log-operation/s',
     method: 'PUT',
-    data: objs
+    data: {
+      items: objs,
+    }
   }),
   /**
    * 删除

@@ -18,6 +18,7 @@ import { Exception } from "../../../../../exception/exception";
 import { UnknownException } from "../../../../../exception/unknown.exception";
 import { serverConfig } from "@ms/config";
 import { idUtils, timeUtils } from "@ms/common";
+import { WinstonService } from "../../../../winston/winston.service";
 
 const SparkMD5 = require('spark-md5');
 
@@ -29,6 +30,7 @@ export class FileUploadService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly bcs: BaseContextService,
+    private readonly winston: WinstonService,
   ) {
     this.env = serverConfig.currentConfig();
     this.bcs.setFieldSelectParam('tbl_file', {
@@ -118,6 +120,7 @@ export class FileUploadService {
       return R.ok(fillObj.fileNewName);
     } catch (e) {
       console.error(e);
+      this.winston.error(e);
       throw new UnknownException(this.bcs.getUserData().reqId, e as HttpException);
     }
   }
@@ -237,9 +240,10 @@ export class FileUploadService {
         id: info.id,
         ifFinished: base.Y,
       });
-      return R.ok();
+      return R.ok(true);
     } catch (e) {
       console.error(e);
+      this.winston.error(e);
       throw new UnknownException(this.bcs.getUserData().reqId, e as HttpException)
     }
   }
@@ -293,6 +297,7 @@ export class FileUploadService {
       })
       .catch((error) => {
         console.error('Error while processing file chunks:', error);
+        this.winston.error(error);
       });
     for (let i = 0; i < fileInfos.length; i++) {
       try {
@@ -303,8 +308,9 @@ export class FileUploadService {
         });
       } catch (e) {
         console.error(e);
+        this.winston.error(e);
       }
     }
-    return R.ok();
+    return R.ok(true);
   }
 }

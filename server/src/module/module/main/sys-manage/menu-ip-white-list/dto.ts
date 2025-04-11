@@ -1,6 +1,6 @@
 import { BaseDto } from '../../../../../common/dto/BaseDto';
 import { PageDto } from '../../../../../common/dto/PageDto';
-import { IsNotEmpty, MaxLength, IsArray, ValidateNested } from 'class-validator';
+import { IsNotEmpty, IsOptional, MaxLength, IsArray, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -74,6 +74,7 @@ export class MenuIpWhiteListInsOneDto {
   type: string;
 
   @ApiProperty({ description: '备注', required: false })
+  @IsOptional()
   @MaxLength(300, { message: '备注不能超过300个字符' })
   remark: string;
 }

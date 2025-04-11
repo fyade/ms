@@ -14,6 +14,7 @@ import { getDbInfo } from "@/api/module/main/sysUtil/codeGeneration.ts";
 import { deepClone } from "@/utils/ObjectUtils.ts";
 import { TypeOM } from "@/type/utils/base.ts";
 import { baseUtils } from "@ms/common";
+import { mysqlLengthFromRowRemark } from "@/utils/RegularUtils.ts";
 
 const props = defineProps({
   tableId: {
@@ -197,8 +198,8 @@ const d1Con = () => {
       obj.colName = row.colName
       obj.colDescr = adict[baseUtils.toCamelCase<keyof AdictInterface>(row.colName)] || ''
       obj.mysqlType = row.colType
-      const match = row.colRemark.match(/\(\d+\)/);
-      obj.mysqlLength = match ? Number(match[0].substring(1, match[0].length - 1)) : 0
+      const match = mysqlLengthFromRowRemark(row.colRemark);
+      obj.mysqlLength = match ? Number(match) : 0
       obj.tsType = (['Int'].indexOf(row.colType) > -1 ? tsTypeDicts.find(item => item.value === 'number')?.value : tsTypeDicts.find(item => item.value !== 'number')?.value) || ''
       obj.tsName = baseUtils.toCamelCase(row.colName)
       obj.ifIns = ifInsIgnoreKeys.includes(row.colName) ? final.N : final.Y
@@ -219,8 +220,8 @@ const d1Con = () => {
     state.dialogForm.colName = row.colName
     state.dialogForm.colDescr = adict[baseUtils.toCamelCase<keyof AdictInterface>(row.colName)] || ''
     state.dialogForm.mysqlType = row.colType
-    const match = row.colRemark.match(/\(\d+\)/);
-    state.dialogForm.mysqlLength = match ? Number(match[0].substring(1, match[0].length - 1)) : 0
+    const match = mysqlLengthFromRowRemark(row.colRemark);
+    state.dialogForm.mysqlLength = match ? Number(match) : 0
     state.dialogForm.tsType = (['Int'].indexOf(row.colType) > -1 ? tsTypeDicts.find(item => item.value === 'number')?.value : tsTypeDicts.find(item => item.value !== 'number')?.value) as string
     state.dialogForm.tsName = baseUtils.toCamelCase(row.colName)
     state.dialogForm.ifIns = final.Y

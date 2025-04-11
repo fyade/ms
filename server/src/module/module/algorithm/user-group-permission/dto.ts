@@ -1,6 +1,6 @@
 import { BaseDto } from '../../../../common/dto/BaseDto';
 import { PageDto } from '../../../../common/dto/PageDto';
-import { IsNotEmpty, MaxLength, IsArray, ValidateNested } from 'class-validator';
+import { IsNotEmpty, IsOptional, MaxLength, IsArray, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -128,12 +128,10 @@ export class UserGroupPermissionInsOneDto {
 
   @ApiProperty({ description: '权限开始时间', required: true })
   @IsNotEmpty({ message: '权限开始时间不能为空' })
-  @MaxLength(3, { message: '权限开始时间不能超过3个字符' })
   permissionStartTime: string;
 
   @ApiProperty({ description: '权限结束时间', required: true })
   @IsNotEmpty({ message: '权限结束时间不能为空' })
-  @MaxLength(3, { message: '权限结束时间不能超过3个字符' })
   permissionEndTime: string;
 
   @ApiProperty({ description: '请求限制次数', required: true })
@@ -151,6 +149,7 @@ export class UserGroupPermissionInsOneDto {
   orderNum: number;
 
   @ApiProperty({ description: '备注', required: false })
+  @IsOptional()
   @MaxLength(300, { message: '备注不能超过300个字符' })
   remark: string;
 }

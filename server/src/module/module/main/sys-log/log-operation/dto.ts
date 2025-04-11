@@ -1,6 +1,6 @@
 import { BaseDto } from '../../../../../common/dto/BaseDto';
 import { PageDto } from '../../../../../common/dto/PageDto';
-import { IsNotEmpty, MaxLength, IsArray, ValidateNested } from 'class-validator';
+import { IsNotEmpty, IsOptional, MaxLength, IsArray, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -150,6 +150,7 @@ export class LogOperationInsOneDto {
   ifSuccess: string;
 
   @ApiProperty({ description: '备注', required: false })
+  @IsOptional()
   @MaxLength(100, { message: '备注不能超过100个字符' })
   remark: string;
 }

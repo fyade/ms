@@ -366,7 +366,7 @@ ${index % 2 === 1 || ifLastAndSingular ? `          </el-col>
   const hd1 =
 `${`import { BaseDto } from '../../../../${isBusiness?'../':''}common/dto/BaseDto';`}
 ${`import { PageDto } from '../../../../${isBusiness?'../':''}common/dto/PageDto';`}
-${`import { IsNotEmpty, MaxLength, IsArray, ValidateNested } from 'class-validator';`}
+${`import { IsNotEmpty, IsOptional, MaxLength, IsArray, ValidateNested } from 'class-validator';`}
 ${`import { Type } from 'class-transformer';`}
 ${`import { ApiProperty } from '@nestjs/swagger';`}
 ${``}
@@ -411,6 +411,9 @@ ${
             str += `  @IsNotEmpty({ message: '${column.colDescr}不能为空' })\n`
           }
           if (column.tsType === 'string' && column.mysqlLength > 0) {
+            if (column.ifRequired !== base.Y) {
+              str += '  @IsOptional()\n';
+            }
             str += `  @MaxLength(${column.mysqlLength}, { message: '${column.colDescr}不能超过${column.mysqlLength}个字符' })\n`
           }
           str += `  ${column.tsName}: ${column.tsType};`

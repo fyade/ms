@@ -31,3 +31,16 @@ export function getScriptTagFromHtmlText(html: string) {
 export function splitUrlByX(url: string): string[] {
   return url.match(/\/[a-zA-Z0-9-]+/g) || []
 }
+
+/**
+ * 从 RowRemark 中匹配数值，代码生成页面用
+ * @param str
+ */
+export function mysqlLengthFromRowRemark(str: string): string | null {
+  const match = str.match(/\@db\.(?:Var|)Char\((\d+)\)/);
+  if (match) {
+    return match[1];
+  } else {
+    return null;
+  }
+}

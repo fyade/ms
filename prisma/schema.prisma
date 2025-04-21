@@ -6,7 +6,7 @@
 
 generator client {
   provider        = "prisma-client-js"
-  // output          = "../../generated/client" // todo 开发时注掉，打包前打开
+  // output          = "../prisma-generated/client" // todo 开发时注掉，打包前打开
   binaryTargets   = ["darwin", "windows", "linux-musl", "rhel-openssl-1.0.x"]
   previewFeatures = ["prismaSchemaFolder"]
 }
@@ -660,7 +660,7 @@ model log_algorithm_call {
 model log_scheduled_task {
   id           Int      @id @default(autoincrement()) @db.Int
   task_target  String   @db.VarChar(150)
-  operate_type String   @db.VarChar(10)
+  operate_type String   @db.VarChar(30)
   if_success   String   @db.Char(1)
   remark       String?  @db.VarChar(100)
   create_time  DateTime @default(now())

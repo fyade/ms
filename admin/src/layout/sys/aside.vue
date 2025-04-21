@@ -7,7 +7,6 @@ import { useSysConfigStore } from "@/store/module/sysConfig.ts";
 
 const defaultActive = ref('')
 const go = (url: string) => {
-  defaultActive.value = url
   const index = allMenus2.findIndex(item => item.path === url)
   if (index > -1) {
     onselectmenu(index)

@@ -19,7 +19,7 @@ const props = defineProps({
 const menus2 = computed(() => {
   return props.menus.toSorted((a, b) => {
     return (objectUtils.ifValid(a.meta.orderNum) && typeof a.meta.orderNum === 'number' ? a.meta.orderNum : 0) - (objectUtils.ifValid(b.meta.orderNum) && typeof b.meta.orderNum === 'number' ? b.meta.orderNum : 0)
-  })
+  }).filter(item => item.meta.ifVisible === final.Y)
 })
 const emits = defineEmits(['gotoMenu']);
 

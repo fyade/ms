@@ -36,7 +36,7 @@ export const goToSystem = async (
     if (router.getRoutes().findIndex(item => item.name === `/${dto.path}`) === -1) {
       const permissions: (RouteRecordNormalized & MenuDto & { component: any })[] = [];
       for (const item of res) {
-        if (!([T_MENU, T_COMP].includes(item.type) && item.ifVisible === final.Y)) {
+        if (!([T_MENU, T_COMP].includes(item.type))) {
           continue;
         }
         const permission = {
@@ -130,4 +130,13 @@ export const goToSystem = async (
     })
   }
   return
+}
+
+export function routerPush(perm: string) {
+  const allMenus2 = routerStore.allMenus2
+  const find = allMenus2.find((item) => item.name === perm);
+  if (find) {
+    routerStore.addMenu(find);
+    router.push(find.path)
+  }
 }

@@ -2,15 +2,14 @@ import { base } from '../util/base';
 import { Injectable } from '@nestjs/common';
 import { BaseContextService } from '../module/base-context/base-context.service';
 import { baseInterfaceColumns2 } from '../module/module/main/sys-util/code-generation/codeGeneration';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Prisma } from '@prisma/client';
 import { serverConfig } from "@ms/config";
 import { baseUtils } from "@ms/common";
 
 const env = serverConfig.currentConfig();
-const { PrismaClient: PrismaClientOrigin } = require(env.mode === base.DEV ? '@prisma/client' : '../../generated/client');
 
 @Injectable()
-export class PrismaoService extends PrismaClientOrigin {
+export class PrismaoService extends PrismaClient {
   constructor(
     private readonly bcs: BaseContextService,
   ) {
@@ -20,7 +19,7 @@ export class PrismaoService extends PrismaClientOrigin {
           url: serverConfig.getMysqlUrlFromEnv(env),
         },
       },
-      log: (env.prismaLogLevel && baseUtils.typeOf(env.prismaLogLevel) === 'array') ? env.prismaLogLevel : [],
+      log: (env.prismaLogLevel && baseUtils.typeOf(env.prismaLogLevel) === 'array') ? (env.prismaLogLevel as Prisma.PrismaClientOptions['log']) : [],
     };
     super(dbConfig);
     // 使用中间件对查询结果中的 Bigint 类型进行序列化

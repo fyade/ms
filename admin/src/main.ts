@@ -6,9 +6,9 @@ import directives from "@/dicevtive/index.ts";
 import { createPinia } from "pinia";
 import { createPersistedState } from 'pinia-plugin-persistedstate'
 import ElementPlus from 'element-plus'
-import 'element-plus/dist/index.css'
 import zhCn from 'element-plus/es/locale/lang/zh-cn'
 import 'virtual:svg-icons-register'
+import 'element-plus/dist/index.css'
 import { adminConfig } from '@ms/config'
 
 import './loaded/autoUpdate.ts'

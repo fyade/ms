@@ -390,9 +390,21 @@ const fCan2 = () => {
       <!--<el-table-column fixed prop="id" :label="logScheduledTaskDict.id" width="180"/>-->
       <!--上面id列的宽度改一下-->
       <!--在此下方添加表格列-->
-      <el-table-column prop="taskTarget" :label="logScheduledTaskDict.taskTarget" width="240"/>
-      <el-table-column prop="operateType" :label="logScheduledTaskDict.operateType" width="180"/>
-      <el-table-column prop="ifSuccess" :label="logScheduledTaskDict.ifSuccess" width="120"/>
+      <el-table-column prop="taskTarget" :label="logScheduledTaskDict.taskTarget" width="300"/>
+      <el-table-column prop="operateType" :label="logScheduledTaskDict.operateType" width="180">
+        <template #default="{row}">
+          <el-tag v-if="row.operateType === 'by:self'" type="success">系统自动触发</el-tag>
+          <el-tag v-else-if="row.operateType === 'user:trigger'" type="primary">用户手动触发</el-tag>
+          <el-tag v-else type="info">{{ row.operateType }}</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column prop="ifSuccess" :label="logScheduledTaskDict.ifSuccess" width="120">
+        <template #default="{row}">
+          <el-tag v-if="row.ifSuccess === final.Y" type="success">成功</el-tag>
+          <el-tag v-else-if="row.ifSuccess === final.N" type="danger">失败</el-tag>
+          <el-tag v-else type="info">不详</el-tag>
+        </template>
+      </el-table-column>
       <el-table-column prop="remark" :label="logScheduledTaskDict.remark" width="120"/>
       <!--在此上方添加表格列-->
       <!--<el-table-column prop="createRole" :label="logScheduledTaskDict.createRole" width="120"/>-->

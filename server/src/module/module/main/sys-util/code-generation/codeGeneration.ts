@@ -105,7 +105,7 @@ export function codeGeneration({ table, columns, sys }: { table: CodeGenTableDto
     if (selListParam.numberKeys.length === 0) delete selListParam.numberKeys;
     if (selListParam.completeMatchingKeys.length === 0) delete selListParam.completeMatchingKeys;
     if (tsNames.includes('deleted')) delete selListParam.ifDeleted;
-
+    
     delete selListParam.notNullKeys;
     delete selListParam.numberKeys;
     delete selListParam.completeMatchingKeys;
@@ -252,8 +252,8 @@ export function codeGeneration({ table, columns, sys }: { table: CodeGenTableDto
   ]
   const qd3_dialogFormForm = [
     [
-      (formType: any, index: number, length: number) => formType === 'inputNumber',
-      (tsName: any, index: number, length: number) => {
+      (formType: string, index: number, length: number) => formType === 'inputNumber',
+      (tsName: string, index: number, length: number) => {
         const string = `            <el-form-item :label="${moduleName1}Dict.${tsName}" prop="${tsName}">
               <el-input-number v-model="state.dialogForm.${tsName}" controls-position="right"/>
             </el-form-item>`;
@@ -264,7 +264,7 @@ ${string}
 ${index % 2 === 1 || ifLastAndSingular ? `          </el-col>
         </el-row>` : `          </el-col>`}`;
       },
-      (tsName: any, index: number, length: number) => {
+      (tsName: string, index: number, length: number) => {
         return `
           <el-table-column prop="${tsName}" :label="${moduleName1}Dict.${tsName}" width="300">
             <template #header>
@@ -279,8 +279,8 @@ ${index % 2 === 1 || ifLastAndSingular ? `          </el-col>
       }
     ],
     [
-      (formType: any, index: number, length: number) => formType === 'textarea',
-      (tsName: any, index: number, length: number) => {
+      (formType: string, index: number, length: number) => formType === 'textarea',
+      (tsName: string, index: number, length: number) => {
         const string = `            <el-form-item :label="${moduleName1}Dict.${tsName}" prop="${tsName}">
               <el-input type="textarea" v-model="state.dialogForm.${tsName}" :placeholder="${moduleName1}Dict.${tsName}"/>
             </el-form-item>`;
@@ -291,7 +291,7 @@ ${string}
 ${index % 2 === 1 || ifLastAndSingular ? `          </el-col>
         </el-row>` : `          </el-col>`}`;
       },
-      (tsName: any, index: number, length: number) => {
+      (tsName: string, index: number, length: number) => {
         return `
           <el-table-column prop="${tsName}" :label="${moduleName1}Dict.${tsName}" width="300">
             <template #header>
@@ -306,8 +306,8 @@ ${index % 2 === 1 || ifLastAndSingular ? `          </el-col>
       }
     ],
     [
-      (formType: any, index: number, length: number) => formType === 'radio',
-      (tsName: any, index: number, length: number) => {
+      (formType: string, index: number, length: number) => formType === 'radio',
+      (tsName: string, index: number, length: number) => {
         const string = `            <el-form-item :label="${moduleName1}Dict.${tsName}" prop="${tsName}">
               <el-radio-group v-model="state.dialogForm.${tsName}">
                 <el-radio :value="final.Y">是</el-radio>
@@ -321,7 +321,7 @@ ${string}
 ${index % 2 === 1 || ifLastAndSingular ? `          </el-col>
         </el-row>` : `          </el-col>`}`;
       },
-      (tsName: any, index: number, length: number) => {
+      (tsName: string, index: number, length: number) => {
         return `
           <el-table-column prop="${tsName}" :label="${moduleName1}Dict.${tsName}" width="70">
             <template #header>
@@ -336,8 +336,8 @@ ${index % 2 === 1 || ifLastAndSingular ? `          </el-col>
       }
     ],
     [
-      (formType: any, index: number, length: number) => formType === 'input' || true,
-      (tsName: any, index: number, length: number) => {
+      (formType: string, index: number, length: number) => formType === 'input' || true,
+      (tsName: string, index: number, length: number) => {
         const string = `            <el-form-item :label="${moduleName1}Dict.${tsName}" prop="${tsName}">
               <el-input v-model="state.dialogForm.${tsName}" :placeholder="${moduleName1}Dict.${tsName}"/>
             </el-form-item>`;
@@ -348,7 +348,7 @@ ${string}
 ${index % 2 === 1 || ifLastAndSingular ? `          </el-col>
         </el-row>` : `          </el-col>`}`;
       },
-      (tsName: any, index: number, length: number) => {
+      (tsName: string, index: number, length: number) => {
         return `
           <el-table-column prop="${tsName}" :label="${moduleName1}Dict.${tsName}" width="300">
             <template #header>

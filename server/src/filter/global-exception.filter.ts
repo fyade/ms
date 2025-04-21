@@ -1,12 +1,12 @@
-import { Injectable, ArgumentsHost, Catch, ExceptionFilter, HttpException, BadRequestException } from '@nestjs/common';
+import { ArgumentsHost, Catch, ExceptionFilter, HttpException, BadRequestException } from '@nestjs/common';
 import { UnknownException } from '../exception/unknown.exception';
 import { BaseContextService } from '../module/base-context/base-context.service';
 import { R } from '../common/R';
 import { WinstonService } from '../module/winston/winston.service';
 import { HTTP } from '../common/Enum';
+import { baseUtils } from '@ms/common';
 
 @Catch()
-@Injectable()
 export class GlobalExceptionFilter implements ExceptionFilter {
   constructor(
     private readonly bcs: BaseContextService,
@@ -38,7 +38,10 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     } else if (exception instanceof HttpException) {
       status = exception.getStatus();
       message = exception.message;
-    } else if (exception instanceof Error) {
+    } else if (['prismaclientvalidationerror'].includes(baseUtils.typeOf(exception))) {
+      status = HTTP.SERVER_ERROR().code;
+      message = '非正常请求。';
+    } else {
       status = HTTP.SERVER_ERROR().code;
       message = exception.message;
     }

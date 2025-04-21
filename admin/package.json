@@ -7,25 +7,5 @@
     "dev": "vite --mode dev",
     "build:prod": "vue-tsc && vite build --mode prod",
     "preview": "vite preview"
-  },
-  "dependencies": {
-    "@element-plus/icons-vue": "^2.3.1",
-    "@ms/common": "workspace:^",
-    "@ms/config": "workspace:^",
-    "axios": "^1.8.1",
-    "element-plus": "^2.9.5",
-    "exceljs": "^4.4.0",
-    "pinia": "^3.0.1",
-    "sass": "^1.85.1",
-    "spark-md5": "^3.0.2",
-    "vue": "^3.5.13",
-    "vue-router": "^4.5.0"
-  },
-  "devDependencies": {
-    "rollup-plugin-visualizer": "^5.14.0",
-    "unplugin-icons": "^22.1.0",
-    "vite-plugin-compression": "^0.5.1",
-    "vite-plugin-inspect": "^11.0.0",
-    "vite-plugin-svg-icons": "^2.0.1"
   }
 }

@@ -322,7 +322,9 @@ const fCan2 = () => {
           </Tooltip>
         </template>
         <template #default="{row}">
-          {{ row.ifSuccess }}
+          <el-tag v-if="row.ifSuccess === final.Y" type="success">成功</el-tag>
+          <el-tag v-else-if="row.ifSuccess === final.N" type="danger">失败</el-tag>
+          <el-tag v-else type="info">不详</el-tag>
         </template>
       </el-table-column>
       <el-table-column prop="remark" :label="logOperationDict.remark" width="120"/>

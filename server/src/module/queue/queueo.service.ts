@@ -11,12 +11,16 @@ export class QueueoService {
   ) {
   }
 
-  getLogOperationQueue(): Queue {
+  getLogOperationQueue(): Queue<LogOperationQueueJobDataDto> {
     return this.logOperationQueue
   }
 
   async addLogOperationQueue(name: string, data: LogOperationQueueJobDataDto) {
     await this.logOperationQueue.add(name, data)
+  }
+
+  getLogScheduledTaskQueue(): Queue<LogScheduledTaskQueueJobDataDto> {
+    return this.logScheduledTaskQueue
   }
 
   async addLogScheduledTaskQueue(name: string, data: LogScheduledTaskQueueJobDataDto) {

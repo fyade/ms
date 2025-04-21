@@ -31,7 +31,10 @@ module.exports = {
     path: path.resolve(__dirname, "dist")
   },
   resolve: {
-    extensions: [".js", ".ts", ".json", ".prisma"]
+    extensions: [".js", ".ts", ".json", ".prisma"],
+    alias: {
+      '@prisma/client': path.resolve(__dirname, '../prisma-generated/client'),
+    },
   },
   plugins: [
     // 需要进行忽略的插件

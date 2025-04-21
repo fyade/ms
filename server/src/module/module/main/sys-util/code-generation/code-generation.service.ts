@@ -19,10 +19,11 @@ export class CodeGenerationService {
   async getDatabaseInfo(): Promise<R> {
     let text = '';
     try {
-      const pathJoin = path.join(__dirname, '../../../../../../');
-      const prismaPath = path.join(pathJoin.endsWith('dist\\') ? pathJoin.substring(0, pathJoin.length - 5) : pathJoin, 'prisma/schema');
+      const pathJoin = path.join(__dirname, '../../../../../../../../');
+      const prismaPath = path.join(pathJoin.endsWith('dist\\') ? pathJoin.substring(0, pathJoin.length - 5) : pathJoin, 'prisma');
       const files = await getAllFiles(prismaPath);
-      for (const file of files.filter((item) => item.endsWith('.prisma'))) {
+      const prismaFiles = files.filter((item) => item.endsWith('.prisma'));
+      for (const file of prismaFiles) {
         text = text + '\n' + fs.readFileSync(file, 'utf-8');
       }
     } catch (e) {

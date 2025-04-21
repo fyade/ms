@@ -10,14 +10,5 @@
   },
   "keywords": [],
   "author": "",
-  "packageManager": "pnpm@10.5.2",
-  "dependencies": {
-    "@ms/config": "workspace:^",
-    "bcryptjs": "^3.0.2",
-    "crypto-js": "^4.2.0",
-    "uuid": "^11.1.0"
-  },
-  "devDependencies": {
-    "@types/crypto-js": "4.2.0"
-  }
+  "packageManager": "pnpm@10.5.2"
 }

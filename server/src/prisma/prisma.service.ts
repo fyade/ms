@@ -49,7 +49,7 @@ export class PrismaService {
     if (ifTopAdmin) {
       return true;
     }
-    // // 用户的角色/部门
+    // 用户的角色/部门
     const { allRoleIds, allDeptIds } = await this.authService.rolesAndDeptsOfUser(userData.userId, userData.loginRole);
     const trpsRole = await this.prismao.getOrigin().sys_table_row_permission.findMany({
       where: {

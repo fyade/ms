@@ -4,6 +4,7 @@ import { PrismaoService } from "../../prisma/prismao.service";
 import { CronJob } from "cron";
 import { QueueoService } from "../queue/queueo.service";
 import { base } from "../../util/base";
+import { WinstonService } from "../winston/winston.service";
 
 @Injectable()
 export class ScheduleService implements OnModuleInit {
@@ -11,6 +12,7 @@ export class ScheduleService implements OnModuleInit {
     private readonly schedulerRegistry: SchedulerRegistry,
     private readonly prismao: PrismaoService,
     private readonly queueoService: QueueoService,
+    private readonly winston: WinstonService,
   ) {
   }
 
@@ -31,7 +33,7 @@ export class ScheduleService implements OnModuleInit {
     }
   }
 
-  private schedules = new Map<string, () => Promise<void>>()
+  private schedules = new Map<string, () => Promise<boolean>>()
 
   private addSchedule(name: string, cronExpression: string) {
     const obj = this.schedules.get(name);
@@ -39,13 +41,19 @@ export class ScheduleService implements OnModuleInit {
       return
     }
     const cronJob = new CronJob(cronExpression, async () => {
+      let ifSuccess = true;
+      try {
+        ifSuccess = await obj()
+      } catch (e) {
+        this.winston.error(e);
+        ifSuccess = false;
+      }
       await this.queueoService.addLogScheduledTaskQueue('ins', {
         taskTarget: name,
         operateType: 'by:self',
-        ifSuccess: 'O',
+        ifSuccess: ifSuccess ? base.Y : base.N,
         remark: '',
       })
-      await obj()
     });
     this.schedulerRegistry.addCronJob(name, cronJob)
     cronJob.start()
@@ -62,14 +70,26 @@ export class ScheduleService implements OnModuleInit {
 
   async runScheduleOnce(...names: string[]) {
     for (const name of names) {
-      const func = this.schedules.get(name);
-      if (func) {
-        await func();
+      const obj = this.schedules.get(name);
+      if (obj) {
+        let ifSuccess = true;
+        try {
+          ifSuccess = await obj()
+        } catch (e) {
+          this.winston.error(e);
+          ifSuccess = false;
+        }
+        await this.queueoService.addLogScheduledTaskQueue('ins', {
+          taskTarget: name,
+          operateType: 'user:trigger',
+          ifSuccess: ifSuccess ? base.Y : base.N,
+          remark: '',
+        })
       }
     }
   }
 
-  addScheduleFunc(name: string, func: () => Promise<void>) {
+  addScheduleFunc(name: string, func: () => Promise<boolean>) {
     this.schedules.set(name, func)
   }
 

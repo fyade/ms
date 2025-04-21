@@ -11,12 +11,9 @@ pnpm-lock.yaml
 /admin/tsconfig.tsbuildinfo
 /admin/dist.zip
 
-/server/.env
-/server/generated
-/server/prisma/migrations
-/server/dist.zip
-/server/generated.zip
+/prisma-generated
+/prisma-generated.zip
+/prisma/migrations
+/.env
 
-/packages/blog/tsconfig.tsbuildinfo
-/packages/blog/dist
-/packages/blog/dist.zip
+/server/dist.zip

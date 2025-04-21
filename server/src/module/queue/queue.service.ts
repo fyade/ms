@@ -10,15 +10,10 @@ export class QueueService {
     private readonly queueo: QueueoService,
     private readonly scheduleService: ScheduleService,
   ) {
-    this.scheduleService.addScheduleFunc('sys:queue:checkLogOperationQueue', this.checkLogOperationQueue.bind(this))
+    this.scheduleService.addScheduleFunc('sys:queue:checkFailedQueues', this.checkFailedQueues.bind(this))
   }
 
-  private async checkLogOperationQueue() {
-    const jobs: Job<LogOperationQueueJobDataDto>[] = await this.queueo.getLogOperationQueue().getFailed();
-    for (const job of jobs) {
-      if (job.data.permission === '-') {
-        await this.queueo.getLogOperationQueue().remove(job.id)
-      }
-    }
+  private async checkFailedQueues() {
+    return true;
   }
 }

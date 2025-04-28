@@ -1,7 +1,7 @@
 import { BaseClass, PageDto } from "@/type/tablePage.ts";
-import { TMenuType } from "@/utils/base.ts";
+import { MenuTypeEnum } from "@/utils/base.ts";
 
-export class MenuDto<T = TMenuType> extends BaseClass {
+export class MenuDto<T = MenuTypeEnum> extends BaseClass {
   id!: number;
   label!: string;
   type!: T;
@@ -26,7 +26,7 @@ export class MenuSelDto extends PageDto {
 export class MenuSelAllDto {
 }
 
-export class MenuInsDto<T = TMenuType> {
+export class MenuInsDto<T = MenuTypeEnum> {
   label!: string;
   type!: T;
   path!: string;
@@ -44,6 +44,6 @@ export class MenuInsDto<T = TMenuType> {
   remark!: string;
 }
 
-export class MenuUpdDto<T = TMenuType> extends MenuInsDto<T> {
+export class MenuUpdDto<T = MenuTypeEnum> extends MenuInsDto<T> {
   id!: number;
 }

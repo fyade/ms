@@ -1,4 +1,4 @@
-import { base, T_COMP, T_DEPT, T_HOST, T_Inter, T_IP, T_IS, T_MENU, T_ROLE } from '../../util/base';
+import { AuthTypeEnum, base, MenuTypeEnum, MTTypeEnum, TMWLTypeEnum, UTDPTypeEnum } from '../../util/base';
 import { Injectable } from '@nestjs/common';
 import { LogAlgorithmCallDto } from '../module/algorithm/log-algorithm-call/dto';
 import { getIpInfoFromRequest } from '../../util/RequestUtils';
@@ -12,9 +12,9 @@ import { CachePermissionService } from '../cache/cache.permission.service';
 import { UserTableDefaultPermissionDto } from '../module/main/other-user/user-table-default-permission/dto';
 import { SysDto } from '../module/main/sys-manage/sys/dto';
 import { PrismaoService } from '../../prisma/prismao.service';
-import { baseUtils, timeUtils } from "@ms/common";
-import { MenuThrottleDto } from "../module/main/sys-manage/menu-throttle/dto";
-import { WinstonService } from "../winston/winston.service";
+import { baseUtils, timeUtils } from '@ms/common';
+import { MenuThrottleDto } from '../module/main/sys-manage/menu-throttle/dto';
+import { WinstonService } from '../winston/winston.service';
 
 @Injectable()
 export class AuthService {
@@ -23,7 +23,20 @@ export class AuthService {
     private readonly cachePermissionService: CachePermissionService,
     private readonly bcs: BaseContextService,
     private readonly winston: WinstonService,
-  ) {
+  ) {}
+
+  /**
+   * 根据 apiKey 获取 userId
+   * @param apiKey
+   */
+  async getUserIdByApiKey(apiKey: string) {
+    const data = await this.prismao.getOrigin().sys_user_api_key.findMany({
+      where: {
+        api_key: apiKey,
+        ...this.prismao.defaultSelArg().where
+      }
+    });
+    return data[0];
   }
 
   /**
@@ -78,7 +91,7 @@ export class AuthService {
       return true;
     }
     const permissionsOfUser = await this.permissionsOfUser({ userId: userId, permission, loginRole });
-    const index = permissionsOfUser.findIndex(item => item.perms === permission);
+    const index = permissionsOfUser.findIndex((item) => item.perms === permission);
     await this.cachePermissionService.setPermissionInCache(userId, permission, loginRole, index > -1);
     return index > -1;
   }
@@ -121,13 +134,13 @@ export class AuthService {
       const menus = await this.prismao.getOrigin().sys_menu.findMany({
         where: {
           if_disabled: base.N,
-          type: T_IS,
+          type: MenuTypeEnum.T_IS,
           id: {
             in: (
               await this.prismao.getOrigin().sys_menu.findMany({
                 where: {
                   if_disabled: base.N,
-                  type: T_Inter,
+                  type: MenuTypeEnum.T_Inter,
                   perms: permission,
                   ...this.prismao.defaultSelArg().where,
                 },
@@ -145,7 +158,7 @@ export class AuthService {
       }
       const ips__ = await this.prismao.getOrigin().sys_menu_ip_white_list.findMany({
         where: {
-          type: T_IS,
+          type: MenuTypeEnum.T_IS,
           menu_id: {
             in: menus.map((item) => item.id),
           },
@@ -160,20 +173,24 @@ export class AuthService {
       return true;
     }
     const ipInfoFromRequest = getIpInfoFromRequest(request);
-    const whiteList_ip = ips.filter(item => item.fromType === T_IP).map(item => item.whiteList);
+    const whiteList_ip = ips.filter((item) => item.fromType === TMWLTypeEnum.T_IP).map((item) => item.whiteList);
     if (
-      whiteList_ip.findIndex(wip => {
-        return (wip.startsWith('http://') || wip.startsWith('https://')) ? wip === `${ipInfoFromRequest.proto}://${ipInfoFromRequest.ip}` : wip === ipInfoFromRequest.ip;
+      whiteList_ip.findIndex((wip) => {
+        return wip.startsWith('http://') || wip.startsWith('https://')
+          ? wip === `${ipInfoFromRequest.proto}://${ipInfoFromRequest.ip}`
+          : wip === ipInfoFromRequest.ip;
       }) > -1 ||
       (ipInfoFromRequest.ip === '::1' && whiteList_ip.includes('127.0.0.1')) ||
       (ipInfoFromRequest.ip === '::1' && whiteList_ip.includes(`${ipInfoFromRequest.proto}://127.0.0.1`))
     ) {
       return true;
     }
-    const whiteList_host = ips.filter(item => item.fromType === T_HOST).map(item => item.whiteList);
+    const whiteList_host = ips.filter((item) => item.fromType === TMWLTypeEnum.T_HOST).map((item) => item.whiteList);
     if (
-      whiteList_host.findIndex(who => {
-        return (who.startsWith('http://') || who.startsWith('https://')) ? who === `${ipInfoFromRequest.proto}://${ipInfoFromRequest.host}` : who === ipInfoFromRequest.host;
+      whiteList_host.findIndex((who) => {
+        return who.startsWith('http://') || who.startsWith('https://')
+          ? who === `${ipInfoFromRequest.proto}://${ipInfoFromRequest.host}`
+          : who === ipInfoFromRequest.host;
       }) > -1
     ) {
       return true;
@@ -230,10 +247,7 @@ export class AuthService {
     const userSyss_ = await this.prismao.getOrigin().sys_sys.findMany({
       where: {
         id: {
-          in: [
-            ...allSysIdsOfRole.map(item => item.sys_id),
-            ...allSysIdsOfDept.map(item => item.sys_id),
-          ],
+          in: [...allSysIdsOfRole.map((item) => item.sys_id), ...allSysIdsOfDept.map((item) => item.sys_id)],
         },
         ...sysPublicSelectParam,
         ...this.prismao.defaultSelArg().where,
@@ -256,19 +270,18 @@ export class AuthService {
    * @param menuType
    */
   async permissionsOfUser({
-                            userId,
-                            loginRole,
-                            permission,
-                            sysId,
-                            menuType = [T_MENU, T_COMP, T_IS, T_Inter],
-                          }: {
-                            userId: string
-                            loginRole: string
-                            permission?: string
-                            sysId?: number
-                            menuType?: string[]
-                          },
-  ) {
+    userId,
+    loginRole,
+    permission,
+    sysId,
+    menuType = [MenuTypeEnum.T_MENU, MenuTypeEnum.T_COMP, MenuTypeEnum.T_IS, MenuTypeEnum.T_Inter],
+  }: {
+    userId: string;
+    loginRole: string;
+    permission?: string;
+    sysId?: number;
+    menuType?: string[];
+  }) {
     const retarr = [];
     const menuPublicSelectParam = {
       type: {
@@ -320,8 +333,8 @@ export class AuthService {
       where: {
         id: {
           in: [
-            ...allPermissionIdsOfRole.map(item => item.permission_id),
-            ...allPermissionIdsOfDept.map(item => item.permission_id),
+            ...allPermissionIdsOfRole.map((item) => item.permission_id),
+            ...allPermissionIdsOfDept.map((item) => item.permission_id),
           ],
         },
         ...menuPublicSelectParam,
@@ -367,13 +380,13 @@ export class AuthService {
       const menus = await this.prismao.getOrigin().sys_menu.findMany({
         where: {
           if_disabled: base.N,
-          type: T_IS,
+          type: MenuTypeEnum.T_IS,
           id: {
             in: (
               await this.prismao.getOrigin().sys_menu.findMany({
                 where: {
                   if_disabled: base.N,
-                  type: T_Inter,
+                  type: MenuTypeEnum.T_Inter,
                   perms: permission,
                   ...this.prismao.defaultSelArg().where,
                 },
@@ -394,7 +407,7 @@ export class AuthService {
           menu_id: {
             in: menus.map((item) => item.id),
           },
-          type: T_IP,
+          type: MTTypeEnum.T_IP,
           ...this.prismao.defaultSelArg().where,
         },
       });
@@ -444,19 +457,30 @@ export class AuthService {
         ...this.prismao.defaultSelArg().where,
       },
     });
-    return (controlUserId === controledUserId)
-      || (topAdminUser.findIndex(item => item.user_id === controlUserId) > -1 && topAdminUser.findIndex(item => item.user_id === controledUserId) === -1);
+    return (
+      controlUserId === controledUserId ||
+      (topAdminUser.findIndex((item) => item.user_id === controlUserId) > -1 &&
+        topAdminUser.findIndex((item) => item.user_id === controledUserId) === -1)
+    );
   }
 
   /**
    * 当前用户是否有此算法权限
    * @param userid
    * @param loginRole
+   * @param authType
    * @param ppermission
    * @param permission
    * @param request
    */
-  async hasSFPermissionByUserid(userid: string, loginRole: string, ppermission: string, permission: string, request?: Request) {
+  async hasSFPermissionByUserid(
+    userid: string,
+    loginRole: string,
+    authType: AuthTypeEnum,
+    ppermission: string,
+    permission: string,
+    request?: Request,
+  ) {
     const algorithmCallDto = new LogAlgorithmCallDto();
     algorithmCallDto.userId = userid;
     algorithmCallDto.callIp = '';
@@ -499,7 +523,17 @@ export class AuthService {
     if (interf.length > 0) {
       // 是否公共算法
       if (interf[0].if_public === base.Y) {
-        await this.insLogAlgorithmCall(-1, ppermission, permission, algorithmCallDto.userId, algorithmCallDto.callIp, '?', loginRole, algorithmCallDto.remark);
+        await this.insLogAlgorithmCall(
+          -1,
+          ppermission,
+          permission,
+          algorithmCallDto.userId,
+          loginRole,
+          authType,
+          algorithmCallDto.callIp,
+          '?',
+          algorithmCallDto.remark,
+        );
         return true;
       }
       // 是否禁用
@@ -520,33 +554,56 @@ export class AuthService {
     algorithmCallDto.userGroupPermissionId = userGroupPermission.id;
     // 没长期权限，不在时间期限内，则阻止
     if (userGroupPermission.ifLongTerm === base.N) {
-      if (timeUtils.timestamp() < timeUtils.timestamp(userGroupPermission.permissionStartTime) || timeUtils.timestamp() > timeUtils.timestamp(userGroupPermission.permissionEndTime)) {
+      if (
+        timeUtils.timestamp() < timeUtils.timestamp(userGroupPermission.permissionStartTime) ||
+        timeUtils.timestamp() > timeUtils.timestamp(userGroupPermission.permissionEndTime)
+      ) {
         throw new Exception('您不在权限期限内。');
       }
     }
     // 在期限内，且不限制次数，则放行
     if (userGroupPermission.ifLimitRequestTimes === base.N) {
-      await this.insLogAlgorithmCall(algorithmCallDto.userGroupPermissionId, ppermission, permission, algorithmCallDto.userId, algorithmCallDto.callIp, '?', loginRole, algorithmCallDto.remark);
+      await this.insLogAlgorithmCall(
+        algorithmCallDto.userGroupPermissionId,
+        ppermission,
+        permission,
+        algorithmCallDto.userId,
+        loginRole,
+        authType,
+        algorithmCallDto.callIp,
+        '?',
+        algorithmCallDto.remark,
+      );
       return true;
     }
     // 在时间期限内，次数还没用光，则放行
     const limitRequestTimes = userGroupPermission.limitRequestTimes;
     const count1: { count: number }[] = await this.prismao.$queryRaw`
-        select count(id) as count
-        from log_algorithm_call
-        where user_group_permission_id = ${userGroupPermission.id};
+      select count(id) as count
+      from log_algorithm_call
+      where user_group_permission_id = ${userGroupPermission.id};
     `;
     const count = count1[0].count;
     if (limitRequestTimes > count) {
-      await this.insLogAlgorithmCall(algorithmCallDto.userGroupPermissionId, ppermission, permission, algorithmCallDto.userId, algorithmCallDto.callIp, '?', loginRole, algorithmCallDto.remark);
+      await this.insLogAlgorithmCall(
+        algorithmCallDto.userGroupPermissionId,
+        ppermission,
+        permission,
+        algorithmCallDto.userId,
+        loginRole,
+        authType,
+        algorithmCallDto.callIp,
+        '?',
+        algorithmCallDto.remark,
+      );
       if (Number(count) === limitRequestTimes - 1) {
         if (userGroupPermission.ifRejectRequestUseUp === base.N) {
         } else {
           // 把状态更改为已用完
           await this.prismao.$queryRaw`
-              update sys_user_group_permission
-              set if_use_up = ${base.Y}
-              where id = ${userGroupPermission.id};
+            update sys_user_group_permission
+            set if_use_up = ${base.Y}
+            where id = ${userGroupPermission.id};
           `;
         }
       }
@@ -554,14 +611,24 @@ export class AuthService {
     }
     // 次数用光后是否停止服务
     if (userGroupPermission.ifRejectRequestUseUp === base.N) {
-      await this.insLogAlgorithmCall(algorithmCallDto.userGroupPermissionId, ppermission, permission, algorithmCallDto.userId, algorithmCallDto.callIp, '?', loginRole, algorithmCallDto.remark);
+      await this.insLogAlgorithmCall(
+        algorithmCallDto.userGroupPermissionId,
+        ppermission,
+        permission,
+        algorithmCallDto.userId,
+        loginRole,
+        authType,
+        algorithmCallDto.callIp,
+        '?',
+        algorithmCallDto.remark,
+      );
       return true;
     } else {
       // 把状态更改为已用完
       await this.prismao.$queryRaw`
-          update sys_user_group_permission
-          set if_use_up = ${base.Y}
-          where id = ${userGroupPermission.id};
+        update sys_user_group_permission
+        set if_use_up = ${base.Y}
+        where id = ${userGroupPermission.id};
       `;
       throw new Exception('请求次数已使用完。');
     }
@@ -575,50 +642,56 @@ export class AuthService {
    * @param loginRole
    * @param ifIgnoreUseUp
    */
-  async getSFPermissionsOfUserid(userid: string, ppermission: string, permission: string, loginRole: string, ifIgnoreUseUp = base.N): Promise<UserGroupPermissionDto[]> {
+  async getSFPermissionsOfUserid(
+    userid: string,
+    ppermission: string,
+    permission: string,
+    loginRole: string,
+    ifIgnoreUseUp = base.N,
+  ): Promise<UserGroupPermissionDto[]> {
     const userSFPermissions: UserGroupPermissionDto[] = await this.prismao.$queryRaw`
-        select sugp.id                       as id,
-               sugp.user_group_id            as userGroupId,
-               sugp.permission_id            as permissionId,
-               sugp.if_long_term             as ifLongTerm,
-               sugp.if_limit_request_times   as ifLimitRequestTimes,
-               sugp.if_reject_request_use_up as ifRejectRequestUseUp,
-               sugp.permission_start_time    as permissionStartTime,
-               sugp.permission_end_time      as permissionEndTime,
-               sugp.limit_request_times      as limitRequestTimes,
-               sugp.if_use_up                as ifUseUp,
-               sugp.order_num                as orderNum,
-               sugp.remark                   as remark,
-               sugp.create_role              as createRole,
-               sugp.update_role              as updateRole,
-               sugp.create_by                as createBy,
-               sugp.update_by                as updateBy,
-               sugp.create_time              as createTime,
-               sugp.update_time              as updateTime,
-               sugp.deleted                  as deleted
-        from sys_user_group_permission sugp
-        where sugp.deleted = ${base.N}
-          and sugp.if_use_up like ${ifIgnoreUseUp === base.Y ? '%%' : `${base.N}`}
-          and sugp.user_group_id in
-              (select suug.user_group_id
-               from sys_user_user_group suug
-               where suug.deleted = ${base.N}
-                 and suug.login_role = ${loginRole}
-                 and suug.user_id = ${userid})
-          and sugp.permission_id in
-              (select siig.interface_group_id
-               from sys_interface_interface_group siig
-               where siig.deleted = ${base.N}
-                 and siig.interface_group_id = (select sig.id
-                                                from sys_interface_group sig
-                                                where sig.deleted = ${base.N}
-                                                  and sig.perms = ${ppermission})
-                 and siig.interface_id = (select si.id
-                                          from sys_interface si
-                                          where si.deleted = ${base.N}
-                                            and si.if_disabled = ${base.N}
-                                            and si.perms = ${permission}))
-        order by sugp.order_num;
+      select sugp.id                       as id,
+             sugp.user_group_id            as userGroupId,
+             sugp.permission_id            as permissionId,
+             sugp.if_long_term             as ifLongTerm,
+             sugp.if_limit_request_times   as ifLimitRequestTimes,
+             sugp.if_reject_request_use_up as ifRejectRequestUseUp,
+             sugp.permission_start_time    as permissionStartTime,
+             sugp.permission_end_time      as permissionEndTime,
+             sugp.limit_request_times      as limitRequestTimes,
+             sugp.if_use_up                as ifUseUp,
+             sugp.order_num                as orderNum,
+             sugp.remark                   as remark,
+             sugp.create_role              as createRole,
+             sugp.update_role              as updateRole,
+             sugp.create_by                as createBy,
+             sugp.update_by                as updateBy,
+             sugp.create_time              as createTime,
+             sugp.update_time              as updateTime,
+             sugp.deleted                  as deleted
+      from sys_user_group_permission sugp
+      where sugp.deleted = ${base.N}
+        and sugp.if_use_up like ${ifIgnoreUseUp === base.Y ? '%%' : `${base.N}`}
+        and sugp.user_group_id in
+            (select suug.user_group_id
+             from sys_user_user_group suug
+             where suug.deleted = ${base.N}
+               and suug.login_role = ${loginRole}
+               and suug.user_id = ${userid})
+        and sugp.permission_id in
+            (select siig.interface_group_id
+             from sys_interface_interface_group siig
+             where siig.deleted = ${base.N}
+               and siig.interface_group_id = (select sig.id
+                                              from sys_interface_group sig
+                                              where sig.deleted = ${base.N}
+                                                and sig.perms = ${ppermission})
+               and siig.interface_id = (select si.id
+                                        from sys_interface si
+                                        where si.deleted = ${base.N}
+                                          and si.if_disabled = ${base.N}
+                                          and si.perms = ${permission}))
+      order by sugp.order_num;
     `;
     return userSFPermissions;
   }
@@ -631,35 +704,35 @@ export class AuthService {
    */
   async rolesAndDeptsOfUser(userId: string, loginRole: string, ifAdmin: boolean = false) {
     const allRoleIds1: { role_id: number }[] = await this.prismao.$queryRaw`
-        select sur.role_id
-        from sys_user_role sur
-                 left join
-             sys_role sr
-             on sur.role_id = sr.id
-        where sur.deleted = ${base.N}
-          and sur.login_role = ${loginRole}
-          and sur.user_id = ${userId}
-          and sr.deleted = ${base.N}
-          and sr.if_admin like ${ifAdmin ? base.Y : '%%'}
-          and sr.if_disabled = ${base.N}
-        group by sur.role_id;
+      select sur.role_id
+      from sys_user_role sur
+             left join
+           sys_role sr
+           on sur.role_id = sr.id
+      where sur.deleted = ${base.N}
+        and sur.login_role = ${loginRole}
+        and sur.user_id = ${userId}
+        and sr.deleted = ${base.N}
+        and sr.if_admin like ${ifAdmin ? base.Y : '%%'}
+        and sr.if_disabled = ${base.N}
+      group by sur.role_id;
     `;
     const allDeptIds1: { dept_id: number }[] = await this.prismao.$queryRaw`
-        select sud.dept_id
-        from sys_user_dept sud
-                 left join
-             sys_dept sd
-             on sud.dept_id = sd.id
-        where sud.deleted = ${base.N}
-          and sud.login_role = ${loginRole}
-          and sud.user_id = ${userId}
-          and sd.deleted = ${base.N}
-          and sd.if_admin like ${ifAdmin ? base.Y : '%%'}
-          and sd.if_disabled = ${base.N}
-        group by sud.dept_id;
+      select sud.dept_id
+      from sys_user_dept sud
+             left join
+           sys_dept sd
+           on sud.dept_id = sd.id
+      where sud.deleted = ${base.N}
+        and sud.login_role = ${loginRole}
+        and sud.user_id = ${userId}
+        and sd.deleted = ${base.N}
+        and sd.if_admin like ${ifAdmin ? base.Y : '%%'}
+        and sd.if_disabled = ${base.N}
+      group by sud.dept_id;
     `;
-    const allRoleIds = [...allRoleIds1.map(item => item.role_id)];
-    const allDeptIds = [...allDeptIds1.map(item => item.dept_id)];
+    const allRoleIds = [...allRoleIds1.map((item) => item.role_id)];
+    const allDeptIds = [...allDeptIds1.map((item) => item.dept_id)];
     if (loginRole === 'admin') {
       const sutdps_ = await this.prismao.getOrigin().sys_user_table_default_permission.findMany({
         where: {
@@ -673,7 +746,7 @@ export class AuthService {
           ...(ifAdmin ? { if_admin: base.Y } : {}),
           if_disabled: base.N,
           id: {
-            in: sutdps.filter(item => item.permType === T_ROLE).map(item => item.permId),
+            in: sutdps.filter((item) => item.permType === UTDPTypeEnum.T_ROLE).map((item) => item.permId),
           },
           ...this.prismao.defaultSelArg().where,
         },
@@ -683,13 +756,13 @@ export class AuthService {
           ...(ifAdmin ? { if_admin: base.Y } : {}),
           if_disabled: base.N,
           id: {
-            in: sutdps.filter(item => item.permType === T_DEPT).map(item => item.permId),
+            in: sutdps.filter((item) => item.permType === UTDPTypeEnum.T_DEPT).map((item) => item.permId),
           },
           ...this.prismao.defaultSelArg().where,
         },
       });
-      allRoleIds.push(...allRoleIds2.map(item => item.id));
-      allDeptIds.push(...allDeptIds2.map(item => item.id));
+      allRoleIds.push(...allRoleIds2.map((item) => item.id));
+      allDeptIds.push(...allDeptIds2.map((item) => item.id));
     }
     if (loginRole === 'visitor') {
       const sutdps_ = await this.prismao.getOrigin().sys_user_table_default_permission.findMany({
@@ -704,7 +777,7 @@ export class AuthService {
           ...(ifAdmin ? { if_admin: base.Y } : {}),
           if_disabled: base.N,
           id: {
-            in: sutdps.filter(item => item.permType === T_ROLE).map(item => item.permId),
+            in: sutdps.filter((item) => item.permType === UTDPTypeEnum.T_ROLE).map((item) => item.permId),
           },
           ...this.prismao.defaultSelArg().where,
         },
@@ -714,13 +787,13 @@ export class AuthService {
           ...(ifAdmin ? { if_admin: base.Y } : {}),
           if_disabled: base.N,
           id: {
-            in: sutdps.filter(item => item.permType === T_DEPT).map(item => item.permId),
+            in: sutdps.filter((item) => item.permType === UTDPTypeEnum.T_DEPT).map((item) => item.permId),
           },
           ...this.prismao.defaultSelArg().where,
         },
       });
-      allRoleIds.push(...allRoleIds2.map(item => item.id));
-      allDeptIds.push(...allDeptIds2.map(item => item.id));
+      allRoleIds.push(...allRoleIds2.map((item) => item.id));
+      allDeptIds.push(...allDeptIds2.map((item) => item.id));
     }
     return {
       allRoleIds,
@@ -736,20 +809,25 @@ export class AuthService {
    * @param remark
    * @param ifIgnoreParamInLog
    */
-  async insLogOperation(permission: string, request: Request, ifSuccess: boolean | string, {
-                          remark,
-                          ifIgnoreParamInLog,
-                        }: {
-                          remark?: string
-                          ifIgnoreParamInLog?: boolean
-                        } = {
-                          remark: '',
-                          ifIgnoreParamInLog: false,
-                        },
+  async insLogOperation(
+    permission: string,
+    request: Request,
+    ifSuccess: boolean | string,
+    {
+      remark,
+      ifIgnoreParamInLog,
+    }: {
+      remark?: string;
+      ifIgnoreParamInLog?: boolean;
+    } = {
+      remark: '',
+      ifIgnoreParamInLog: false,
+    },
   ) {
     const reqId = this.bcs.getUserData().reqId;
     const userId = this.bcs.getUserData().userId || '???';
     const loginRole = this.bcs.getUserData().loginRole || '???';
+    const authType = this.bcs.getUserData().authType;
     const ipInfoFromRequest = getIpInfoFromRequest(request);
     await this.insLogOperation2(permission, ipInfoFromRequest, ifSuccess, {
       remark: remark,
@@ -761,7 +839,8 @@ export class AuthService {
       reqId: reqId,
       userId: userId,
       loginRole: loginRole,
-    })
+      authType: authType,
+    });
   }
 
   /**
@@ -778,6 +857,7 @@ export class AuthService {
    * @param reqId
    * @param userId
    * @param loginRole
+   * @param authType
    */
   async insLogOperation2(
     permission: string,
@@ -793,6 +873,7 @@ export class AuthService {
       reqId,
       userId,
       loginRole,
+      authType,
     }: {
       remark?: string;
       ifIgnoreParamInLog?: boolean;
@@ -803,6 +884,7 @@ export class AuthService {
       reqId: string;
       userId: string;
       loginRole: string;
+      authType: AuthTypeEnum;
     } = {
       remark: '',
       ifIgnoreParamInLog: false,
@@ -813,6 +895,7 @@ export class AuthService {
       reqId: '',
       userId: '',
       loginRole: '',
+      authType: AuthTypeEnum.unknown,
     },
   ) {
     await this.prismao.getOrigin().log_operation.create({
@@ -823,6 +906,7 @@ export class AuthService {
         perms: permission,
         user_id: userId || '???',
         login_role: loginRole || '???',
+        auth_type: authType || '???',
         req_param: ifIgnoreParamInLog
           ? JSON.stringify({ body: 'hidden', query: 'hidden', param: 'hidden' })
           : JSON.stringify({ body: reqBody, query: reqQuery, param: reqParam }),
@@ -840,12 +924,23 @@ export class AuthService {
    * @param pperms
    * @param perms
    * @param userId
+   * @param loginRole
+   * @param authType
    * @param callIp
    * @param ifSuccess
-   * @param loginRole
    * @param remark
    */
-  async insLogAlgorithmCall(userGroupPermissionId: number, pperms: string, perms: string, userId: string, callIp: string, ifSuccess: string, loginRole: string, remark: string) {
+  async insLogAlgorithmCall(
+    userGroupPermissionId: number,
+    pperms: string,
+    perms: string,
+    userId: string,
+    loginRole: string,
+    authType: AuthTypeEnum,
+    callIp: string,
+    ifSuccess: string,
+    remark: string,
+  ) {
     await this.prismao.getOrigin().log_algorithm_call.create({
       data: {
         user_group_permission_id: userGroupPermissionId,
@@ -853,6 +948,7 @@ export class AuthService {
         perms: perms,
         user_id: userId,
         login_role: loginRole,
+        auth_type: authType,
         call_ip: callIp,
         if_success: ifSuccess,
         remark: remark,

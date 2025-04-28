@@ -7,8 +7,23 @@ import { PrismaParam, SelectParamObj } from './dto';
 import { PrismaoService } from './prismao.service';
 import { AuthService } from '../module/auth/auth.service';
 import { BaseContextService } from '../module/base-context/base-context.service';
-import { T_DEPT, T_ROLE } from '../util/base';
+import { UTDPTypeEnum } from '../util/base';
 import { baseUtils, objectUtils } from "@ms/common";
+
+enum RowPermissionEnum {
+  all = 'all',
+  self = 'self',
+}
+
+class RowPermissionRet {
+  types: RowPermissionEnum[];
+  ids: (string | number)[];
+
+  constructor() {
+    this.types = [];
+    this.ids = [];
+  }
+}
 
 @Injectable()
 export class PrismaService {
@@ -32,7 +47,8 @@ export class PrismaService {
                                         model: string,
                                         arg: PrismaParam
                                       },
-  ): Promise<boolean | string | { key: string, value: (number | string)[] }> {
+  ): Promise<RowPermissionRet> {
+    const rowPermissionRet = new RowPermissionRet();
     const userData = this.bcs.getUserData();
     const permissionData = await this.prismao.getOrigin().sys_menu.findFirst({
       where: {
@@ -47,13 +63,13 @@ export class PrismaService {
     }
     const ifTopAdmin = userData.topAdmin;
     if (ifTopAdmin) {
-      return true;
+      rowPermissionRet.types.push(RowPermissionEnum.all);
     }
     // 用户的角色/部门
     const { allRoleIds, allDeptIds } = await this.authService.rolesAndDeptsOfUser(userData.userId, userData.loginRole);
     const trpsRole = await this.prismao.getOrigin().sys_table_row_permission.findMany({
       where: {
-        action_type: T_ROLE,
+        action_type: UTDPTypeEnum.T_ROLE,
         action_id: {
           in: allRoleIds.map(_ => `${_}`),
         },
@@ -63,7 +79,7 @@ export class PrismaService {
     });
     const trpsDept = await this.prismao.getOrigin().sys_table_row_permission.findMany({
       where: {
-        action_type: T_DEPT,
+        action_type: UTDPTypeEnum.T_DEPT,
         action_id: {
           in: allDeptIds.map(_ => `${_}`),
         },
@@ -73,26 +89,24 @@ export class PrismaService {
     });
     const trps = [...trpsRole, ...trpsDept];
     if (trps.length === 0) {
-      return true;
+      rowPermissionRet.types.push(RowPermissionEnum.all);
     }
     const dataTypes = trps.map(item => item.data_type);
-    // 注：同一权限类型同一权限只能设置一个数据类型
-    if (dataTypes.length !== (allRoleIds.length + allDeptIds.length)) {
-      return true;
-    }
     if (dataTypes.includes('ALL')) {
-      return true;
+      rowPermissionRet.types.push(RowPermissionEnum.all);
     }
+    if (dataTypes.includes('SELF_DEPT')) {}
+    if (dataTypes.includes('DEPT_ONE_SON')) {}
+    if (dataTypes.includes('DEPT_ALL_SON')) {}
+    if (dataTypes.includes('SELF_ROLE')) {}
     if (dataTypes.includes('SELF')) {
-      return 'self';
+      rowPermissionRet.types.push(RowPermissionEnum.self);
     }
-    if (dataTypes.includes('SELF_ROLE')) {
-      // model, JSON.stringify(arg)
-    }
+    return rowPermissionRet;
   }
 
   private getModel(model: string) {
-    const modelInstance = this.prismao[model];
+    const modelInstance = this.prismao.getOrigin()[model];
     if (!modelInstance) {
       throw new UnknownException(this.bcs.getUserData().reqId);
     }

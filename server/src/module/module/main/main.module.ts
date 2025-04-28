@@ -29,6 +29,7 @@ import { LogScheduledTaskModule } from './sys-log/log-scheduled-task/log-schedul
 import { ViewRealTimeModule } from './sys-log/view-real-time/view-real-time.module';
 import { SysConfigModule } from './sys-manage/sys-config/sys-config.module';
 import { MenuThrottleModule } from './sys-manage/menu-throttle/menu-throttle.module';
+import { UserApiKeyModule } from './sys-manage/user-api-key/user-api-key.module';
 
 @Module({
   imports: [
@@ -62,6 +63,7 @@ import { MenuThrottleModule } from './sys-manage/menu-throttle/menu-throttle.mod
     ViewRealTimeModule,
     SysConfigModule,
     MenuThrottleModule,
+    UserApiKeyModule,
   ],
 })
 export class MainModule {}

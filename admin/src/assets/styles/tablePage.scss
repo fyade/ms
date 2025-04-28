@@ -79,6 +79,12 @@
   }
 }
 
+.zs-table-data-col-more-col {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .zs-table-data-operate-button-row {
   display: flex;
   flex-wrap: wrap;

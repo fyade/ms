@@ -50,6 +50,22 @@ model sys_user {
   sys_admin_tops sys_admin_top[]
 }
 
+// 1.1.0 用户 apiKey 表
+model sys_user_api_key {
+  id          Int      @id @default(autoincrement()) @db.Int
+  user_id     String   @db.VarChar(10)
+  user_role   String   @db.VarChar(30)
+  api_key     String   @db.VarChar(50)
+  remark      String?  @db.VarChar(300)
+  create_role String   @db.VarChar(30)
+  update_role String   @db.VarChar(30)
+  create_by   String   @db.VarChar(10)
+  update_by   String   @db.VarChar(10)
+  create_time DateTime @default(now())
+  update_time DateTime @updatedAt
+  deleted     String   @default("N") @db.Char(1)
+}
+
 // 1.1.1 访客用户表
 model sys_user_visitor {
   id          String   @id @db.VarChar(10)
@@ -633,6 +649,7 @@ model log_operation {
   perms        String   @db.VarChar(100)
   user_id      String   @db.VarChar(10)
   login_role   String   @db.VarChar(30)
+  auth_type    String   @db.VarChar(30)
   req_param    String   @db.Text
   old_value    String   @db.Text
   operate_type String   @db.VarChar(10)
@@ -649,6 +666,7 @@ model log_algorithm_call {
   perms                     String                    @db.VarChar(100)
   user_id                   String                    @db.VarChar(10)
   login_role                String                    @db.VarChar(30)
+  auth_type                 String                    @db.VarChar(30)
   call_ip                   String                    @db.VarChar(20)
   if_success                String                    @db.Char(1)
   remark                    String?                   @db.VarChar(100)

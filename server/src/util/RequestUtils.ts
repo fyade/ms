@@ -8,10 +8,10 @@ import { UAParser } from "ua-parser-js";
 export function getIpInfoFromRequest(request: Request) {
   const loginIp: string = request.headers['x-real-ip'] || request.headers['x-forwarded-for'] || (request as any).ip;
   const proto_ = request.headers['x-forwarded-proto'] || request.protocol || 'http';
-  const proto = Array.isArray(proto_) ? proto_.toString() : proto_;
-  const hostname = request.hostname;
+  const proto = Array.isArray(proto_) ? proto_[0] : proto_;
+  const hostname = request.headers['host'] || request.hostname;
   const port_ = request.headers['x-forwarded-port'] || '80';
-  const port = Array.isArray(proto_) ? proto_.toString() : proto_;
+  const port = Array.isArray(port_) ? port_[0] : port_;
   const userAgentString = request.headers['user-agent'];
   const ua = UAParser(userAgentString)
   const browser = ua.browser;

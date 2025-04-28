@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { reactive } from "vue";
-import { CONFIG, final, mIWLTypeDict, T_HOST, T_IP, T_IS, TMIWLType } from "@/utils/base.ts";
+import { CONFIG, final, MenuTypeEnum, mIWLTypeDict, TMWLTypeEnum } from "@/utils/base.ts";
 import Pagination from "@/components/pagination/pagination.vue";
 import { funcTablePage } from "@/composition/tablePage/tablePage2.ts";
 import { State2, TablePageConfig } from "@/type/tablePage.ts";
@@ -24,8 +24,8 @@ const state = reactive<State2<MenuIpWhiteListDto, MenuIpWhiteListUpdDto>>({
     id: -1,
     menuId: props.menu.id,
     whiteList: '',
-    fromType: T_IP,
-    type: T_IS,
+    fromType: TMWLTypeEnum.T_IP,
+    type: MenuTypeEnum.T_IS,
     remark: '',
   },
   dialogForms: [],
@@ -133,8 +133,8 @@ const {
             <el-form-item :label="menuIpWhiteListDict.fromType" prop="fromType">
               <!--<el-input v-model="state.dialogForm.fromType" :placeholder="menuIpWhiteListDict.fromType"/>-->
               <el-radio-group v-model="state.dialogForm.fromType">
-                <el-radio :value="T_IP">{{ mIWLTypeDict[T_IP] }}</el-radio>
-                <el-radio :value="T_HOST">{{ mIWLTypeDict[T_HOST] }}</el-radio>
+                <el-radio :value="TMWLTypeEnum.T_IP">{{ mIWLTypeDict[TMWLTypeEnum.T_IP] }}</el-radio>
+                <el-radio :value="TMWLTypeEnum.T_HOST">{{ mIWLTypeDict[TMWLTypeEnum.T_HOST] }}</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -198,8 +198,8 @@ const {
               <div :class="state.dialogForms_error?.[`${$index}-fromType`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
                 <!--<el-input v-model="state.dialogForms[$index].fromType" :placeholder="menuIpWhiteListDict.fromType"/>-->
                 <el-radio-group v-model="state.dialogForms[$index].fromType">
-                  <el-radio :value="T_IP">{{ mIWLTypeDict[T_IP] }}</el-radio>
-                  <el-radio :value="T_HOST">{{ mIWLTypeDict[T_HOST] }}</el-radio>
+                  <el-radio :value="TMWLTypeEnum.T_IP">{{ mIWLTypeDict[TMWLTypeEnum.T_IP] }}</el-radio>
+                  <el-radio :value="TMWLTypeEnum.T_HOST">{{ mIWLTypeDict[TMWLTypeEnum.T_HOST] }}</el-radio>
                 </el-radio-group>
               </div>
             </template>
@@ -271,8 +271,8 @@ const {
       </el-form-item>
       <el-form-item :label="menuIpWhiteListDict.fromType" prop="fromType">
         <el-select v-model="state.filterForm.fromType" :placeholder="menuIpWhiteListDict.fromType" clearable filterable>
-          <el-option :label="mIWLTypeDict[T_IP]" :value="T_IP"/>
-          <el-option :label="mIWLTypeDict[T_HOST]" :value="T_HOST"/>
+          <el-option :label="mIWLTypeDict[TMWLTypeEnum.T_IP]" :value="TMWLTypeEnum.T_IP"/>
+          <el-option :label="mIWLTypeDict[TMWLTypeEnum.T_HOST]" :value="TMWLTypeEnum.T_HOST"/>
         </el-select>
       </el-form-item>
       <!--在此上方添加表单项-->
@@ -312,7 +312,7 @@ const {
       <el-table-column prop="whiteList" :label="menuIpWhiteListDict.whiteList" width="360"/>
       <el-table-column prop="fromType" :label="menuIpWhiteListDict.fromType" width="120">
         <template #default="{row}">
-          {{ mIWLTypeDict[row.fromType as TMIWLType] }}
+          {{ mIWLTypeDict[row.fromType as TMWLTypeEnum] }}
         </template>
       </el-table-column>
       <el-table-column prop="remark" :label="menuIpWhiteListDict.remark" width="120"/>

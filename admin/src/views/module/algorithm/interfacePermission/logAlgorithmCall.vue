@@ -26,6 +26,7 @@ const state = reactive<State2<LogAlgorithmCallDto, LogAlgorithmCallUpdDto>>({
     perms: '',
     userId: '',
     loginRole: '',
+    authType: '',
     callIp: '',
     ifSuccess: '',
     remark: '',
@@ -37,6 +38,7 @@ const state = reactive<State2<LogAlgorithmCallDto, LogAlgorithmCallUpdDto>>({
     perms: '',
     userId: '',
     loginRole: '',
+    authType: '',
     callIp: '',
   },
 })
@@ -46,6 +48,7 @@ const dFormRules: FormRules = {
   perms: [{required: true, trigger: 'change'}],
   userId: [{required: true, trigger: 'change'}],
   loginRole: [{required: true, trigger: 'change'}],
+  authType: [{required: true, trigger: 'change'}],
   callIp: [{required: true, trigger: 'change'}],
   ifSuccess: [{required: true, trigger: 'change'}],
 }
@@ -227,6 +230,9 @@ const fCan2 = () => {
       <el-form-item :label="logAlgorithmCallDict.loginRole" prop="loginRole">
         <el-input v-model="state.filterForm.loginRole" :placeholder="logAlgorithmCallDict.loginRole"/>
       </el-form-item>
+      <el-form-item :label="logAlgorithmCallDict.authType" prop="authType">
+        <el-input v-model="state.filterForm.authType" :placeholder="logAlgorithmCallDict.authType"/>
+      </el-form-item>
       <el-form-item :label="logAlgorithmCallDict.callIp" prop="callIp">
         <el-input v-model="state.filterForm.callIp" :placeholder="logAlgorithmCallDict.callIp"/>
       </el-form-item>
@@ -282,6 +288,7 @@ const fCan2 = () => {
       <el-table-column prop="perms" :label="logAlgorithmCallDict.perms" width="180"/>
       <el-table-column prop="userId" :label="logAlgorithmCallDict.userId" width="120"/>
       <el-table-column prop="loginRole" :label="logAlgorithmCallDict.loginRole" width="120"/>
+      <el-table-column prop="authType" :label="logAlgorithmCallDict.authType" width="120"/>
       <el-table-column prop="callIp" :label="logAlgorithmCallDict.callIp" width="120"/>
       <el-table-column prop="ifSuccess" :label="logAlgorithmCallDict.ifSuccess" width="120"/>
       <el-table-column prop="remark" :label="logAlgorithmCallDict.remark" width="120"/>

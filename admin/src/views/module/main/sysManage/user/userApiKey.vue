@@ -1,31 +1,30 @@
 <script setup lang="ts">
 import { reactive } from "vue";
-import { CONFIG, final, mTTypeDict, MTTypeEnum } from "@/utils/base.ts";
+import { CONFIG, final } from "@/utils/base.ts";
 import Pagination from "@/components/pagination/pagination.vue";
 import { funcTablePage } from "@/composition/tablePage/tablePage2.ts";
 import { State2, TablePageConfig } from "@/type/tablePage.ts";
-import { FormRules } from "element-plus";
+import { ElMessage, FormRules } from "element-plus";
 import { Delete, Download, Edit, Plus, Refresh, Upload, Search } from "@element-plus/icons-vue";
-import { MenuThrottleDto, MenuThrottleUpdDto } from "@/type/module/main/sysManage/menuThrottle.ts";
-import { menuThrottleApi } from "@/api/module/main/sysManage/menuThrottle.ts";
-import { menuThrottleDict } from "@/dict/module/main/sysManage/menuThrottle.ts";
-import { MenuDto } from "@/type/module/main/sysManage/menu.ts";
-import { menuDictInter } from "@/dict/module/main/sysManage/menu.ts";
+import { UserApiKeyDto, UserApiKeyUpdDto } from "@/type/module/main/sysManage/userApiKey.ts";
+import { userApiKeyApi } from "@/api/module/main/sysManage/userApiKey.ts";
+import { userApiKeyDict } from "@/dict/module/main/sysManage/userApiKey.ts";
+import { UserDto2 } from "@/type/module/main/sysManage/user.ts";
+import { userDict } from "@/dict/module/main/sysManage/user.ts";
 
 const props = defineProps({
-  menu: {
-    type: MenuDto,
-    required: true,
+  user: {
+    type: UserDto2,
+    required: true
   }
 })
 
-const state = reactive<State2<MenuThrottleDto, MenuThrottleUpdDto>>({
+const state = reactive<State2<UserApiKeyDto, UserApiKeyUpdDto>>({
   dialogForm: {
     id: -1,
-    menuId: props.menu.id,
-    ttl: 0,
-    limit: 0,
-    type: MTTypeEnum.T_IP,
+    userId: props.user?.id,
+    userRole: '#',
+    apiKey: '#',
     remark: '',
   },
   dialogForms: [],
@@ -33,15 +32,25 @@ const state = reactive<State2<MenuThrottleDto, MenuThrottleUpdDto>>({
   filterForm: {},
 })
 const dFormRules: FormRules = {
-  menuId: [{required: true, trigger: 'change'}],
-  ttl: [{required: true, trigger: 'change'}],
-  limit: [{required: true, trigger: 'change'}],
-  type: [{required: true, trigger: 'change'}],
+  userId: [{required: true, trigger: 'change'}],
+  userRole: [{required: true, trigger: 'change'}],
+  apiKey: [{required: true, trigger: 'change'}],
 }
-const config = new TablePageConfig({
+const config = new TablePageConfig<UserApiKeyDto>({
   bulkOperation: true,
   selectParam: {
-    menuId: props.menu.id,
+    userId: props.user?.id,
+    userRole: 'admin',
+  },
+  insUpdParam: {
+    userId: props.user?.id,
+    userRole: 'admin',
+  },
+  dialogFormLoadingFinishCallback: () => {
+    state.dialogForm.apiKey = '#'
+    state.dialogForms?.forEach((item) => {
+      item.apiKey = '#'
+    })
   }
 })
 
@@ -82,13 +91,18 @@ const {
   dfIns,
   dfDel,
   ifRequired,
-} = funcTablePage<MenuThrottleDto, MenuThrottleUpdDto>({
+} = funcTablePage<UserApiKeyDto, UserApiKeyUpdDto>({
   state,
   dFormRules,
   config,
-  api: menuThrottleApi,
-  dict: menuThrottleDict,
+  api: userApiKeyApi,
+  dict: userApiKeyDict,
 })
+
+const copy = async (row: UserApiKeyDto) => {
+  await navigator.clipboard.writeText(row.apiKey)
+  ElMessage.success('复制成功。')
+}
 </script>
 
 <template>
@@ -116,53 +130,55 @@ const {
         <!--  <el-col :span="12"></el-col>-->
         <!--  <el-col :span="12"></el-col>-->
         <!--</el-row>-->
-        <el-form-item v-if="dialogType.value!==final.ins" :label="menuThrottleDict.id" prop="id">
+        <el-form-item v-if="dialogType.value!==final.ins" :label="userApiKeyDict.id" prop="id">
           <span>{{ state.dialogForm.id }}</span>
         </el-form-item>
         <!--在此下方添加表单项-->
+        <!--<el-row>-->
+        <!--  <el-col :span="12">-->
+        <!--    <el-form-item :label="userApiKeyDict.userId" prop="userId">-->
+        <!--      <el-input v-model="state.dialogForm.userId" :placeholder="userApiKeyDict.userId"/>-->
+        <!--    </el-form-item>-->
+        <!--  </el-col>-->
+        <!--  <el-col :span="12">-->
+        <!--    <el-form-item :label="userApiKeyDict.userRole" prop="userRole">-->
+        <!--      <el-input v-model="state.dialogForm.userRole" :placeholder="userApiKeyDict.userRole"/>-->
+        <!--    </el-form-item>-->
+        <!--  </el-col>-->
+        <!--</el-row>-->
         <el-row>
           <el-col :span="12">
-            <el-form-item :label="menuThrottleDict.ttl" prop="ttl">
-              <el-input-number v-model="state.dialogForm.ttl" controls-position="right"/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item :label="menuThrottleDict.limit" prop="limit">
-              <el-input-number v-model="state.dialogForm.limit" controls-position="right"/>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item :label="menuThrottleDict.type" prop="type">
-              <!--<el-input v-model="state.dialogForm.type" :placeholder="menuThrottleDict.type"/>-->
-              <el-radio-group v-model="state.dialogForm.type">
-                <el-radio :value="MTTypeEnum.T_IP">{{ mTTypeDict[MTTypeEnum.T_IP] }}</el-radio>
-              </el-radio-group>
+            <el-form-item :label="userApiKeyDict.apiKey" prop="apiKey">
+              <template #label>
+                <Tooltip content="后端生成">
+                  {{ userApiKeyDict.apiKey }}
+                </Tooltip>
+              </template>
+              <el-input v-model="state.dialogForm.apiKey" :placeholder="userApiKeyDict.apiKey" disabled/>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="24">
-            <el-form-item :label="menuThrottleDict.remark" prop="remark">
-              <el-input type="textarea" v-model="state.dialogForm.remark" :placeholder="menuThrottleDict.remark"/>
+            <el-form-item :label="userApiKeyDict.remark" prop="remark">
+              <el-input type="textarea" v-model="state.dialogForm.remark" :placeholder="userApiKeyDict.remark"/>
             </el-form-item>
           </el-col>
         </el-row>
         <!--在此上方添加表单项-->
-        <!--<el-form-item :label="menuThrottleDict.orderNum" prop='orderNum'>-->
+        <!--<el-form-item :label="userApiKeyDict.orderNum" prop='orderNum'>-->
         <!--  <el-input-number v-model="state.dialogForm.orderNum" controls-position="right"/>-->
         <!--</el-form-item>-->
-        <!--<el-form-item :label="menuThrottleDict.ifDefault" prop='ifDefault'>-->
+        <!--<el-form-item :label="userApiKeyDict.ifDefault" prop='ifDefault'>-->
         <!--  <el-switch v-model="state.dialogForm.ifDefault" :active-value='final.Y' :inactive-value='final.N'/>-->
         <!--</el-form-item>-->
-        <!--<el-form-item :label="menuThrottleDict.ifDisabled" prop='ifDisabled'>-->
+        <!--<el-form-item :label="userApiKeyDict.ifDisabled" prop='ifDisabled'>-->
         <!--  <el-radio-group v-model="state.dialogForm.ifDisabled">-->
         <!--    <el-radio :value="final.Y">是</el-radio>-->
         <!--    <el-radio :value="final.N">否</el-radio>-->
         <!--  </el-radio-group>-->
         <!--</el-form-item>-->
-        <!--<el-form-item :label="menuThrottleDict.ifDisabled" prop="ifDisabled">-->
+        <!--<el-form-item :label="userApiKeyDict.ifDisabled" prop="ifDisabled">-->
         <!--  <el-switch v-model="state.dialogForm.ifDisabled" :active-value="final.N" :inactive-value="final.Y"/>-->
         <!--</el-form-item>-->
         <!--上方几个酌情使用-->
@@ -183,46 +199,45 @@ const {
             </template>
           </el-table-column>
           <!--在此下方添加表格列-->
-          <el-table-column prop="ttl" :label="menuThrottleDict.ttl" width="300">
+          <!--<el-table-column prop="userId" :label="userApiKeyDict.userId" width="300">-->
+          <!--  <template #header>-->
+          <!--    <span :class="ifRequired('userId')?'tp-table-header-required':''">{{ userApiKeyDict.userId }}</span>-->
+          <!--  </template>-->
+          <!--  <template #default="{$index}">-->
+          <!--    <div :class="state.dialogForms_error?.[`${$index}-userId`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">-->
+          <!--      <el-input v-model="state.dialogForms[$index].userId" :placeholder="userApiKeyDict.userId"/>-->
+          <!--    </div>-->
+          <!--  </template>-->
+          <!--</el-table-column>-->
+          <!--<el-table-column prop="userRole" :label="userApiKeyDict.userRole" width="300">-->
+          <!--  <template #header>-->
+          <!--    <span :class="ifRequired('userRole')?'tp-table-header-required':''">{{ userApiKeyDict.userRole }}</span>-->
+          <!--  </template>-->
+          <!--  <template #default="{$index}">-->
+          <!--    <div :class="state.dialogForms_error?.[`${$index}-userRole`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">-->
+          <!--      <el-input v-model="state.dialogForms[$index].userRole" :placeholder="userApiKeyDict.userRole"/>-->
+          <!--    </div>-->
+          <!--  </template>-->
+          <!--</el-table-column>-->
+          <el-table-column prop="apiKey" :label="userApiKeyDict.apiKey" width="300">
             <template #header>
-              <span :class="ifRequired('ttl')?'tp-table-header-required':''">{{ menuThrottleDict.ttl }}</span>
+              <Tooltip content="后端生成">
+                <span :class="ifRequired('apiKey')?'tp-table-header-required':''">{{ userApiKeyDict.apiKey }}</span>
+              </Tooltip>
             </template>
             <template #default="{$index}">
-              <div :class="state.dialogForms_error?.[`${$index}-ttl`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input-number v-model="state.dialogForms[$index].ttl" controls-position="right"/>
+              <div :class="state.dialogForms_error?.[`${$index}-apiKey`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-input v-model="state.dialogForms[$index].apiKey" :placeholder="userApiKeyDict.apiKey" disabled/>
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="limit" :label="menuThrottleDict.limit" width="300">
+          <el-table-column prop="remark" :label="userApiKeyDict.remark" width="300">
             <template #header>
-              <span :class="ifRequired('limit')?'tp-table-header-required':''">{{ menuThrottleDict.limit }}</span>
-            </template>
-            <template #default="{$index}">
-              <div :class="state.dialogForms_error?.[`${$index}-limit`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input-number v-model="state.dialogForms[$index].limit" controls-position="right"/>
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column prop="type" :label="menuThrottleDict.type" width="300">
-            <template #header>
-              <span :class="ifRequired('type')?'tp-table-header-required':''">{{ menuThrottleDict.type }}</span>
-            </template>
-            <template #default="{$index}">
-              <div :class="state.dialogForms_error?.[`${$index}-type`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <!--<el-input v-model="state.dialogForms[$index].type" :placeholder="menuThrottleDict.type"/>-->
-                <el-radio-group v-model="state.dialogForms[$index].type">
-                  <el-radio :value="MTTypeEnum.T_IP">{{ mTTypeDict[MTTypeEnum.T_IP] }}</el-radio>
-                </el-radio-group>
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column prop="remark" :label="menuThrottleDict.remark" width="300">
-            <template #header>
-              <span :class="ifRequired('remark')?'tp-table-header-required':''">{{ menuThrottleDict.remark }}</span>
+              <span :class="ifRequired('remark')?'tp-table-header-required':''">{{ userApiKeyDict.remark }}</span>
             </template>
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[`${$index}-remark`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input type="textarea" v-model="state.dialogForms[$index].remark" :placeholder="menuThrottleDict.remark"/>
+                <el-input type="textarea" v-model="state.dialogForms[$index].remark" :placeholder="userApiKeyDict.remark"/>
               </div>
             </template>
           </el-table-column>
@@ -246,28 +261,6 @@ const {
     </template>
   </el-dialog>
 
-  <el-divider content-position="left">
-    <el-text size="large" style="font-weight: bold;">接口组信息</el-text>
-  </el-divider>
-  <el-form>
-    <el-row>
-      <el-col :span="8">
-        <el-form-item :label="menuDictInter.label">
-          {{ props.menu.label }}
-        </el-form-item>
-      </el-col>
-      <el-col :span="8">
-        <el-form-item :label="menuDictInter.perms">
-          {{ props.menu.perms }}
-        </el-form-item>
-      </el-col>
-    </el-row>
-  </el-form>
-
-  <el-divider content-position="left">
-    <el-text size="large" style="font-weight: bold;">请求限速列表</el-text>
-  </el-divider>
-
   <!--顶部筛选表单-->
   <div class="zs-filter-form" v-show="filterFormVisible1 && filterFormVisible">
     <el-form
@@ -278,8 +271,8 @@ const {
         @keyup.enter="fEnter"
     >
       <!--在此下方添加表单项-->
-      <!--<el-form-item :label="menuThrottleDict." prop="">-->
-      <!--  <el-input v-model="state.filterForm." :placeholder="menuThrottleDict."/>-->
+      <!--<el-form-item :label="userApiKeyDict." prop="">-->
+      <!--  <el-input v-model="state.filterForm." :placeholder="userApiKeyDict."/>-->
       <!--</el-form-item>-->
       <!--在此上方添加表单项-->
       <el-form-item>
@@ -289,6 +282,32 @@ const {
     </el-form>
   </div>
 
+  <el-divider content-position="left">
+    <el-text size="large" style="font-weight: bold;">用户信息</el-text>
+  </el-divider>
+  <el-form>
+    <el-row>
+      <el-col :span="8">
+        <el-form-item :label="userDict.id">
+          {{ props.user.id }}
+        </el-form-item>
+      </el-col>
+      <el-col :span="8">
+        <el-form-item :label="userDict.username">
+          {{ props.user.username }}
+        </el-form-item>
+      </el-col>
+      <el-col :span="8">
+        <el-form-item :label="userDict.nickname">
+          {{ props.user.nickname }}
+        </el-form-item>
+      </el-col>
+    </el-row>
+  </el-form>
+
+  <el-divider content-position="left">
+    <el-text size="large" style="font-weight: bold;">apiKey列表</el-text>
+  </el-divider>
   <!--操作按钮-->
   <div class="zs-button-row">
     <div>
@@ -312,22 +331,28 @@ const {
         @selection-change="handleSelectionChange"
     >
       <el-table-column fixed type="selection" width="55"/>
-      <!--<el-table-column fixed prop="id" :label="menuThrottleDict.id" width="180"/>-->
+      <!--<el-table-column fixed prop="id" :label="userApiKeyDict.id" width="180"/>-->
       <!--上面id列的宽度改一下-->
       <!--在此下方添加表格列-->
-      <!--<el-table-column prop="menuId" :label="menuThrottleDict.menuId" width="120"/>-->
-      <el-table-column prop="ttl" :label="menuThrottleDict.ttl" width="120"/>
-      <el-table-column prop="limit" :label="menuThrottleDict.limit" width="120"/>
-      <el-table-column prop="type" :label="menuThrottleDict.type" width="120"/>
-      <el-table-column prop="remark" :label="menuThrottleDict.remark" width="120"/>
+      <el-table-column prop="userId" :label="userApiKeyDict.userId" width="120"/>
+      <el-table-column prop="userRole" :label="userApiKeyDict.userRole" width="120"/>
+      <el-table-column prop="apiKey" :label="userApiKeyDict.apiKey" width="240">
+        <template #default="{row}">
+          <div class="zs-table-data-col-more-col">
+            <span>******</span>
+            <el-button link :icon="Edit" @click="copy(row)">复制</el-button>
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column prop="remark" :label="userApiKeyDict.remark" width="240"/>
       <!--在此上方添加表格列-->
-      <!--<el-table-column prop="createRole" :label="menuThrottleDict.createRole" width="120"/>-->
-      <!--<el-table-column prop="updateRole" :label="menuThrottleDict.updateRole" width="120"/>-->
-      <!--<el-table-column prop="createBy" :label="menuThrottleDict.createBy" width="120"/>-->
-      <!--<el-table-column prop="updateBy" :label="menuThrottleDict.updateBy" width="120"/>-->
-      <!--<el-table-column prop="createTime" :label="menuThrottleDict.createTime" width="220"/>-->
-      <!--<el-table-column prop="updateTime" :label="menuThrottleDict.updateTime" width="220"/>-->
-      <!--<el-table-column prop="deleted" :label="menuThrottleDict.deleted" width="60"/>-->
+      <!--<el-table-column prop="createRole" :label="userApiKeyDict.createRole" width="120"/>-->
+      <!--<el-table-column prop="updateRole" :label="userApiKeyDict.updateRole" width="120"/>-->
+      <!--<el-table-column prop="createBy" :label="userApiKeyDict.createBy" width="120"/>-->
+      <!--<el-table-column prop="updateBy" :label="userApiKeyDict.updateBy" width="120"/>-->
+      <!--<el-table-column prop="createTime" :label="userApiKeyDict.createTime" width="220"/>-->
+      <!--<el-table-column prop="updateTime" :label="userApiKeyDict.updateTime" width="220"/>-->
+      <!--<el-table-column prop="deleted" :label="userApiKeyDict.deleted" width="60"/>-->
       <!--上方几个酌情使用-->
       <el-table-column fixed="right" label="操作" min-width="140">
         <template #default="{row}">

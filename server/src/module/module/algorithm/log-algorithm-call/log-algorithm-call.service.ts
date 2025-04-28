@@ -11,7 +11,7 @@ export class LogAlgorithmCallService {
     private readonly bcs: BaseContextService,
   ) {
     this.bcs.setFieldSelectParam('log_algorithm_call', {
-      notNullKeys: ['userGroupPermissionId', 'pperms', 'perms', 'userId', 'callIp', 'ifSuccess', 'loginRole'],
+      notNullKeys: ['userGroupPermissionId', 'pperms', 'perms', 'userId', 'loginRole', 'authType', 'callIp', 'ifSuccess'],
       numberKeys: ['userGroupPermissionId'],
       completeMatchingKeys: ['userGroupPermissionId', 'pperms', 'perms', 'userId', 'loginRole'],
       ifCreateRole: false,

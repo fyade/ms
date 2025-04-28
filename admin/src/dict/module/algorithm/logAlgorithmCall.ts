@@ -8,6 +8,7 @@ export const logAlgorithmCallDict: { [P in keyof LogAlgorithmCallDto]: string } 
   perms: '接口权限标识',
   userId: '用户id',
   loginRole: '登录身份',
+  authType: '认证类型',
   callIp: '请求源ip',
   ifSuccess: '是否成功',
 }

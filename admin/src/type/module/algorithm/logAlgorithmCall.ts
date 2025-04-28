@@ -7,6 +7,7 @@ export class LogAlgorithmCallDto extends BaseClass {
   perms!: string;
   userId!: string;
   loginRole!: string;
+  authType!: string;
   callIp!: string;
   ifSuccess!: string;
   remark!: string;
@@ -24,6 +25,7 @@ export class LogAlgorithmCallInsDto {
   perms!: string;
   userId!: string;
   loginRole!: string;
+  authType!: string;
   callIp!: string;
   ifSuccess!: string;
   remark!: string;

@@ -2,7 +2,7 @@ import { SysDto } from "@/type/module/main/sysManage/sys.ts";
 import { getButtons, getPages } from "@/api/common/sys.ts";
 import { RouteRecordNormalized, RouteRecordRaw } from "vue-router";
 import { MenuDto } from "@/type/module/main/sysManage/menu.ts";
-import { final, T_COMP, T_MENU } from "@/utils/base.ts";
+import { final, MenuTypeEnum } from "@/utils/base.ts";
 import { arr2ToDiguiObj, diguiRun } from "@/utils/baseUtils.ts";
 import { useSysStore } from "@/store/module/sys.ts";
 import { useRouterStore } from "@/store/module/router.ts";
@@ -15,8 +15,8 @@ const routerStore = useRouterStore();
 
 // 引入资源
 const modules = {
-  ...import.meta.glob(`../../views/**/**/**/**/**.vue`),
-  ...import.meta.glob(`../../views/**/**/**/**.vue`),
+  ...import.meta.glob(`../../views/module/**/**/**/**.vue`),
+  ...import.meta.glob(`../../views/module/**/**/**.vue`),
 }
 export const goToSystem = async (
   dto: SysDto,
@@ -36,7 +36,7 @@ export const goToSystem = async (
     if (router.getRoutes().findIndex(item => item.name === `/${dto.path}`) === -1) {
       const permissions: (RouteRecordNormalized & MenuDto & { component: any })[] = [];
       for (const item of res) {
-        if (!([T_MENU, T_COMP].includes(item.type))) {
+        if (!([MenuTypeEnum.T_MENU, MenuTypeEnum.T_COMP].includes(item.type))) {
           continue;
         }
         const permission = {
@@ -48,7 +48,7 @@ export const goToSystem = async (
             sysPerms: dto.perms,
           },
         } as unknown as (RouteRecordNormalized & MenuDto & { component: any })
-        if (permission.type === T_COMP) {
+        if (permission.type === MenuTypeEnum.T_COMP) {
           const component = await modules[`../module/${dto.path}${permission.component}`]()
           permission.component = component.default
         } else {

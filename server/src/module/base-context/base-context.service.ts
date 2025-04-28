@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ClsService } from 'nestjs-cls';
 import { CurrentUser, FieldSelectParam, genCurrentUser, USER_INFO_LINSHI_FIELD_NAME } from './baseContext';
+import { AuthTypeEnum } from '../../util/base';
 
 @Injectable()
 export class BaseContextService {
@@ -24,6 +25,12 @@ export class BaseContextService {
   setUserToTopAdmin() {
     const userData = this.getUserData();
     userData.topAdmin = true;
+    this.setUserData(userData);
+  }
+
+  setUserAuthType(authType: AuthTypeEnum) {
+    const userData = this.getUserData();
+    userData.authType = authType;
     this.setUserData(userData);
   }
 

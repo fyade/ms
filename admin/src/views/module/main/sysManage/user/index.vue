@@ -25,6 +25,7 @@ import { userDeptApi, userDeptUpdUD } from "@/api/module/main/sysManage/userDept
 import UserRole from "@/views/module/main/sysManage/user/userRole.vue";
 import UserDept from "@/views/module/main/sysManage/user/userDept.vue";
 import { useSysStore } from "@/store/module/sys.ts";
+import UserApiKey from "@/views/module/main/sysManage/user/userApiKey.vue";
 
 const sysStore = useSysStore()
 
@@ -213,6 +214,12 @@ const drawerCancelUserDept = () => {
   drawer2.value = false
 }
 provide('changeSelectDept', selectDept)
+
+const showManageApiKey = ref(false)
+const manageApiKey = (row: UserDto_) => {
+  selectUser.value = deepClone(row)
+  showManageApiKey.value = true
+}
 </script>
 
 <template>
@@ -250,6 +257,20 @@ provide('changeSelectDept', selectDept)
       <el-button plain @click="drawerCancelUserDept">取消</el-button>
       <el-button type="primary" plain @click="drawerConfirmUserDept">提交</el-button>
     </template>
+  </el-dialog>
+
+  <!--apiKey-->
+  <el-dialog
+      v-model="showManageApiKey"
+      :width="CONFIG.dialog_width_wider"
+      draggable
+      append-to-body
+      destroy-on-close
+      title="apiKey管理"
+  >
+    <UserApiKey
+      :user="selectUser"
+    />
   </el-dialog>
 
   <!--重置密码-->
@@ -422,6 +443,7 @@ provide('changeSelectDept', selectDept)
                 <el-dropdown-menu>
                   <el-dropdown-item><el-button link type="info" size="small" :icon="Edit" @click="manageRole(row)">分配角色</el-button></el-dropdown-item>
                   <el-dropdown-item><el-button link type="info" size="small" :icon="Edit" @click="manageDept(row)">分配部门</el-button></el-dropdown-item>
+                  <el-dropdown-item><el-button link type="info" size="small" :icon="Edit" @click="manageApiKey(row)">apiKey管理</el-button></el-dropdown-item>
                 </el-dropdown-menu>
               </template>
             </el-dropdown>

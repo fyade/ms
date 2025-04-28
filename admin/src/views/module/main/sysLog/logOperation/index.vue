@@ -26,6 +26,7 @@ const state = reactive<State2<LogOperationDto, LogOperationUpdDto>>({
     perms: '',
     userId: '',
     loginRole: '',
+    authType: '',
     reqParam: '',
     oldValue: '',
     operateType: '',
@@ -41,6 +42,7 @@ const state = reactive<State2<LogOperationDto, LogOperationUpdDto>>({
     perms: '',
     userId: '',
     loginRole: '',
+    authType: '',
     reqParam: '',
     ifSuccess: '',
   },
@@ -52,6 +54,7 @@ const dFormRules: FormRules = {
   perms: [{required: true, trigger: 'change'}],
   userId: [{required: true, trigger: 'change'}],
   loginRole: [{required: true, trigger: 'change'}],
+  authType: [{required: true, trigger: 'change'}],
   reqParam: [{required: true, trigger: 'change'}],
   oldValue: [{required: true, trigger: 'change'}],
   operateType: [{required: true, trigger: 'change'}],
@@ -240,6 +243,9 @@ const fCan2 = () => {
       <el-form-item :label="logOperationDict.loginRole" prop="loginRole">
         <el-input v-model="state.filterForm.loginRole" :placeholder="logOperationDict.loginRole"/>
       </el-form-item>
+      <el-form-item :label="logOperationDict.authType" prop="authType">
+        <el-input v-model="state.filterForm.authType" :placeholder="logOperationDict.authType"/>
+      </el-form-item>
       <el-form-item :label="logOperationDict.reqParam" prop="reqParam">
         <el-input v-model="state.filterForm.reqParam" :placeholder="logOperationDict.reqParam"/>
       </el-form-item>
@@ -304,6 +310,7 @@ const fCan2 = () => {
       <el-table-column prop="perms" :label="logOperationDict.perms" width="240"/>
       <el-table-column prop="userId" :label="logOperationDict.userId" width="120"/>
       <el-table-column prop="loginRole" :label="logOperationDict.loginRole" width="120"/>
+      <el-table-column prop="authType" :label="logOperationDict.authType" width="120"/>
       <el-table-column prop="reqParam" :label="logOperationDict.reqParam" width="360">
         <template #default="{row}">
           <div style="max-height: 100px;overflow: auto;">

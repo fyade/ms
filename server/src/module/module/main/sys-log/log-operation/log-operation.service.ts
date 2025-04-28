@@ -11,7 +11,7 @@ export class LogOperationService {
     private readonly bcs: BaseContextService,
   ) {
     this.bcs.setFieldSelectParam('log_operation', {
-      notNullKeys: ['reqId', 'callIp', 'hostName', 'perms', 'userId', 'reqParam', 'oldValue', 'operateType', 'ifSuccess', 'loginRole'],
+      notNullKeys: ['reqId', 'callIp', 'hostName', 'perms', 'userId', 'loginRole', 'authType', 'reqParam', 'oldValue', 'operateType', 'ifSuccess'],
       completeMatchingKeys: ['userId', 'loginRole'],
       ifCreateRole: false,
       ifUpdateRole: false,

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { reactive, ref, toRaw, watch } from "vue";
-import { allTRPDataTypes, T_COMP, T_DEPT, T_Inter, T_MENU, T_ROLE } from "@/utils/base.ts";
+import { allTRPDataTypes, MenuTypeEnum } from "@/utils/base.ts";
 import Pagination from "@/components/pagination/pagination.vue";
 import { funcTablePage } from "@/composition/tablePage/tablePage2.ts";
 import { State2, TablePageConfig } from "@/type/tablePage.ts";
@@ -41,7 +41,7 @@ const config = new TablePageConfig<MenuDto<String>>({
   getDataOnMounted: false,
   bulkOperation: true,
   selectParam: {
-    type: JSON.stringify({in: {value: [T_Inter]}}),
+    type: JSON.stringify({in: {value: [MenuTypeEnum.T_Inter]}}),
   },
   selectListCallback: () => {
     selectTableRowPermissions()

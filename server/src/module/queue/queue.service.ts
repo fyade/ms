@@ -1,6 +1,4 @@
 import { Injectable } from "@nestjs/common";
-import { Job } from "bullmq";
-import { LogOperationQueueJobDataDto } from "./dto";
 import { ScheduleService } from "../schedule/schedule.service";
 import { QueueoService } from "./queueo.service";
 

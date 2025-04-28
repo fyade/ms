@@ -50,7 +50,15 @@ export const routes: RouteRecordRaw[] = [
           label: '修改密码',
         },
         component: () => import('@/views/user/edit-psd.vue')
-      }
+      },
+      // {
+      //   path: 'api-key',
+      //   meta: {
+      //     icon: '',
+      //     label: 'apiKey管理'
+      //   },
+      //   component: () => import('@/views/user/api-key.vue')
+      // }
     ]
   },
   {

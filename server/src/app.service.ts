@@ -3,7 +3,7 @@ import { R } from './common/R';
 import { NonSupportException } from './exception/non-support.exception';
 import { AuthService } from './module/auth/auth.service';
 import { getAllFiles } from './util/FileUtils';
-import { T_COMP, T_Inter, T_MENU } from './util/base';
+import { MenuTypeEnum } from './util/base';
 import { BaseContextService } from './module/base-context/base-context.service';
 import { CacheTokenService } from './module/cache/cache.token.service';
 import { PrismaoService } from "./prisma/prismao.service";
@@ -154,7 +154,7 @@ export class AppService {
       userId: this.bcs.getUserData().userId,
       loginRole: this.bcs.getUserData().loginRole,
       sysId,
-      menuType: [T_MENU, T_COMP],
+      menuType: [MenuTypeEnum.T_MENU, MenuTypeEnum.T_COMP],
     });
     return R.ok(permissionsOfUser);
   }
@@ -164,7 +164,7 @@ export class AppService {
       userId: this.bcs.getUserData().userId,
       loginRole: this.bcs.getUserData().loginRole,
       sysId,
-      menuType: [T_Inter],
+      menuType: [MenuTypeEnum.T_Inter],
     });
     return R.ok(buttonsOfUser);
   }

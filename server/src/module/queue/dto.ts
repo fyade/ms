@@ -1,4 +1,5 @@
 import { getIpInfoFromRequest } from "../../util/RequestUtils";
+import { AuthTypeEnum } from '../../util/base';
 
 export class LogOperationQueueJobDataDto {
   permission: string
@@ -12,6 +13,7 @@ export class LogOperationQueueJobDataDto {
   reqId: string
   userId: string
   loginRole: string
+  authType: AuthTypeEnum;
 }
 
 export class LogScheduledTaskQueueJobDataDto {

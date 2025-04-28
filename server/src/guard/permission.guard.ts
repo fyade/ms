@@ -13,6 +13,7 @@ import { UnauthorizedException } from '../exception/unauthorized.exception';
 import { CacheTokenService } from '../module/cache/cache.token.service';
 import { BaseContextService } from '../module/base-context/base-context.service';
 import { getTokenUuidFromAuth } from '../util/RequestUtils';
+import { AuthTypeEnum } from '../util/base';
 
 @Injectable()
 export class PermissionGuard implements CanActivate {
@@ -29,6 +30,7 @@ export class PermissionGuard implements CanActivate {
     const request: Request = context.switchToHttp().getRequest();
 
     let tokenUsable = true;
+    let apiKeyUsable = false;
 
     if (ifIgnore && !ifIgnoreButResolveToken) {
     } else {
@@ -54,6 +56,22 @@ export class PermissionGuard implements CanActivate {
       ifTrue = true;
     }
 
+    let authType = AuthTypeEnum.token;
+
+    const headerApiKey = request.headers['console-api-key'];
+    if (headerApiKey) {
+      const userInfoByKey = await this.authService.getUserIdByApiKey(headerApiKey as string);
+      if (userInfoByKey) {
+        const userData = this.bcs.getUserData();
+        userData.userId = userInfoByKey.user_id;
+        userData.loginRole = userInfoByKey.user_role;
+        this.bcs.setUserData(userData);
+        apiKeyUsable = true;
+        authType = AuthTypeEnum.apiKey;
+      }
+    }
+
+    this.bcs.setUserAuthType(authType);
     const userId = this.bcs.getUserData().userId;
     const loginRole = this.bcs.getUserData().loginRole;
 
@@ -68,7 +86,14 @@ export class PermissionGuard implements CanActivate {
         throw new ParameterException('参数错误，权限标识不可为空。');
       }
       if (userId) {
-        const permissionsOfUser = await this.authService.hasSFPermissionByUserid(userId, loginRole, reqBody.pperms, reqBody.perms, request);
+        const permissionsOfUser = await this.authService.hasSFPermissionByUserid(
+          userId,
+          loginRole,
+          authType,
+          reqBody.pperms,
+          reqBody.perms,
+          request,
+        );
         if (permissionsOfUser) {
           return true;
         }
@@ -91,12 +116,15 @@ export class PermissionGuard implements CanActivate {
     // 请求ip是否在此接口的ip白名单中
     const ifIpInWhiteList = await this.authService.ifIpInWhiteListOfPermission(permission, request);
     if (!ifIpInWhiteList) {
-      await this.authService.insLogOperation(permission, request, false, { remark: '请求源IP不在白名单内。', ifIgnoreParamInLog });
+      await this.authService.insLogOperation(permission, request, false, {
+        remark: '请求源IP不在白名单内。',
+        ifIgnoreParamInLog,
+      });
       throw new IpNotInWhiteListException();
     }
     // 是否公共接口
     const ifPublicInterface = await this.authService.ifPublicInterface(permission);
-    if (!ifTrue && !tokenUsable && !ifPublicInterface) {
+    if (!ifTrue && !tokenUsable && !ifPublicInterface && !apiKeyUsable) {
       await this.authService.insLogOperation(permission, request, false, { remark: '401', ifIgnoreParamInLog });
       throw new UnauthorizedException();
     }

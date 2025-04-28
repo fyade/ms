@@ -24,6 +24,7 @@ export class LogOperationConsumer extends WorkerHost {
       reqId: data.reqId,
       userId: data.userId,
       loginRole: data.loginRole,
+      authType: data.authType,
     })
   }
 }

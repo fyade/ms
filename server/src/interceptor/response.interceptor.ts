@@ -49,6 +49,7 @@ export class ResponseInterceptor implements NestInterceptor {
           reqId: reqId,
           userId: userId,
           loginRole: loginRole,
+          authType: userData.authType,
         })
       }),
       catchError(async (error) => {
@@ -74,6 +75,7 @@ export class ResponseInterceptor implements NestInterceptor {
           reqId: reqId,
           userId: userId,
           loginRole: loginRole,
+          authType: userData.authType,
         })
         throw error;
       }),

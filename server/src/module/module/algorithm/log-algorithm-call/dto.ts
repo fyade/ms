@@ -17,6 +17,8 @@ export class LogAlgorithmCallDto extends BaseDto {
 
   loginRole: string;
 
+  authType: string;
+
   callIp: string;
 
   ifSuccess: string;
@@ -39,6 +41,9 @@ export class LogAlgorithmCallSelListDto extends PageDto {
 
   @ApiProperty({ description: '登录身份', required: false })
   loginRole: string;
+
+  @ApiProperty({ description: '认证类型', required: false })
+  authType: string;
 
   @ApiProperty({ description: '请求源ip', required: false })
   callIp: string;
@@ -65,6 +70,9 @@ export class LogAlgorithmCallSelAllDto {
 
   @ApiProperty({ description: '登录身份', required: false })
   loginRole: string;
+
+  @ApiProperty({ description: '认证类型', required: false })
+  authType: string;
 
   @ApiProperty({ description: '请求源ip', required: false })
   callIp: string;
@@ -101,6 +109,11 @@ export class LogAlgorithmCallInsOneDto {
   @IsNotEmpty({ message: '登录身份不能为空' })
   @MaxLength(30, { message: '登录身份不能超过30个字符' })
   loginRole: string;
+
+  @ApiProperty({ description: '认证类型', required: true })
+  @IsNotEmpty({ message: '认证类型不能为空' })
+  @MaxLength(30, { message: '认证类型不能超过30个字符' })
+  authType: string;
 
   @ApiProperty({ description: '请求源ip', required: true })
   @IsNotEmpty({ message: '请求源ip不能为空' })

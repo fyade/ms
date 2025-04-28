@@ -1,46 +1,55 @@
-export const T_MENU = 'mm'
-export const T_COMP = 'mc'
-export const T_IS = 'ma'
-export const T_Inter = 'mb'
-export type T_MENU = 'mm'
-export type T_COMP = 'mc'
-export type T_IS = 'ma'
-export type T_Inter = 'mb'
-export type TMenuType = T_MENU | T_COMP | T_IS | T_Inter
+// 菜单
+export enum MenuTypeEnum {
+  T_MENU = 'mm',
+  T_COMP = 'mc',
+  T_IS = 'ma',
+  T_Inter = 'mb',
+}
+
 export const menuTypeDict = {
-  [T_MENU]: '菜单',
-  [T_COMP]: '组件',
-  [T_IS]: '接口组',
-  [T_Inter]: '接口',
+  [MenuTypeEnum.T_MENU]: '菜单',
+  [MenuTypeEnum.T_COMP]: '组件',
+  [MenuTypeEnum.T_IS]: '接口组',
+  [MenuTypeEnum.T_Inter]: '接口',
 };
 
-export const T_IP = 'ip'
-export const T_HOST = 'ho'
-export type T_IP = 'ip'
-export type T_HOST = 'ho'
-export type TMIWLType = T_IP | T_HOST
+// 菜单 IP 限制
+export enum TMWLTypeEnum {
+  T_IP = 'ip',
+  T_HOST = 'ho',
+}
+
 export const mIWLTypeDict = {
-  [T_IP]: 'ip',
-  [T_HOST]: 'host',
+  [TMWLTypeEnum.T_IP]: 'ip',
+  [TMWLTypeEnum.T_HOST]: 'host',
+};
+
+// 接口限流
+export enum MTTypeEnum {
+  T_IP = 'ip',
 }
 
-// export const T_IP = 'ip'
-// export type T_IP = 'ip'
 export const mTTypeDict = {
-  [T_IP]: 'ip',
+  [MTTypeEnum.T_IP]: 'ip',
+};
+
+// 权限身份类型
+export enum UTDPTypeEnum {
+  T_ROLE = 'ro',
+  T_DEPT = 'de',
+  T_UG = 'ug',
 }
 
-export const T_ROLE = 'ro'
-export const T_DEPT = 'de'
-export const T_UG = 'ug'
-export type T_ROLE = 'ro'
-export type T_DEPT = 'de'
-export type T_UG = 'ug'
-export type TUTDPType = T_ROLE | T_DEPT | T_UG
 export const uTDPTypeDict = {
-  [T_ROLE]: '角色',
-  [T_DEPT]: '部门',
-  [T_UG]: '用户组',
+  [UTDPTypeEnum.T_ROLE]: '角色',
+  [UTDPTypeEnum.T_DEPT]: '部门',
+  [UTDPTypeEnum.T_UG]: '用户组',
+};
+
+export enum AuthTypeEnum {
+  token = 'token',
+  apiKey = 'apiKey',
+  unknown = '???',
 }
 
 export const base = {

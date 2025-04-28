@@ -168,6 +168,10 @@ $ nest g pipe validation pipe # 管道
 * ip 表示 ip
 * ho 表示 host
 
+接口限流相关常量：
+
+* ip 表示 以 ip 为单位限制
+
 权限身份类型相关常量：
 
 * ro 表示角色

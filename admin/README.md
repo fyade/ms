@@ -28,6 +28,8 @@
 
 在 配置模块根目录/config/adminConfig.ts 中，根据注释，将每个配置改为自己的配置；
 
+在项目根目录运行 `pnpm "[build] [config & common]"` 命令，构造 config 模块和 common 模块；
+
 3. 启动项目
 
 在项目根目录运行 `pnpm "[dev] [admin ] dev"` 命令。

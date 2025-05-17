@@ -7,7 +7,7 @@
 generator client {
   provider        = "prisma-client-js"
   // output          = "../prisma-generated/client" // todo 开发时注掉，打包前打开
-  binaryTargets   = ["darwin", "windows", "linux-musl", "rhel-openssl-1.0.x"]
+  binaryTargets   = ["darwin", "windows", "linux-musl", "rhel-openssl-1.0.x", "debian-openssl-3.0.x"]
   previewFeatures = ["prismaSchemaFolder"]
 }
 

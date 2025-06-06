@@ -2,6 +2,7 @@ import { BaseClass, PageDto } from "@/type/tablePage.ts";
 import { RoleDto } from "@/type/module/main/sysManage/role.ts";
 import { DeptDto } from "@/type/module/main/sysManage/dept.ts";
 import { UserGroupDto } from "@/type/module/algorithm/userGroup.ts";
+import { UserVisitorDto } from "@/type/module/main/otherUser/userVisitor.ts";
 
 export class UserDto extends BaseClass {
   id!: string;
@@ -71,4 +72,9 @@ export class UserDto_ extends UserDto {
   roles!: RoleDto[]
   depts!: DeptDto[]
   ugs!: UserGroupDto[]
+}
+
+export class MultiAuthUserDto {
+  admin!: UserDto | null;
+  visitor!: UserVisitorDto | null;
 }

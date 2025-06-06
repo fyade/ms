@@ -1,5 +1,5 @@
 import request from "@/api/request.ts";
-import { LoginDto } from "@/type/module/main/sysManage/user.ts";
+import { LoginDto, MultiAuthUserDto } from "@/type/module/main/sysManage/user.ts";
 import { cryptUtils } from "@ms/common";
 
 /**
@@ -19,7 +19,11 @@ export function generateLoginKey() {
 export async function loginApi(data: LoginDto) {
   const key = await generateLoginKey();
   const newPassword = await cryptUtils.rsa.encrypt(key.publicKey, data.password);
-  return request({
+  return request<{
+    token: string,
+    loginRole: string,
+    multiAuthUser: MultiAuthUserDto,
+  }>({
     url: '/sys/user/adminlogin',
     method: 'POST',
     data: {

@@ -4,8 +4,13 @@ import { CacheTokenService } from './cache.token.service';
 
 @Global()
 @Module({
-  providers: [CachePermissionService, CacheTokenService],
-  exports: [CachePermissionService, CacheTokenService],
+  providers: [
+    CachePermissionService,
+    CacheTokenService
+  ],
+  exports: [
+    CachePermissionService,
+    CacheTokenService
+  ],
 })
-export class CacheModule {
-}
+export class CacheModule {}

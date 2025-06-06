@@ -1,7 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../../../prisma/prisma.service';
 import { R } from '../../../../../common/R';
-import { AdminNewUserDto, LoginDto, RegistDto, ResetUserPsdDto, UpdPsdDto, UserDto, UserSelListDto } from './dto';
+import {
+  AdminNewUserDto,
+  LoginDto,
+  MultiAuthUserDto,
+  RegistDto,
+  ResetUserPsdDto,
+  UpdPsdDto,
+  UserDto,
+  UserSelListDto,
+} from './dto';
 import { AuthService } from '../../../../auth/auth.service';
 import { HTTP } from '../../../../../common/Enum';
 import { base } from '../../../../../util/base';
@@ -150,15 +159,18 @@ export class UserService {
   async getSelfInfo(): Promise<R> {
     const loginRole = this.bcs.getUserData().loginRole;
     const userId = this.bcs.getUserData().userId;
+    const multiAuthUser = new MultiAuthUserDto();
     if (loginRole === 'admin') {
       const user = await this.prisma.findById<UserDto>('sys_user', userId);
       delete user.password;
-      return R.ok(user);
+      multiAuthUser.admin = user;
+      return R.ok(multiAuthUser);
     }
     if (loginRole === 'visitor') {
       const user = await this.prisma.findById<UserVisitorDto>('sys_user_visitor', userId);
       delete user.password;
-      return R.ok(user);
+      multiAuthUser.visitor = user;
+      return R.ok(multiAuthUser);
     }
     throw new Exception('');
   }
@@ -184,15 +196,15 @@ export class UserService {
     return R.ok(true);
   }
 
-  async updUser(dto: UserDto): Promise<R> {
+  async updUser(dto: MultiAuthUserDto): Promise<R> {
     const loginRole = this.bcs.getUserData().loginRole;
     const userId = this.bcs.getUserData().userId;
     if (loginRole === 'admin') {
-      await this.prisma.updateById('sys_user', dto);
+      await this.prisma.updateById<UserDto>('sys_user', dto.admin);
       return R.ok(true);
     }
     if (loginRole === 'visitor') {
-      await this.prisma.updateById('sys_user_visitor', dto);
+      await this.prisma.updateById<UserVisitorDto>('sys_user_visitor', dto.visitor);
       return R.ok(true);
     }
     throw new Exception('');
@@ -300,8 +312,8 @@ export class UserService {
 
   async login(dto: LoginDto, { loginIp, loginBrowser, loginOs }, ifAdminLogin = false): Promise<R<{
     token: string,
-    user: UserDto,
     loginRole: string,
+    multiAuthUser: MultiAuthUserDto,
   }>> {
     if (!serverConfig.currentConfig().ifIgnoreVerificationCode) {
       const vcode = await this.cacheTokenService.getVerificationCode(dto.verificationCodeUuid);
@@ -314,6 +326,7 @@ export class UserService {
       }
     }
     await this.cacheTokenService.deletePasswordKey(dto.passwordKeyUuid);
+    const multiAuthUser = new MultiAuthUserDto();
     if (dto.loginRole === 'admin') {
       const user = await this.prisma.findFirst<UserDto>('sys_user', {
         username: dto.username,
@@ -337,10 +350,11 @@ export class UserService {
       }
       delete user.password;
       const token = await this.cacheTokenService.genToken(user.id, user.username, dto.loginRole, loginIp, loginOs, loginBrowser);
+      multiAuthUser.admin = user;
       return R.ok({
         token: token,
-        user: user,
         loginRole: dto.loginRole,
+        multiAuthUser: multiAuthUser,
       });
     }
     if (dto.loginRole === 'visitor') {
@@ -366,10 +380,11 @@ export class UserService {
       }
       delete user.password;
       const token = await this.cacheTokenService.genToken(user.id, user.username, dto.loginRole, loginIp, loginOs, loginBrowser);
+      multiAuthUser.visitor = user;
       return R.ok({
         token: token,
-        user: user,
         loginRole: dto.loginRole,
+        multiAuthUser: multiAuthUser,
       });
     }
   }
@@ -379,12 +394,15 @@ export class UserService {
     if (userinfo.code !== HTTP.SUCCESS().code) {
       throw new Exception(userinfo.msg);
     }
-    const ifAdminUser = await this.authService.ifAdminUser(userinfo.data.user.id, dto.loginRole);
+    let userId = '';
+    if (userinfo.data.multiAuthUser.admin) userId = userinfo.data.multiAuthUser.admin.id;
+    if (userinfo.data.multiAuthUser.visitor) userId = userinfo.data.multiAuthUser.visitor.id;
+    const ifAdminUser = await this.authService.ifAdminUser(userId, dto.loginRole);
     if (ifAdminUser) {
-      await this.insLoginLog(loginIp, loginBrowser, '', loginOs, userinfo.data.user.id, dto.loginRole, true);
+      await this.insLoginLog(loginIp, loginBrowser, '', loginOs, userId, dto.loginRole, true);
       return R.ok(userinfo.data);
     } else {
-      await this.insLoginLog(loginIp, loginBrowser, '', loginOs, userinfo.data.user.id, dto.loginRole, false, NOT_ADMIN, '不是管理员用户');
+      await this.insLoginLog(loginIp, loginBrowser, '', loginOs, userId, dto.loginRole, false, NOT_ADMIN, '不是管理员用户');
       throw new Exception('你不是管理员用户。');
     }
   }

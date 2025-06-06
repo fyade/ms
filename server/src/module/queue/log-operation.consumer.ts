@@ -1,15 +1,13 @@
-import { Processor, WorkerHost } from "@nestjs/bullmq";
-import { Job } from "bullmq";
-import { AuthService } from "../auth/auth.service";
-import { LogOperationQueueJobDataDto } from "./dto";
-import { Injectable } from "@nestjs/common";
+import { Processor, WorkerHost } from '@nestjs/bullmq';
+import { Job } from 'bullmq';
+import { AuthService } from '../auth/auth.service';
+import { LogOperationQueueJobDataDto } from './dto';
+import { Injectable } from '@nestjs/common';
 
 @Processor('log-operation-queue')
 @Injectable()
 export class LogOperationConsumer extends WorkerHost {
-  constructor(
-    private readonly authService: AuthService
-  ) {
+  constructor(private readonly authService: AuthService) {
     super();
   }
 
@@ -25,6 +23,7 @@ export class LogOperationConsumer extends WorkerHost {
       userId: data.userId,
       loginRole: data.loginRole,
       authType: data.authType,
-    })
+      createTime: data.createTime,
+    });
   }
 }

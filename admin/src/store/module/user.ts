@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import { reactive, ref } from "vue";
 import { ElNotification, NotificationHandle, ElMessage } from "element-plus";
 import { useRoute, useRouter } from "vue-router";
-import { LoginDto, UserDto } from "@/type/module/main/sysManage/user.ts";
+import { LoginDto, MultiAuthUserDto, UserDto } from "@/type/module/main/sysManage/user.ts";
 import { getSelfInfo } from "@/api/module/main/sysManage/user.ts";
 import { ifWebsiteLink } from "@/utils/LinkUtils.ts";
 import { UserVisitorDto } from "@/type/module/main/otherUser/userVisitor.ts";
@@ -14,16 +14,7 @@ export const useUserStore = defineStore('userStore', () => {
   const router = useRouter()
   const token = ref('')
   const loginRole = ref('')
-  const userinfo = reactive<UserDto | UserVisitorDto>({
-    id: '',
-    username: '',
-    nickname: '',
-    password: '',
-    avatar: '',
-    sex: '',
-    email: '',
-    tel: '',
-  })
+  const userinfo = reactive(new MultiAuthUserDto())
   const ifLogin = ref(false)
   const route = useRoute()
   const login = async (user: LoginDto) => {
@@ -43,7 +34,14 @@ export const useUserStore = defineStore('userStore', () => {
             token.value = res.token
             loginRole.value = res.loginRole
             ifLogin.value = true
-            objectUtils.copyObject(userinfo, res.user)
+            if (loginRole.value === "admin") {
+              userinfo.admin = new UserDto();
+              objectUtils.copyObject(userinfo.admin, res.multiAuthUser.admin);
+            }
+            if (loginRole.value === "visitor") {
+              userinfo.visitor = new UserVisitorDto();
+              objectUtils.copyObject(userinfo.visitor, res.multiAuthUser.visitor);
+            }
             if (route.query?.redirect && !ifWebsiteLink(route.query?.redirect.toString(), '/')) {
               notification.close()
               await router.push(route.query.redirect as string)
@@ -79,11 +77,14 @@ export const useUserStore = defineStore('userStore', () => {
   const removeToken = () => {
     token.value = ''
     ifLogin.value = false
-    objectUtils.clearObject(userinfo)
+    for (let userinfoKey in userinfo) {
+      userinfo[userinfoKey as keyof typeof userinfo] = null;
+    }
   }
   const refreshSelfInfo = () => {
     getSelfInfo().then(res => {
-      objectUtils.copyObject(userinfo, res)
+      if (loginRole.value === 'admin') objectUtils.copyObject(userinfo.admin, res.admin)
+      if (loginRole.value === 'visitor') objectUtils.copyObject(userinfo.visitor, res.visitor)
     })
   }
   return {

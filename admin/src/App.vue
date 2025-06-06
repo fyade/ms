@@ -7,7 +7,10 @@ import { ElMessageBox } from 'element-plus'
 const userStore = useUserStore()
 
 BCService.on('login', (data) => {
-  if (userStore.ifLogin && (data.username !== userStore.userinfo.username || data.loginRole !== userStore.loginRole)) {
+  let username_ = '';
+  if (userStore.loginRole === 'admin') username_ = userStore.userinfo.admin!.username;
+  if (userStore.loginRole === 'visitor') username_ = userStore.userinfo.visitor!.username;
+  if (userStore.ifLogin && (data.username !== username_ || data.loginRole !== userStore.loginRole)) {
     ElMessageBox.alert(
         '在其他标签页有其他用户登录，当前标签页用户即将退出。',
         '警告',

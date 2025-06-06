@@ -146,9 +146,12 @@ export class PrismaService {
           },
         ], []),
         ...Object.keys(data_).reduce((obj, item) => {
-          let datum = '';
+          let datum: any = '';
           try {
             datum = JSON.parse(data_[item]);
+            if (typeof datum === 'number') {
+              datum = data_[item];
+            }
           } catch (e) {
             datum = data_[item];
           }

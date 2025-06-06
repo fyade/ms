@@ -3,6 +3,7 @@ import { getSelfInfo, updUser } from '@/api/module/main/sysManage/user';
 import { reactive } from 'vue';
 import { ElMessage } from "element-plus";
 import { useUserStore } from "@/store/module/user.ts";
+import { MultiAuthUserDto } from "@/type/module/main/sysManage/user.ts";
 
 const userStore = useUserStore();
 
@@ -13,15 +14,37 @@ const state = reactive({
 })
 const getUserInfo = () => {
   getSelfInfo().then(res => {
-    state.id = res.id
-    state.nickname = res.nickname
-    state.username = res.username
+    if (userStore.loginRole === 'admin') {
+      state.id = res.admin!.id
+      state.nickname = res.admin!.nickname
+      state.username = res.admin!.username
+    }
+    if (userStore.loginRole === 'visitor') {
+      state.id = res.visitor!.id
+      state.nickname = res.visitor!.nickname
+      state.username = res.visitor!.username
+    }
   })
 }
 getUserInfo()
 
 const onSubmit = () => {
-  updUser(state).then(res => {
+  const multiAuthUser: { [P in keyof MultiAuthUserDto]: Partial<MultiAuthUserDto[P]> } = new MultiAuthUserDto();
+  if (userStore.loginRole === "admin") {
+    multiAuthUser.admin = {
+      id: userStore.userinfo.admin!.id,
+      nickname: state.nickname,
+      username: state.username,
+    }
+  }
+  if (userStore.loginRole === "visitor") {
+    multiAuthUser.visitor = {
+      id: userStore.userinfo.visitor!.id,
+      nickname: state.nickname,
+      username: state.username,
+    }
+  }
+  updUser(multiAuthUser).then(res => {
     if (res) {
       ElMessage.success('用户资料修改成功。')
       getUserInfo()

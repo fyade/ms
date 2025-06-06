@@ -14,6 +14,9 @@ import { CacheTokenService } from '../module/cache/cache.token.service';
 import { BaseContextService } from '../module/base-context/base-context.service';
 import { getTokenUuidFromAuth } from '../util/RequestUtils';
 import { AuthTypeEnum } from '../util/base';
+import { serverConfig } from '@ms/config';
+
+const serverCurrentConfig = serverConfig.currentConfig();
 
 @Injectable()
 export class PermissionGuard implements CanActivate {
@@ -58,7 +61,7 @@ export class PermissionGuard implements CanActivate {
 
     let authType = AuthTypeEnum.token;
 
-    const headerApiKey = request.headers['console-api-key'];
+    const headerApiKey = request.headers[serverCurrentConfig.headerApiKeyName];
     if (headerApiKey) {
       const userInfoByKey = await this.authService.getUserIdByApiKey(headerApiKey as string);
       if (userInfoByKey) {

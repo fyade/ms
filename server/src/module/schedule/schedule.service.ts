@@ -1,10 +1,10 @@
-import { Injectable, OnModuleInit } from "@nestjs/common";
-import { SchedulerRegistry } from "@nestjs/schedule";
-import { PrismaoService } from "../../prisma/prismao.service";
-import { CronJob } from "cron";
-import { QueueoService } from "../queue/queueo.service";
-import { base } from "../../util/base";
-import { WinstonService } from "../winston/winston.service";
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { SchedulerRegistry } from '@nestjs/schedule';
+import { PrismaoService } from '../../prisma/prismao.service';
+import { CronJob } from 'cron';
+import { QueueoService } from '../queue/queueo.service';
+import { base } from '../../util/base';
+import { WinstonService } from '../winston/winston.service';
 
 @Injectable()
 export class ScheduleService implements OnModuleInit {
@@ -13,37 +13,36 @@ export class ScheduleService implements OnModuleInit {
     private readonly prismao: PrismaoService,
     private readonly queueoService: QueueoService,
     private readonly winston: WinstonService,
-  ) {
-  }
+  ) {}
 
   async onModuleInit() {
-    await this.init()
+    await this.init();
   }
 
   private async init() {
     const tasks = await this.prismao.getOrigin().sys_scheduled_task.findMany({
       where: {
-        ...this.prismao.defaultSelArg().where
-      }
+        ...this.prismao.defaultSelArg().where,
+      },
     });
     for (const task of tasks) {
       if (task.if_disabled === base.N) {
-        this.addSchedule(task.target, task.cron_expression)
+        this.addSchedule(task.target, task.cron_expression);
       }
     }
   }
 
-  private schedules = new Map<string, () => Promise<boolean>>()
+  private schedules = new Map<string, () => Promise<boolean>>();
 
   private addSchedule(name: string, cronExpression: string) {
     const obj = this.schedules.get(name);
     if (!obj) {
-      return
+      return;
     }
     const cronJob = new CronJob(cronExpression, async () => {
       let ifSuccess = true;
       try {
-        ifSuccess = await obj()
+        ifSuccess = await obj();
       } catch (e) {
         this.winston.error(e);
         ifSuccess = false;
@@ -53,18 +52,19 @@ export class ScheduleService implements OnModuleInit {
         operateType: 'by:self',
         ifSuccess: ifSuccess ? base.Y : base.N,
         remark: '',
-      })
+        createTime: new Date(),
+      });
     });
-    this.schedulerRegistry.addCronJob(name, cronJob)
-    cronJob.start()
+    this.schedulerRegistry.addCronJob(name, cronJob);
+    cronJob.start();
   }
 
   private delSchedule(name: string) {
     const b = this.schedulerRegistry.getCronJobs().has(name);
     if (b) {
       const cronJob = this.schedulerRegistry.getCronJob(name);
-      cronJob.stop()
-      this.schedulerRegistry.deleteCronJob(name)
+      cronJob.stop();
+      this.schedulerRegistry.deleteCronJob(name);
     }
   }
 
@@ -74,7 +74,7 @@ export class ScheduleService implements OnModuleInit {
       if (obj) {
         let ifSuccess = true;
         try {
-          ifSuccess = await obj()
+          ifSuccess = await obj();
         } catch (e) {
           this.winston.error(e);
           ifSuccess = false;
@@ -84,20 +84,21 @@ export class ScheduleService implements OnModuleInit {
           operateType: 'user:trigger',
           ifSuccess: ifSuccess ? base.Y : base.N,
           remark: '',
-        })
+          createTime: new Date(),
+        });
       }
     }
   }
 
   addScheduleFunc(name: string, func: () => Promise<boolean>) {
-    this.schedules.set(name, func)
+    this.schedules.set(name, func);
   }
 
   dbInsSchedule(name: string, cronExpression: string) {
-    this.addSchedule(name, cronExpression)
+    this.addSchedule(name, cronExpression);
   }
 
   dbDelSchedule(name: string) {
-    this.delSchedule(name)
+    this.delSchedule(name);
   }
 }

@@ -840,6 +840,7 @@ export class AuthService {
       userId: userId,
       loginRole: loginRole,
       authType: authType,
+      createTime: new Date(),
     });
   }
 
@@ -858,6 +859,7 @@ export class AuthService {
    * @param userId
    * @param loginRole
    * @param authType
+   * @param createTime
    */
   async insLogOperation2(
     permission: string,
@@ -874,6 +876,7 @@ export class AuthService {
       userId,
       loginRole,
       authType,
+      createTime,
     }: {
       remark?: string;
       ifIgnoreParamInLog?: boolean;
@@ -885,6 +888,7 @@ export class AuthService {
       userId: string;
       loginRole: string;
       authType: AuthTypeEnum;
+      createTime: Date;
     } = {
       remark: '',
       ifIgnoreParamInLog: false,
@@ -896,6 +900,7 @@ export class AuthService {
       userId: '',
       loginRole: '',
       authType: AuthTypeEnum.unknown,
+      createTime: new Date(),
     },
   ) {
     await this.prismao.getOrigin().log_operation.create({
@@ -914,6 +919,7 @@ export class AuthService {
         operate_type: reqMethod,
         if_success: typeof ifSuccess === 'boolean' ? (ifSuccess ? base.Y : base.N) : ifSuccess,
         remark: remark,
+        create_time: createTime,
       },
     });
   }

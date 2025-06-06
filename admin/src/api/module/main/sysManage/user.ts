@@ -6,7 +6,7 @@ import {
   LoginDto,
   UserUpdPsdDto,
   AdminResetUserPsdDto,
-  RegistDto
+  RegistDto, MultiAuthUserDto
 } from "@/type/module/main/sysManage/user.ts";
 import { encryptUtils } from "@ms/common";
 
@@ -101,7 +101,7 @@ export const userApi: ApiConfig<UserDto, UserUpdDto> = {
  * 查询个人信息
  */
 export function getSelfInfo() {
-  return request({
+  return request<MultiAuthUserDto>({
     url: '/main/sys-manage/user/self-info',
     method: 'GET',
   })
@@ -119,7 +119,7 @@ export function newUser(params: Omit<RegistDto, 'loginRole'>) {
   })
 }
 
-export function updUser(params: UserUpdDto) {
+export function updUser(params: { [P in keyof MultiAuthUserDto]: Partial<MultiAuthUserDto[P]> }) {
   return request({
     url: '/main/sys-manage/user/upd-user',
     method: 'POST',

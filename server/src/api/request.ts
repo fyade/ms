@@ -1,6 +1,6 @@
 import axios, { AxiosRequestConfig } from 'axios';
 
-const axi = axios.create();
+export const axi = axios.create();
 
 /**
  * 算法请求

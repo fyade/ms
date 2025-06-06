@@ -1,6 +1,7 @@
 import { PageDto } from '../../../../../common/dto/PageDto';
 import { IsNotEmpty } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { UserVisitorDto } from '../../other-user/user-visitor/dto';
 
 export class UserDto {
   @ApiProperty({ description: '用户id', required: true })
@@ -127,4 +128,9 @@ export class ResetUserPsdDto {
   @ApiProperty({ description: '密码类型，a:未加密/b:AES加密/c:RSA加密', required: true })
   @IsNotEmpty({ message: '密码类型不能为空' })
   psdType: string;
+}
+
+export class MultiAuthUserDto {
+  admin: UserDto | null;
+  visitor: UserVisitorDto | null;
 }

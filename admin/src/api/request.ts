@@ -41,7 +41,6 @@ request.interceptors.response.use(
   },
   async error => {
     if (error.response.data.code === 401) {
-      useUserStore().removeToken()
       // ElMessage.error('登录已过期，请重新登录。')
       if (status401) {
         return;
@@ -50,6 +49,7 @@ request.interceptors.response.use(
         '登录已过期，请重新登录。',
         '警告',
       ).finally(() => {
+        useUserStore().removeToken()
         window.location.href = `/login?redirect=${window.location.pathname}`
       })
       status401 = true;
@@ -98,6 +98,7 @@ export async function request2<T = any>(param: AxiosRequestConfig, {
         resolve(response.data.data as any)
       }
     } catch (err: any) {
+      console.error(err);
       if (errLevel === 0) {
         reject(err)
       } else if (errLevel === 1) {

@@ -11,7 +11,6 @@ import { menuApi } from "@/api/module/main/sysManage/menu.ts";
 import { menuDict, menuDictInter } from "@/dict/module/main/sysManage/menu.ts";
 import { tableRowPermissionApi } from "@/api/module/main/sysManage/tableRowPermission.ts";
 import { TableRowPermissionDto } from "@/type/module/main/sysManage/tableRowPermission.ts";
-import Login from "@/views/user/login.vue";
 import { deepClone } from "@/utils/ObjectUtils.ts";
 
 const props = defineProps({
